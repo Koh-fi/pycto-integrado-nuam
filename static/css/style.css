@@ -1,0 +1,35 @@
+:root{
+  --bs-primary:#ff4201;
+  --bs-primary-rgb: rgb(255, 66, 1);
+  --font-title: 'Times New Roman', Times, serif;
+  --nuam-primary:#ff4201;
+  --nuam-bg-light: #fffbfa;
+  --nuam-bg-light2: #f7f7f7;
+  --nuam-bg-dark: #3d3d3d;
+  --nuam-bg-black: #030303;
+  --nuam-bg-red: #a70606;
+  --nuam-bg-light-orange: #ffc642;
+
+}
+
+.font-title {
+  font-family: var(--font-title);
+}
+
+.table-primary{
+  --bs-table-accent-bg: var(--nuam-bg-light-orange);
+  font-size: small;
+}
+
+.table-primary th {
+  font-size: small;
+}
+
+.table-hover td {
+  background-color: var(--nuam-bg-light2);
+  font-size: small; 
+}
+
+.bg-nuam-nav {
+  background-color: var(--nuam-bg-light2);
+}
