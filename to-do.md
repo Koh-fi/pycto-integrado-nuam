@@ -9,10 +9,10 @@
 ---
 # ESENCIAL
 
-- [ ] Models (de Usuario principalmente) - Jaime
+- [X] Models (de Usuario principalmente) - Jaime
 - [ ] Form (de Login principalmente) - Seba
-- [ ] Templates
-  - [ ] Login - Seba
-  - [ ] Intranet Administrador      - Jadeth
-  - [ ] Intranet Corredor de Bolsa  - Jadeth
-  - [ ] Intranet Auditor            - Jadeth
+- [X] Templates
+  - [X] Login - Seba
+  - [X] Intranet Administrador      - Jadeth
+  - [X] Intranet Corredor de Bolsa  - Jadeth
+  - [X] Intranet Auditor            - Jadeth

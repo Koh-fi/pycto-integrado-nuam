@@ -1,0 +1,78 @@
+{% extends "../base.html" %}
+{% load static %}
+
+{% block title %}Gestión de Calificaciones Tributarias{% endblock title %}
+
+{% block navbar %}
+    <nav class="navbar bg-nuam-nav border-bottom">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <div class="row">
+                <div class="col">
+                    <img src="{% static 'img/logo.png' %}" alt="Logo" width="117" height="27"> |
+                </div>
+
+                <div class="col market-info">
+                    <span class="mt-3">
+                        MSCI NUAM USD
+                        </br>
+                        1.371 0.71% ▲
+                    </span>
+                </div>
+            </div>
+        </a>
+        <div class="justify-content-end">
+            <div class="profile-icon1">
+                <i class="bi bi-person-circle"></i>
+            </div>
+        </div>
+      </div>
+    </nav>
+{% endblock navbar %}
+
+{% block content %}
+    <div class="admin-container">
+
+        <div class="profile-column">
+            <i class="bi bi-person-circle profile-icon2"></i>
+            <div class="profile-info">
+                <p class="profile-label">Administrador</p>
+                <p class="profile-email">admin@nuam.com</p>
+            </div>
+        </div>
+
+        <div class="admin-column">
+            <button class="admin-btn">
+                <i class="bi bi-people-fill"></i> Gestión de usuarios
+            </button>
+            <div class="sub-actions">
+                <button class="sub-btn"><i class="bi bi-person-plus-fill"></i> Creación</button>
+                <button class="sub-btn"><i class="bi bi-pencil-square"></i> Modificación</button>
+                <button class="sub-btn"><i class="bi bi-person-x-fill"></i> Eliminación</button>
+                <button class="sub-btn"><i class="bi bi-person-badge-fill"></i> Asignación de roles</button>
+            </div>
+
+            <button class="admin-btn">
+                <i class="bi bi-file-earmark-bar-graph-fill"></i> Gestión de calificaciones tributarias
+            </button>
+        </div>
+
+        <div class="admin-column">
+            <button class="admin-btn">
+                <i class="bi bi-currency-dollar"></i> Gestión de instrumentos financieros
+            </button>
+
+            <button class="admin-btn">
+                <i class="bi bi-shield-lock-fill"></i> Gestión de seguridad
+            </button>
+
+            <button class="admin-btn">
+                <i class="bi bi-hdd-fill"></i> Administración de respaldo
+            </button>
+
+            <button class="admin-btn">
+                <i class="bi bi-tools"></i> Mantenimiento del sistema
+            </button>
+        </div>
+    </div>
+{% endblock content %}

@@ -31,5 +31,150 @@
 }
 
 .bg-nuam-nav {
+  background-color: var(--nuam-bg-light);
+  min-height: 80px;
+}
+
+.card-login {
+  border-radius: 20px;
+  max-height: 1500px;
+  max-width: 400px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  margin-right: 15px;
+  height: 40px;
+  width: 100px;
+  margin-bottom: 10px;
+}
+
+.market-info {
+  font-size: 0.6em;
+  color: #22be22;
+  line-height: 1.2;
+}
+
+.profile-icon {
+  margin-left: auto;
+  font-size: 2.1em;
+  color: black;
+  cursor: pointer;
+}
+
+.admin-container {
+  display: flex;
+  gap: 50px;
+  padding: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.admin-layout, .broker-layout, .auditor-layout {
+  display: flex;
+  gap: 50px;
+  padding: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.profile-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 280px;
+  height: 240px;
   background-color: var(--nuam-bg-light2);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-top: 50px;
+}
+
+.profile-icon1 {
+  font-size: 2.5em;
+  color: black;
+  margin-bottom: 10px;
+}
+
+.profile-icon2 {
+  font-size: 5.0em;
+  color: black;
+  margin-bottom: 10px;
+}
+
+.profile-info {
+  text-align: center;
+}
+
+.profile-label {
+  font-weight: bold;
+  font-size: 1.1em;
+  margin-bottom: 5px;
+}
+
+.profile-email {
+  font-size: 0.95em;
+  color: var(--nuam-bg-dark);
+}
+
+.admin-column, .broker-column, .auditor-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 50px;
+}
+
+.admin-btn {
+  width: 300px;
+  background-color: var(--nuam-primary);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 1em;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.sub-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sub-btn {
+  width: 260px;
+  background-color: var(--nuam-primary);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  font-size: 1em;
+  cursor: pointer;
+  text-align: left;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: var(--nuam-bg-light-orange);
+  color: black;
+  font-size: 0.9em;
+  margin-bottom: 15px;
+}
+
+.broker-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
 }

@@ -11,3 +11,8 @@ def login(request):
 def admin(request):
   return render(request, "Intranets/admin.html")
 
+def auditor(request):
+  return render(request, "Intranets/auditor.html")
+
+def corredor(request):
+  return render(request, "Intranets/corredor.html")

@@ -1,7 +1,7 @@
 {% extends "../base.html" %}
 {% load static %}
 
-{% block title %}Inicio Auditor tributario{% endblock title %}
+{% block title %}Inicio Corrodor de bolsas{% endblock title %}
 
 {% block navbar %}
     <nav class="navbar bg-nuam-nav border-bottom">
@@ -31,37 +31,38 @@
 {% endblock navbar %}
 
 {% block content %}
-<div class="auditor-layout">
+<div class="broker-layout">
 
     <div class="profile-column">
             <i class="bi bi-person-circle profile-icon2"></i>
             <div class="profile-info">
-                <p class="profile-label">Auditor</p>
-                <p class="profile-email">auditor@nuam.com</p>
+                <p class="profile-label">Corredor</p>
+                <p class="profile-email">corredor@nuam.com</p>
             </div>
         </div>
 
-    <div class="auditor-column">
+    <div class="broker-column left-column">
         <button class="admin-btn">
-            <i class="bi bi-check2-circle"></i> Validación de calificaciones tributarias
+            <i class="bi bi-file-earmark-bar-graph-fill"></i> Gestión de calificaciones tributarias
         </button>
-
-        <button class="admin-btn">
-            <i class="bi bi-check2-square"></i> Validación de instrumentos financieros
-        </button>
-
-        <button class="admin-btn">
-            <i class="bi bi-clock-history"></i> Acceso a historial
-        </button>
+        <div class="sub-actions">
+            <button class="sub-btn"><i class="bi bi-file-earmark-plus-fill"></i> Creación</button>
+            <button class="sub-btn"><i class="bi bi-pencil-fill"></i> Modificación</button>
+            <button class="sub-btn"><i class="bi bi-trash-fill"></i> Eliminación</button>
+        </div>
     </div>
 
-    <div class="auditor-column">
+    <div class="broker-column right-column">
         <button class="admin-btn">
-            <i class="bi bi-journal-text"></i> Registro de auditoria
+            <i class="bi bi-journal-plus"></i> Creación de instrumentos financieros
         </button>
 
         <button class="admin-btn">
-            <i class="bi bi-arrow-counterclockwise"></i> Solicitud de restauraciones de datos
+        <i class="bi bi-bar-chart-line-fill"></i> Módulo de calificaciones tributarias
+        </button>
+
+        <button class="admin-btn">
+            <i class="bi bi-graph-up-arrow"></i> Módulo de instrumentos financieros
         </button>
     </div>
 </div>

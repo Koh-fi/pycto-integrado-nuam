@@ -21,5 +21,8 @@ from Intranet import views as intr
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', intr.index),
-    path('login/', intr.login)
+    path('login/', intr.login),
+    path('intranet/admin', intr.admin),
+    path('intranet/corredor', intr.corredor),
+    path('intranet/auditor', intr.auditor)
 ]
