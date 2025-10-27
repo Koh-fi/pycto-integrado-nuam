@@ -16,10 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-import MNG_Calificaciones.views as cal_mngr
+from Intranet import views as intr
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('gestor/calif_trib', cal_mngr.mngr_view),
-    path('gestor/ingresar', cal_mngr.new_view)
+    path('', intr.index),
+    path('login/', intr.login)
 ]
