@@ -12,6 +12,10 @@
 
 }
 
+.dark-bg-overlay {
+  background-color: #0000005a;
+}
+
 .font-title {
   font-family: var(--font-title);
 }
@@ -37,7 +41,7 @@
 
 .card-login {
   border-radius: 20px;
-  max-height: 1500px;
+  min-height: 450px;
   max-width: 400px;
 }
 
@@ -177,4 +181,25 @@
   align-items: center;
   gap: 10px;
   padding: 20px;
+}
+
+.carousel,
+.carousel-inner,
+.carousel-item,
+.carousel-item img {
+  height: 100vh; 
+}
+
+.carousel-item img {
+  transition: transform 1.2s ease-in-out, opacity 1.2s ease-in-out;
+  object-fit: fill;     
+  object-position: center; 
+  width: 100%;
+}
+
+
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; 
 }
