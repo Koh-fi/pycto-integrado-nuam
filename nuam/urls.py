@@ -24,5 +24,7 @@ urlpatterns = [
     path('login/', intr.login),
     path('intranet/admin', intr.admin, name="admin"),
     path('intranet/corredor', intr.corredor, name="corredor"),
-    path('intranet/auditor', intr.auditor, name="auditor")
+    path('intranet/auditor', intr.auditor, name="auditor"),
+    path('gestores/calificaciones/', intr.view_cal),
+    path('gestores/calificaciones/nueva', intr.create_cal)
 ]

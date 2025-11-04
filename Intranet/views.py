@@ -49,3 +49,9 @@ def auditor(request):
 
 def corredor(request):
   return render(request, "Intranets/corredor.html")
+
+def create_cal(request):
+  return render(request, "Creates/calificaciones.html")
+
+def view_cal(request):
+  return render(request, "Readers/calificaciones.html")
