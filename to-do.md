@@ -16,9 +16,9 @@
   
    - [ ] Desarrollar Templates de Creaciones
      
-      - [ ] Calificaciones Tributarias
+      - [ ] Calificaciones Tributarias - Jadeth & Seba
      
-      - [ ] Instrumentos Financieros
+      - [ ] Instrumentos Financieros  - Seba
      
       - [ ] Usuarios
   
@@ -39,6 +39,7 @@
       - [ ] Instrumentos Financieros
      
       - [ ] Usuarios
+
 - [ ] Subir prototipo FrontEnd a la Nube
   
    - [ ] Investigar cómo implementar prototipo funcional mediante AWS
