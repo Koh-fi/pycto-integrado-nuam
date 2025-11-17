@@ -50,49 +50,83 @@ def auditor(request):
 def corredor(request):
   return render(request, "Intranets/corredor.html")
 
+
 def create_cal(request):
-  factores = factor_calificacion.objects.all()
-  if request.method == 'POST':
-    form = CalificacionTributariaForm(request.POST)
-    if form.is_valid():
-      calificacion = form.save(commit=False)
-      calificacion.rol = "Corredor"
-      calificacion.estado = "Pendiente"
 
-      if 'ingresar' in request.POST:
-        calificacion.save()
-        for f in factores:
-          valor = form.cleaned_data.get(f"factor{f.factor_id}")
-          if valor not in [None, ""]:
-            califica.objects.create(
-              calificacion=calificacion,
-              factor=f,
-              valor=valor
-            )
-        return redirect('view_cal')
-      
-      total = sum([form.cleaned_data.get(f"factor{n}") or 0 for n in range(8, 19)])
-  
-      updated_data = form.data.copy()
+    # --- Construcción de categorías niveladas ---
+    categorias = list(categoria_factor.objects.all())
 
-      for n in range(8, 39):
-        valor = form.cleaned_data.get(f"factor{n}")
-        if valor == 0:
-          calculo = 0
-        else:
-          calculo = valor / total
-        
-        updated_data[f"factor{n}"] = round(calculo, 6)
+    categorias_por_padre = {}
+    for cat in categorias:
+        key = cat.padre_id 
+        categorias_por_padre.setdefault(key, []).append(cat)
 
-      updated_data["ingresoMontos"] = False
+    def aplanar(cat, lvl=0):
+        salida = [{
+            "categoria": cat,
+            "nivel": lvl,
+            "factores": list(cat.factor_calificacion_set.all())
+        }]
+        for sub in categorias_por_padre.get(cat.id, []):
+            salida.extend(aplanar(sub, lvl + 1))
+        return salida
 
-      form = CalificacionTributariaForm(updated_data)
-      return render(request, 'Creates/calificaciones.html', {'form_calificacion': form, 
-      'alert':'Factores calculados correctamente. Revisa los valores antes de guardar.',
-      'factores': factores})
-  form = CalificacionTributariaForm()
+    categorias_niveladas = []
+    for raiz in categorias_por_padre.get(None, []):
+        categorias_niveladas.extend(aplanar(raiz))
 
-  return render(request, 'Creates/calificaciones.html', {'form_calificacion': form, 'factores': factores})
+    # Factores sin categoría
+    factores_sueltos = factor_calificacion.objects.filter(categoria__isnull=True)
+
+    if request.method == 'POST':
+        form = CalificacionTributariaForm(request.POST)
+        if form.is_valid():
+            calificacion = form.save(commit=False)
+            calificacion.rol = "Corredor"
+            calificacion.estado = "Pendiente"
+
+            # Guardar
+            if "ingresar" in request.POST:
+                calificacion.save()
+                for f in factor_calificacion.objects.all():
+                    valor = form.cleaned_data.get(f"factor" + str(f.factor_id))
+                    if valor not in [None, ""]:
+                        califica.objects.create(
+                            calificacion=calificacion,
+                            factor=f,
+                            valor=valor
+                        )
+                return redirect('view_cal')
+
+            # Calcular
+            total = sum([
+                form.cleaned_data.get(f"factor{n}") or 0
+                for n in range(8, 20)
+            ])
+
+            updated = form.data.copy()
+
+            for n in range(8, 39):
+                valor = form.cleaned_data.get(f"factor{n}")
+                updated[f"factor{n}"] = round((valor or 0) / total, 6) if total else 0
+
+            updated["ingresoMontos"] = False
+
+            form = CalificacionTributariaForm(updated)
+
+            return render(request, 'Creates/calificaciones.html', {
+                "form_calificacion": form,
+                "alert": "Factores calculados correctamente.",
+                "categorias_niveladas": categorias_niveladas,
+                "factores_sueltos": factores_sueltos,
+            })
+
+    # GET normal
+    return render(request, 'Creates/calificaciones.html', {
+        "form_calificacion": CalificacionTributariaForm(),
+        "categorias_niveladas": categorias_niveladas,
+        "factores_sueltos": factores_sueltos,
+    })
 
 
 def view_cal(request):
@@ -102,7 +136,7 @@ def instrumentosFinancierosView(request):
     if request.method == 'POST':
         form = formInstrumentoFinanciero(request.POST)
         if form.is_valid():
-            form.save()
+            form.save() # Cambiar a ModelForm si se quiere hacer uso de la funcion ".save()"
             return redirect('instrumentosFinancieros')
     else:
         form = formInstrumentoFinanciero()
@@ -119,6 +153,7 @@ def gestionInstrumentos(request):
             categoria = request.POST.get('categoria', '')
             bolsa = request.POST.get('bolsa', '')
             mercado = request.POST.get('mercado', '')
+            estado = request.POST.get('estado','')
 
             instrumentos = instrumento_financiero.objects.all()
             if codigo:
@@ -129,29 +164,9 @@ def gestionInstrumentos(request):
                 instrumentos = instrumentos.filter(bolsa=bolsa)
             if mercado:
                 instrumentos = instrumentos.filter(mercado=mercado)
-
-        elif 'ingresar' in request.POST:
-            form = formInstrumentoFinanciero(request.POST)
-            if form.is_valid():
-                nuevo = instrumento_financiero(
-                    codigo=form.cleaned_data['codigo'],
-                    descripcion=form.cleaned_data['descripcion'],
-                    categoria=form.cleaned_data['categoria'],
-                    bolsa=form.cleaned_data['bolsa'],
-                    mercado=form.cleaned_data['mercado']
-                )
-                nuevo.save()
-                return redirect('instrumentosFinancieros')
-
-        elif 'eliminar' in request.POST:
-            ids = request.POST.getlist('seleccionados')
-            instrumento_financiero.objects.filter(id__in=ids).delete()
-            return redirect('instrumentosFinancieros')
-
-        elif 'limpiar' in request.POST:
-            return redirect('instrumentosFinancieros')
-
+            if estado:
+                instrumentos = instrumentos.filter(estado=estado)
     else:
-        form = formInstrumentoFinanciero()
+      form = formInstrumentoFinanciero()
 
-    return render(request, 'Creates/instrumentos/gestion.html', {'form': form, 'instrumentos': instrumentos,})
+    return render(request, 'Readers/instrumentos.html', {'form': form,'instrumentos':instrumentos})

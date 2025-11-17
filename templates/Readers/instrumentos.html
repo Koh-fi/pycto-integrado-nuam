@@ -13,7 +13,7 @@
 
               <div class="col">
                 <h5 class="mb-0 text-black">
-                  {% block navbar-title %}Creación de Instrumento Financiero{% endblock navbar-title %}
+                  {% block navbar-title %}Visualización de Instrumento Financiero{% endblock navbar-title %}
                 </h5>
               </div>
             </div>
@@ -34,7 +34,7 @@
         <div class="row mb-3 align-items-center">
             <div class="col-md-2">
                 <label class="form-label">InstrumentoID</label>
-                <input type="text" class="form-control" name="id" placeholder="XXXXXXX">
+                <input type="text" class="form-control" name="instrumento_id" placeholder="XXXXXXX">
             </div>
 
             <div class="col-md-2">
@@ -73,9 +73,19 @@
                 </select>
             </div>
 
+            <div class="col-md-2">
+                <label class="form-label">Estado</label>
+                <select class="form-select" name="Estado">
+                    <option value="">Seleccione...</option>
+                    <option>Ingresado</option>
+                    <option>Validado</option>
+                    <option>Rechazado</option>
+                </select>
+            </div>
+
             <div class="col-md-1 d-flex flex-column gap-2">
                 <button type="submit" name="buscar" class="btn btn-sm btn-primary" style="background-color: var(--nuam-primary); border: none;">BUSCAR</button>
-                <button type="reset" class="btn btn-sm btn-outline-secondary">LIMPIAR</button>
+                <button type="reset" class="btn btn-sm btn-primary">LIMPIAR</button>
             </div>
         </div>
     </form>
@@ -86,23 +96,30 @@
             <table class="table table-bordered table-hover align-middle text-center">
                 <thead class="table-primary text-white" style="background-color: var(--nuam-primary);">
                     <tr>
-                        <th scope="col"><input type="checkbox" id="selectAll"></th>
+                        <th scope="col"><input type="checkbox" instrumento_id="selectAll"></th>
                         <th scope="col">ID</th>
                         <th scope="col">Código</th>
                         <th scope="col">Categoría</th>
                         <th scope="col">Bolsa</th>
                         <th scope="col">Mercado</th>
+                        <th scope="col">Estado</th>
+                        <th></th>
+                        <th></th>
+
                     </tr>
                 </thead>
                 <tbody>
                     {% for i in instrumentos %}
                     <tr>
-                        <td><input type="checkbox" name="seleccionados" value="{{ i.id }}"></td>
-                        <td>{{ i.id }}</td>
+                        <td><input type="checkbox" name="seleccionados" value="{{ i.instrumento_id }}"></td>
+                        <td>{{ i.instrumento_id }}</td>
                         <td>{{ i.codigo }}</td>
                         <td>{{ i.categoria }}</td>
                         <td>{{ i.bolsa }}</td>
                         <td>{{ i.mercado }}</td>
+                        <td>{{ i.estado }}</td>
+                        <td><a href="/actualizarInstrumento/{{ i.instrumento_id }}" class="btn btn-success btn-sm"><i class="bi bi-pencil"></i></td>
+                        <td><a href="/eliminarInstrumento/{{ i.instrumento_id }}" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -110,8 +127,8 @@
         </div>
 
         <div class="d-flex justify-content-end mt-3 gap-3">
-            <button type="submit" name="eliminar" class="btn btn-danger">ELIMINAR</button>
-            <button type="submit" name="ingresar" class="btn btn-success" style="background-color: var(--nuam-primary); border: none;">INGRESAR</button>
+            <!--<button type="submit" name="ingresar" class="btn btn-success" style="background-color: var(--nuam-primary); border: none;">INGRESAR</button>-->
+            <a href="../Creates/instrumentos.html" class="btn btn-sm btn-primary">Agregar Instrumento</a>
         </div>
     </form>
 </div>   
