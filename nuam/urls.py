@@ -27,5 +27,5 @@ urlpatterns = [
     path('intranet/auditor', intr.auditor, name="auditor"),
     path('gestores/calificaciones/', intr.view_cal),
     path('gestores/calificaciones/nueva', intr.create_cal),
-    path('gestores/instrumentos/nuevo/', intr.instrumentosFinancierosView, name='instrumentosFinancieros')
+    path('gestores/instrumentos/', intr.instrumentosFinancierosView, name='instrumentosFinancieros')
 ]

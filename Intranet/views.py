@@ -51,15 +51,13 @@ def corredor(request):
   return render(request, "Intranets/corredor.html")
 
 def create_cal(request):
-  factores = [8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38]
+  factores = factor_calificacion.objects.all()
   if request.method == 'POST':
     form = CalificacionTributariaForm(request.POST)
     if form.is_valid():
       calificacion = form.save(commit=False)
       calificacion.rol = "Corredor"
       calificacion.estado = "Pendiente"
-
-      factores = factor.objects.all()
 
       if 'ingresar' in request.POST:
         calificacion.save()

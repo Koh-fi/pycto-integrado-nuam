@@ -31,9 +31,10 @@
 <div class="container mt-5 mb-5">
 
   <form method="POST" class="p-4 rounded shadow bg-light">
-    {% csrf_token %}
+  {% csrf_token %}
 
-    <div class="row mb-3 justify-content-center" style="gap: 75px;">
+<div>
+  <div class="row mb-3 justify-content-center" style="gap: 75px;">
       <div class="col-md-3">
         <label class="form-label">Mercado</label>
         <input type="text" class="form-control" name="mercado" id="mercado" placeholder="AC">
@@ -46,9 +47,9 @@
         <label class="form-label">Valor Histórico</label>
         <input type="text" class="form-control" name="valor_historico" id="valor_historico" placeholder="JEEP ACC 1X1">
       </div>
-    </div>
+  </div>
 
-    <div class="row mb-3 justify-content-center" style="gap: 75px;">
+  <div class="row mb-3 justify-content-center" style="gap: 75px;">
       <div class="col-md-3">
         <label class="form-label">Fecha Pago</label>
         <input type="date" class="form-control" name="fecha_pago" id="fecha_pago" placeholder="2025-01-02">
@@ -61,9 +62,9 @@
         <label class="form-label">Descripción</label>
         <input type="text" class="form-control" name="descripcion" id="descripcion" placeholder="JEEP ACC 1X1">
       </div>
-    </div>
+  </div>
 
-    <div class="row mb-3 justify-content-center" style="gap: 75px;">
+  <div class="row mb-3 justify-content-center" style="gap: 75px;">
       <div class="col-md-3">
         <label class="form-label">Secuencia Evento</label>
         <input type="date" class="form-control" name="secuencia_evento" id="secuencia_evento" placeholder="100000809">
@@ -76,11 +77,12 @@
         <label class="form-label">Ingreso por Montos</label>
         <input type="checkbox" class="form-check-input" name="ingreso_montos" id="ingreso_montos" style="margin-top: 0; margin-left: 150px;">
       </div>
-    </div>
+  </div>
   <br>
+</div>
 
-  <div class="row mt-4 g-6 align-items-center">
-    <div class="col-auto">
+  <div class="row mt-4 g-6 align-items-center" style="gap: 5px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 08 No <br> Constitutiva de <br> Renta No <br> Acogido a Impto.</label>
     </div>
     <div class="col-auto">
@@ -93,7 +95,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto" style="gap: 2px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 09 Impto. <br> 1ra Categ. Afecto <br> GI. Comp Con <br> Devolución</label>
     </div>
     <div class="col-auto">
@@ -106,7 +108,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto" style="margin-left: 25px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 10 <br> Impuesto Tasa <br> Adicional Exento <br> Art. 21</label>
     </div>
     <div class="col-auto">
@@ -121,8 +123,8 @@
     </div>
   </div>
   
-  <div class="row mt-4 g-6 align-items-center" style="gap: 10px;">
-    <div class="col-auto">
+  <div class="row mt-4 g-6 align-items-center" style="gap: 5px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 11 <br> Incremento <br> Impuesto <br> 1ra Categoría</label>
     </div>
     <div class="col-auto">
@@ -135,7 +137,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 12 Impto. <br> 1ra Categ. Exento <br> GI. Comp. Con <br> Devolución</label>
     </div>
     <div class="col-auto">
@@ -148,8 +150,8 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto">
-      <label for="" class="form-label" style="font-size: 0.6rem;">Factor 13 Impto. <br> 1ra Categ. Afecto <br> GI. Comp. Sin <br> Devolución</label>
+    <div class="col">
+      <label for="" class="form-label" style="font-size: 0.7rem;">Factor 13 Impto. <br> 1ra Categ. Afecto <br> GI. Comp. Sin <br> Devolución</label>
     </div>
     <div class="col-auto">
       <input
@@ -163,8 +165,8 @@
     </div>
   </div>
 
-  <div class="row mt-4 g-6 align-items-center">
-    <div class="col-auto">
+  <div class="row mt-4 g-6 align-items-center" style="gap: 5px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 14 Impto. <br> 1ra Categ. Exento <br> GI. Comp. Sin <br> Devolución</label>
     </div>
     <div class="col-auto">
@@ -177,7 +179,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 15 Impto. <br> Créditos por <br> Impuestos <br> Externos</label>
     </div>
     <div class="col-auto">
@@ -190,7 +192,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto" style="margin-left: 25px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 16 No <br> Constitutiva de <br> Renta Acogido a <br> Impto.</label>
     </div>
     <div class="col-auto">
@@ -205,8 +207,8 @@
     </div>
   </div>
 
-  <div class="row mt-4 g-6 align-items-center">
-    <div class="col-auto">
+  <div class="row mt-4 g-6 align-items-center" style="gap: 5px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 17 No <br> Constituida de <br> Renta Devolución <br> de Capital <br> Art. 17</label>
     </div>
     <div class="col-auto">
@@ -219,7 +221,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 18 <br> Rentas Exentas <br> de Impto. GC <br> Y/O Impto. <br> Adicional</label>
     </div>
     <div class="col-auto">
@@ -232,7 +234,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto" style="margin-left: 30px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 19 A <br> Ingreso no <br> Constitutivos <br> de Renta</label>
     </div>
     <div class="col-auto">
@@ -247,8 +249,8 @@
     </div>
   </div>
 
-  <div class="row mt-4 g-6 align-items-center" style="gap: 10px;">
-    <div class="col-auto">
+  <div class="row mt-4 g-6 align-items-center" style="gap: 5px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 20 <br> Sin Derecho <br> a Devolución</label>
     </div>
     <div class="col-auto">
@@ -261,7 +263,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 21 <br> Con Derecho a <br> Devolución</label>
     </div>
     <div class="col-auto">
@@ -274,7 +276,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto" style="margin-left: 13px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 22 <br> Sin Derecho <br> a Devolución</label>
     </div>
     <div class="col-auto">
@@ -290,7 +292,7 @@
   </div>
 
   <div class="row mt-4 g-6 align-items-center" style="gap: 5px;">
-    <div class="col-auto">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 23 <br> Con Derecho a <br> Devolución</label>
     </div>
     <div class="col-auto">
@@ -303,7 +305,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 24 <br> Sin Derecho <br> a Devolución</label>
     </div>
     <div class="col-auto">
@@ -316,7 +318,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto" style="margin-left: 35px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 25 <br> Con Derecho a <br> Devolución</label>
     </div>
     <div class="col-auto">
@@ -331,8 +333,8 @@
     </div>
   </div>
 
-  <div class="row mt-4 g-6 align-items-center" style="gap: 9px;">
-    <div class="col-auto">
+  <div class="row mt-4 g-6 align-items-center" style="gap: 5px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 26 <br> Sin Derecho <br> a Devolución</label>
     </div>
     <div class="col-auto">
@@ -345,7 +347,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 27 <br> Con Derecho a <br> Devolución</label>
     </div>
     <div class="col-auto">
@@ -358,7 +360,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto" style="margin-left: 18px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 28 <br> Crédito por IPE</label>
     </div>
     <div class="col-auto">
@@ -373,8 +375,8 @@
     </div>
   </div>
 
-  <div class="row mt-4 g-6 align-items-center" style="gap: 9px;">
-    <div class="col-auto">
+  <div class="row mt-4 g-6 align-items-center" style="gap: 5px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 29 <br> Sin Derecho <br> a Devolución</label>
     </div>
     <div class="col-auto">
@@ -387,7 +389,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 30 <br> Con Derecho <br> a Devolución</label>
     </div>
     <div class="col-auto">
@@ -400,7 +402,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto" style="margin-left: 25px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 31 <br> Sin Derecho <br> a Devolución</label>
     </div>
     <div class="col-auto">
@@ -415,8 +417,8 @@
     </div>
   </div>
 
-  <div class="row mt-4 g-6 align-items-center" style="gap: 9px;">
-    <div class="col-auto">
+  <div class="row mt-4 g-6 align-items-center" style="gap: 5px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 32 <br> Con Derecho <br> a Devolución</label>
     </div>
     <div class="col-auto">
@@ -429,7 +431,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 33 <br> Crédito por IPE</label>
     </div>
     <div class="col-auto">
@@ -442,7 +444,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto" style="margin-left: 15px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 34 Cred. <br> Por Impto. Tasa <br> Adicional Ex <br> Art. 21 LIR</label>
     </div>
     <div class="col-auto">
@@ -457,8 +459,8 @@
     </div>
   </div>
 
-  <div class="row mt-4 g-6 align-items-center" style="gap: 9px;">
-    <div class="col-auto">
+  <div class="row mt-4 g-6 align-items-center" style="gap: 5px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 35 Tasa <br> Efectiva Del <br> Cred. Del FUT <br> (TEF)</label>
     </div>
     <div class="col-auto">
@@ -471,7 +473,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 36 Tasa <br> Efectiva Del <br> Cred. Del FUNT <br> (TEX)</label>
     </div>
     <div class="col-auto">
@@ -484,7 +486,7 @@
         placeholder=""
       />
     </div>
-    <div class="col-auto" style="margin-left: 10px;">
+    <div class="col">
       <label for="" class="form-label" style="font-size: 0.7rem;">Factor 37 <br> Devolución de <br> Capital Art. <br> 17 num 7 LIR</label>
     </div>
     <div class="col-auto">
@@ -493,22 +495,6 @@
         class="form-control"
         name="factor37"
         id="factor37"
-        aria-describedby="helpId"
-        placeholder=""
-      />
-    </div>
-  </div>
-
-  <div class="row mt-4 g-6 align-items-center">
-    <div class="col-auto">
-      <label for="" class="form-label" style="font-size: 0.7rem;">Factor 38 <br> Descripción</label>
-    </div>
-    <div class="col-auto">
-      <input
-        type="text"
-        class="form-control"
-        name="factor38"
-        id="factor38"
         aria-describedby="helpId"
         placeholder=""
       />

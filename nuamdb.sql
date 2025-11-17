@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 04, 2025 at 08:48 PM
+-- Generation Time: Nov 17, 2025 at 07:00 AM
 -- Server version: 11.8.3-MariaDB
 -- PHP Version: 8.0.30
 
@@ -93,7 +93,35 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 (29, 'Can add rol', 8, 'add_rol'),
 (30, 'Can change rol', 8, 'change_rol'),
 (31, 'Can delete rol', 8, 'delete_rol'),
-(32, 'Can view rol', 8, 'view_rol');
+(32, 'Can view rol', 8, 'view_rol'),
+(33, 'Can add factor', 9, 'add_factor'),
+(34, 'Can change factor', 9, 'change_factor'),
+(35, 'Can delete factor', 9, 'delete_factor'),
+(36, 'Can view factor', 9, 'view_factor'),
+(37, 'Can add instrumento_financiero', 10, 'add_instrumento_financiero'),
+(38, 'Can change instrumento_financiero', 10, 'change_instrumento_financiero'),
+(39, 'Can delete instrumento_financiero', 10, 'delete_instrumento_financiero'),
+(40, 'Can view instrumento_financiero', 10, 'view_instrumento_financiero'),
+(41, 'Can add calificacion_tributaria', 11, 'add_calificacion_tributaria'),
+(42, 'Can change calificacion_tributaria', 11, 'change_calificacion_tributaria'),
+(43, 'Can delete calificacion_tributaria', 11, 'delete_calificacion_tributaria'),
+(44, 'Can view calificacion_tributaria', 11, 'view_calificacion_tributaria'),
+(45, 'Can add califica', 12, 'add_califica'),
+(46, 'Can change califica', 12, 'change_califica'),
+(47, 'Can delete califica', 12, 'delete_califica'),
+(48, 'Can view califica', 12, 'view_califica'),
+(49, 'Can add solicitud', 13, 'add_solicitud'),
+(50, 'Can change solicitud', 13, 'change_solicitud'),
+(51, 'Can delete solicitud', 13, 'delete_solicitud'),
+(52, 'Can view solicitud', 13, 'view_solicitud'),
+(53, 'Can add factor_calificacion', 14, 'add_factor_calificacion'),
+(54, 'Can change factor_calificacion', 14, 'change_factor_calificacion'),
+(55, 'Can delete factor_calificacion', 14, 'delete_factor_calificacion'),
+(56, 'Can view factor_calificacion', 14, 'view_factor_calificacion'),
+(57, 'Can add categoria_factor', 15, 'add_categoria_factor'),
+(58, 'Can change categoria_factor', 15, 'change_categoria_factor'),
+(59, 'Can delete categoria_factor', 15, 'delete_categoria_factor'),
+(60, 'Can view categoria_factor', 15, 'view_categoria_factor');
 
 -- --------------------------------------------------------
 
@@ -178,7 +206,14 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 (2, 'auth', 'permission'),
 (4, 'auth', 'user'),
 (5, 'contenttypes', 'contenttype'),
+(12, 'Intranet', 'califica'),
+(11, 'Intranet', 'calificacion_tributaria'),
+(15, 'Intranet', 'categoria_factor'),
+(9, 'Intranet', 'factor'),
+(14, 'Intranet', 'factor_calificacion'),
+(10, 'Intranet', 'instrumento_financiero'),
 (8, 'Intranet', 'rol'),
+(13, 'Intranet', 'solicitud'),
 (7, 'Intranet', 'usuario'),
 (6, 'sessions', 'session');
 
@@ -218,7 +253,11 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 (16, 'auth', '0011_update_proxy_permissions', '2025-09-07 23:47:46.520176'),
 (17, 'auth', '0012_alter_user_first_name_max_length', '2025-09-07 23:47:46.982678'),
 (18, 'sessions', '0001_initial', '2025-09-07 23:47:47.744907'),
-(19, 'Intranet', '0001_initial', '2025-10-27 10:49:05.784761');
+(19, 'Intranet', '0001_initial', '2025-10-27 10:49:05.784761'),
+(20, 'Intranet', '0002_factor_instrumento_financiero_alter_rol_rol_id_and_more', '2025-11-10 14:45:06.701959'),
+(21, 'Intranet', '0003_alter_califica_valor_categoria_factor_and_more', '2025-11-17 00:33:56.332635'),
+(22, 'Intranet', '0004_alter_factor_calificacion_categoria', '2025-11-17 00:51:28.645916'),
+(23, 'Intranet', '0005_alter_instrumento_financiero_categoria_and_more', '2025-11-17 05:59:51.672945');
 
 -- --------------------------------------------------------
 
@@ -230,6 +269,135 @@ CREATE TABLE `django_session` (
   `session_key` varchar(40) NOT NULL,
   `session_data` longtext NOT NULL,
   `expire_date` datetime(6) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `intranet_califica`
+--
+
+CREATE TABLE `intranet_califica` (
+  `id` bigint(20) NOT NULL,
+  `valor` double NOT NULL,
+  `calificacion_id` int(11) NOT NULL,
+  `factor_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `intranet_calificacion_tributaria`
+--
+
+CREATE TABLE `intranet_calificacion_tributaria` (
+  `calificacion_id` int(11) NOT NULL,
+  `mercado` varchar(30) NOT NULL,
+  `descripcion` varchar(150) NOT NULL,
+  `fecha_pago` date NOT NULL,
+  `secuencia_evento` bigint(20) NOT NULL,
+  `dividendo` int(11) DEFAULT NULL,
+  `valor_historico` bigint(20) DEFAULT NULL,
+  `anio` int(11) NOT NULL,
+  `estado` varchar(30) NOT NULL,
+  `rol_id` int(11) NOT NULL,
+  `instrumento_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `intranet_categoria_factor`
+--
+
+CREATE TABLE `intranet_categoria_factor` (
+  `id` bigint(20) NOT NULL,
+  `nombre` varchar(200) NOT NULL,
+  `padre_id` bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `intranet_categoria_factor`
+--
+
+INSERT INTO `intranet_categoria_factor` (`id`, `nombre`, `padre_id`) VALUES
+(1, 'Afectos a los Impuestos Global Complementario y/o Impuesto Adicional', NULL),
+(2, 'Rentas Exentas e Ingresos no Constitutivos de Renta (REX)', NULL),
+(3, 'Rentas con Tributación Cumplida', 2),
+(4, 'Rentas Exentas', 2),
+(5, 'Acumulados a Contar del 01/01/2017', NULL),
+(6, 'Asociados a Rentas Afectas', 5),
+(7, 'Asociados a Rentas Exentas', 5),
+(8, 'No Sujetos a Restitución generados hasta el 31/12/2019', 6),
+(9, 'No Sujetos a Restitución a contar del 01/01/2020', 6),
+(10, 'Sujetos a Restitución', 6),
+(11, 'Sujetos a Restitución', 7),
+(12, 'Acumulados Hasta el 31/12/2016', NULL),
+(13, 'Asociados a Rentas Afectas', 12),
+(14, 'Asociados a Rentas Exentas (Art. 11, Ley 18.401)', 12);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `intranet_factor_calificacion`
+--
+
+CREATE TABLE `intranet_factor_calificacion` (
+  `factor_id` int(11) NOT NULL,
+  `nombre_factor` varchar(120) NOT NULL,
+  `categoria_id` bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `intranet_factor_calificacion`
+--
+
+INSERT INTO `intranet_factor_calificacion` (`factor_id`, `nombre_factor`, `categoria_id`) VALUES
+(8, 'Con crédito IDPC generados a contar del 01/01/2017', 1),
+(9, 'Con crédito IDPC acumulados hasta el 31/12/2016', 1),
+(10, 'Con derecho a crédito por pago de IDPC voluntario', 1),
+(11, 'Sin derecho a crédito', 1),
+(12, 'Rentas provenientes del registro RAP y Diferencia Inicial de sociedad acogida al ex Art. 14 TER A) LIR', 3),
+(13, 'Otras ventas percibidas Sin Prioridad en su orden de imputación', 3),
+(14, 'Exceso Distribuciones Desproporcionadas (Nº9 Art.14 A)', 3),
+(15, 'Utilidades afectadas con impuesto sustitutivo al FUT (ISFUT) Ley Nº20.780', 3),
+(16, 'Rentas generadas hasta el 31/12/1983 y/o utilidades afectadas con impuesto sustitutivo al FUT (ISFUT) Ley Nº21.210', 3),
+(17, 'Rentas Exentas de Impuesto Global Complementario (IGC) (Artículo 11, Ley 18.401) Afectas a Impuesto Adicional', 4),
+(18, 'Rentas Exentas de Impuesto Global Complementario (IGC) y/o Impuesto Adicional (IA)', 4),
+(19, 'Ingresos No Constitutivos de Renta', 2),
+(20, 'Sin derecho a devolución', 8),
+(21, 'Con derecho a devolución', 8),
+(22, 'Sin derecho a devolución', 9),
+(23, 'Con derecho a devolución', 9),
+(24, 'Sin derecho a devolución', 10),
+(25, 'Con derecho a devolución', 10),
+(26, 'Sin derecho a devolución', 11),
+(27, 'Con derecho a devolución', 11),
+(28, 'Crédito por IPE', 5),
+(29, 'Sin derecho a devolución', 13),
+(30, 'Con derecho a devolución', 13),
+(31, 'Sin derecho a devolución', 14),
+(32, 'Con derecho a devolución', 14),
+(33, 'Crédito por IPE', 12),
+(34, 'Crédito por Impuesto Tasa Adicional, Ex. Art. 21 LIR', NULL),
+(35, 'Tasa Efectiva del crédito del FUT (TEF)', NULL),
+(36, 'Tasa Efectiva del crédito del FUNT (TEX)', NULL),
+(37, 'Devolución de capital Art. 17 Nº7 LIR', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `intranet_instrumento_financiero`
+--
+
+CREATE TABLE `intranet_instrumento_financiero` (
+  `instrumento_id` int(11) NOT NULL,
+  `codigo` varchar(6) NOT NULL,
+  `descripcion` varchar(150) NOT NULL,
+  `categoria` varchar(50) NOT NULL,
+  `bolsa` varchar(30) NOT NULL,
+  `mercado` varchar(50) NOT NULL,
+  `estado` varchar(9) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -255,6 +423,20 @@ INSERT INTO `intranet_rol` (`rol_id`, `nombre_rol`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `intranet_solicitud`
+--
+
+CREATE TABLE `intranet_solicitud` (
+  `solicitud_id` int(11) NOT NULL,
+  `motivo` varchar(130) NOT NULL,
+  `fecha` date NOT NULL,
+  `rol_id` int(11) NOT NULL,
+  `usuario_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `intranet_usuario`
 --
 
@@ -262,7 +444,7 @@ CREATE TABLE `intranet_usuario` (
   `usuario_id` int(11) NOT NULL,
   `nombre` varchar(50) NOT NULL,
   `email` varchar(150) NOT NULL,
-  `password` varchar(512) NOT NULL,
+  `password` varchar(256) NOT NULL,
   `rol_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -353,17 +535,61 @@ ALTER TABLE `django_session`
   ADD KEY `django_session_expire_date_a5c62663` (`expire_date`);
 
 --
+-- Indexes for table `intranet_califica`
+--
+ALTER TABLE `intranet_califica`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `Intranet_califica_calificacion_id_4ede9fe8_fk_Intranet_` (`calificacion_id`),
+  ADD KEY `Intranet_califica_factor_id_d90edd10_fk_Intranet_` (`factor_id`);
+
+--
+-- Indexes for table `intranet_calificacion_tributaria`
+--
+ALTER TABLE `intranet_calificacion_tributaria`
+  ADD PRIMARY KEY (`calificacion_id`),
+  ADD KEY `Intranet_calificacio_instrumento_id_868bd9cb_fk_Intranet_` (`instrumento_id`),
+  ADD KEY `Intranet_calificacio_rol_id_e623d16e_fk_Intranet_` (`rol_id`);
+
+--
+-- Indexes for table `intranet_categoria_factor`
+--
+ALTER TABLE `intranet_categoria_factor`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `Intranet_categoria_f_padre_id_2d6b5feb_fk_Intranet_` (`padre_id`);
+
+--
+-- Indexes for table `intranet_factor_calificacion`
+--
+ALTER TABLE `intranet_factor_calificacion`
+  ADD PRIMARY KEY (`factor_id`),
+  ADD KEY `Intranet_factor_cali_categoria_id_f1d76899_fk_Intranet_` (`categoria_id`);
+
+--
+-- Indexes for table `intranet_instrumento_financiero`
+--
+ALTER TABLE `intranet_instrumento_financiero`
+  ADD PRIMARY KEY (`instrumento_id`);
+
+--
 -- Indexes for table `intranet_rol`
 --
 ALTER TABLE `intranet_rol`
   ADD PRIMARY KEY (`rol_id`);
 
 --
+-- Indexes for table `intranet_solicitud`
+--
+ALTER TABLE `intranet_solicitud`
+  ADD PRIMARY KEY (`solicitud_id`),
+  ADD KEY `Intranet_solicitud_rol_id_5462e1a3_fk_Intranet_rol_rol_id` (`rol_id`),
+  ADD KEY `Intranet_solicitud_usuario_id_72a2a0c5_fk_Intranet_` (`usuario_id`);
+
+--
 -- Indexes for table `intranet_usuario`
 --
 ALTER TABLE `intranet_usuario`
   ADD PRIMARY KEY (`usuario_id`),
-  ADD KEY `Intranet_usuario_rol_id_40863af3_fk_Intranet_rol_rol_id` (`rol_id`);
+  ADD KEY `Intranet_usuario_rol_id_40863af3_fk` (`rol_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -385,7 +611,7 @@ ALTER TABLE `auth_group_permissions`
 -- AUTO_INCREMENT for table `auth_permission`
 --
 ALTER TABLE `auth_permission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT for table `auth_user`
@@ -415,13 +641,61 @@ ALTER TABLE `django_admin_log`
 -- AUTO_INCREMENT for table `django_content_type`
 --
 ALTER TABLE `django_content_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+
+--
+-- AUTO_INCREMENT for table `intranet_califica`
+--
+ALTER TABLE `intranet_califica`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `intranet_calificacion_tributaria`
+--
+ALTER TABLE `intranet_calificacion_tributaria`
+  MODIFY `calificacion_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `intranet_categoria_factor`
+--
+ALTER TABLE `intranet_categoria_factor`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `intranet_factor_calificacion`
+--
+ALTER TABLE `intranet_factor_calificacion`
+  MODIFY `factor_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT for table `intranet_instrumento_financiero`
+--
+ALTER TABLE `intranet_instrumento_financiero`
+  MODIFY `instrumento_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `intranet_rol`
+--
+ALTER TABLE `intranet_rol`
+  MODIFY `rol_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `intranet_solicitud`
+--
+ALTER TABLE `intranet_solicitud`
+  MODIFY `solicitud_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `intranet_usuario`
+--
+ALTER TABLE `intranet_usuario`
+  MODIFY `usuario_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
@@ -462,10 +736,43 @@ ALTER TABLE `django_admin_log`
   ADD CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
 
 --
+-- Constraints for table `intranet_califica`
+--
+ALTER TABLE `intranet_califica`
+  ADD CONSTRAINT `Intranet_califica_calificacion_id_4ede9fe8_fk_Intranet_` FOREIGN KEY (`calificacion_id`) REFERENCES `intranet_calificacion_tributaria` (`calificacion_id`),
+  ADD CONSTRAINT `Intranet_califica_factor_id_d90edd10_fk_Intranet_` FOREIGN KEY (`factor_id`) REFERENCES `intranet_factor_calificacion` (`factor_id`);
+
+--
+-- Constraints for table `intranet_calificacion_tributaria`
+--
+ALTER TABLE `intranet_calificacion_tributaria`
+  ADD CONSTRAINT `Intranet_calificacio_instrumento_id_868bd9cb_fk_Intranet_` FOREIGN KEY (`instrumento_id`) REFERENCES `intranet_instrumento_financiero` (`instrumento_id`),
+  ADD CONSTRAINT `Intranet_calificacio_rol_id_e623d16e_fk_Intranet_` FOREIGN KEY (`rol_id`) REFERENCES `intranet_rol` (`rol_id`);
+
+--
+-- Constraints for table `intranet_categoria_factor`
+--
+ALTER TABLE `intranet_categoria_factor`
+  ADD CONSTRAINT `Intranet_categoria_f_padre_id_2d6b5feb_fk_Intranet_` FOREIGN KEY (`padre_id`) REFERENCES `intranet_categoria_factor` (`id`);
+
+--
+-- Constraints for table `intranet_factor_calificacion`
+--
+ALTER TABLE `intranet_factor_calificacion`
+  ADD CONSTRAINT `Intranet_factor_cali_categoria_id_f1d76899_fk_Intranet_` FOREIGN KEY (`categoria_id`) REFERENCES `intranet_categoria_factor` (`id`);
+
+--
+-- Constraints for table `intranet_solicitud`
+--
+ALTER TABLE `intranet_solicitud`
+  ADD CONSTRAINT `Intranet_solicitud_rol_id_5462e1a3_fk_Intranet_rol_rol_id` FOREIGN KEY (`rol_id`) REFERENCES `intranet_rol` (`rol_id`),
+  ADD CONSTRAINT `Intranet_solicitud_usuario_id_72a2a0c5_fk_Intranet_` FOREIGN KEY (`usuario_id`) REFERENCES `intranet_usuario` (`usuario_id`);
+
+--
 -- Constraints for table `intranet_usuario`
 --
 ALTER TABLE `intranet_usuario`
-  ADD CONSTRAINT `Intranet_usuario_rol_id_40863af3_fk_Intranet_rol_rol_id` FOREIGN KEY (`rol_id`) REFERENCES `intranet_rol` (`rol_id`);
+  ADD CONSTRAINT `Intranet_usuario_rol_id_40863af3_fk` FOREIGN KEY (`rol_id`) REFERENCES `intranet_rol` (`rol_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

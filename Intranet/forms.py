@@ -12,7 +12,7 @@ class LoginForm(forms.Form):
     }))
 
 from django import forms
-from .models import calificacion_tributaria, califica, factor
+from .models import calificacion_tributaria, califica, factor_calificacion
 
 class CalificacionTributariaForm(forms.ModelForm):
     class Meta:
@@ -82,7 +82,7 @@ class CalificacionTributariaForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         # Agregar campos dinámicos para los factores desde la BD
-        for f in factor.objects.all():
+        for f in factor_calificacion.objects.all():
             self.fields[f"factor_{f.factor_id}"] = forms.DecimalField(
                 required=False,
                 label=f.nombre_factor,

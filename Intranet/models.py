@@ -8,12 +8,12 @@ class instrumento_financiero(models.Model):
     instrumento_id = models.AutoField(primary_key=True)
     codigo = models.CharField(max_length=6)
     descripcion = models.CharField(max_length=150)
-    categoria = models.CharField(max_length=30)
+    categoria = models.CharField(max_length=50)
     bolsa = models.CharField(max_length=30)
-    mercado = models.CharField(max_length=30)
+    mercado = models.CharField(max_length=50)
     estado = models.CharField(max_length=9) # Auto-Field - Ingresado | Validado | Rechazado
 
-    def __str__(self):
+    def str(self):
         return f"{self.codigo}{self.categoria}"
 
 ##### rol #####
@@ -26,12 +26,21 @@ class rol(models.Model):
         return self.nombre_rol
 
 
-##### factor #####
+##### factor_calificacion #####
 
-class factor(models.Model):
-    factor_id = models.AutoField(primary_key=True)
+class categoria_factor(models.Model):
+    nombre = models.CharField(max_length=200)
+    padre = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
+
+class factor_calificacion(models.Model):
+    factor_id = models.AutoField(primary_key=True, default=8)
     nombre_factor = models.CharField(max_length=120)
-
+    categoria = models.ForeignKey(categoria_factor, null=True, on_delete=models.CASCADE)
     def __str__(self):
         return self.nombre_factor
 
@@ -50,7 +59,7 @@ class calificacion_tributaria(models.Model):
     estado = models.CharField(max_length=30)
     rol = models.ForeignKey(rol, on_delete=models.CASCADE)
 
-    factores = models.ManyToManyField(factor,through='califica')
+    factores = models.ManyToManyField(factor_calificacion,through='califica')
 
     def __str__(self):
         return f"calificación {self.calificacion_id}{self.descripcion}"
@@ -59,9 +68,9 @@ class calificacion_tributaria(models.Model):
 ##### califica #####
 
 class califica(models.Model):
-    factor = models.ForeignKey(factor, on_delete=models.CASCADE)
+    factor = models.ForeignKey(factor_calificacion, on_delete=models.CASCADE)
     calificacion = models.ForeignKey(calificacion_tributaria, on_delete=models.CASCADE)
-    valor = models.IntegerField()
+    valor = models.FloatField(default=0.0)
 
     def __str__(self):
         return f"{self.factor}{self.calificacion} ({self.valor})"
