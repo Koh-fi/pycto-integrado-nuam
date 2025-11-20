@@ -61,14 +61,18 @@ def create_cal(request):
         key = cat.padre_id 
         categorias_por_padre.setdefault(key, []).append(cat)
 
-    def aplanar(cat, lvl=0):
+    def aplanar(cat, lvl=0, valores=None):
         salida = [{
             "categoria": cat,
             "nivel": lvl,
-            "factores": list(cat.factor_calificacion_set.all())
+            "factores": [{
+              "obj": factor,
+              "valor": (valores.get(factor.factor_id) if valores else 0)
+            }
+            for factor in cat.factor_calificacion_set.all().order_by("factor_id")]
         }]
         for sub in categorias_por_padre.get(cat.id, []):
-            salida.extend(aplanar(sub, lvl + 1))
+            salida.extend(aplanar(sub, lvl + 1, valores))
         return salida
 
     categorias_niveladas = []
@@ -112,20 +116,35 @@ def create_cal(request):
 
             updated["ingresoMontos"] = False
 
+            valores = {n: updated[f"factor{n}"] for n in range(8,39)}
+            for f in factores_sueltos:
+              valores[f.factor_id] = updated.get(f"factor{f.factor_id}", 0)
+
+            factores_sueltos_data = [{
+              "obj": factor,
+              "valor": valores.get(factor.factor_id, 0)
+            } for factor in factores_sueltos]
+
+            categorias_niveladas = []
+            for raiz in categorias_por_padre.get(None, []):
+              categorias_niveladas.extend(aplanar(raiz, valores=valores))
+
             form = CalificacionTributariaForm(updated)
 
             return render(request, 'Creates/calificaciones.html', {
                 "form_calificacion": form,
                 "alert": "Factores calculados correctamente.",
                 "categorias_niveladas": categorias_niveladas,
-                "factores_sueltos": factores_sueltos,
+                "factores_sueltos": factores_sueltos_data,
             })
 
     # GET normal
     return render(request, 'Creates/calificaciones.html', {
         "form_calificacion": CalificacionTributariaForm(),
         "categorias_niveladas": categorias_niveladas,
-        "factores_sueltos": factores_sueltos,
+        "factores_sueltos": [
+        {"obj": f, "valor": 0} for f in factores_sueltos
+    ],
     })
 
 

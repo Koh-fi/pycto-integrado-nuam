@@ -203,3 +203,11 @@ body, html {
   padding: 0;
   overflow-x: hidden; 
 }
+
+.factor-label {
+  font-size: 0.75rem;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
