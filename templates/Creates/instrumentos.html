@@ -1,0 +1,107 @@
+{% extends "../base.html" %}
+{% load static %}
+
+
+{% block title %}Agregar Instrumento Financiero{% endblock title %}
+{% block navbar %}
+    <nav class="navbar bg-nuam-nav border-bottom">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <div class="row">
+              <div class="col">
+                <img src="{% static 'img/logo.png' %}" alt="Logo" width="117" height="27"> |
+              </div>
+
+
+              <div class="col">
+                <h5 class="mb-0 text-black">
+                  {% block navbar-title %}Creación de Instrumento Financiero{% endblock navbar-title %}
+                </h5>
+              </div>
+            </div>
+        </a>
+        <div class="justify-content-end">
+            <div class="profile-icon1">
+                <i class="bi bi-person-circle"></i>
+            </div>
+        </div>
+      </div>
+    </nav>
+{% endblock navbar %}
+
+
+
+
+{% block content %}
+<div class="container-fluid mt-5 mb-5 px-5">
+    <form method="POST" class="p-3 rounded shadow-sm bg-light mb-4">
+        {% csrf_token %}
+        <div class="row mb-3 align-items-center">
+
+
+            <div class="col-md-2">
+                <label class="form-label">Código</label>
+                <input type="text" class="form-control" name="codigo" placeholder="Código...">
+            </div>
+             <div class="col-md-2">
+                <label class="form-label">Descripción</label>
+                <input type="text" class="form-control" name="descripcion" placeholder="Descripción...">
+            </div>
+
+
+            <div class="col-md-3">
+                <label class="form-label">Categoría</label>
+                <select class="form-select" name="categoria">
+                    <option value="">Seleccione...</option>
+                    <option>ACCIONES</option>
+                    <option>BONOS</option>
+                    <option>DERIVADOS</option>
+                    <option>FONDOS MUTUOS</option>
+                </select>
+            </div>
+
+
+            <div class="col-md-2">
+                <label class="form-label">Bolsa</label>
+                <select class="form-select" name="bolsa">
+                    <option value="">Seleccione...</option>
+                    <option>BCS</option>
+                    <option>BVC</option>
+                    <option>BVL</option>
+                </select>
+            </div>
+
+
+            <div class="col-md-2">
+                <label class="form-label">Mercado</label>
+                <select class="form-select" name="mercado">
+                    <option value="">Seleccione...</option>
+                    <option>Chile</option>
+                    <option>Perú</option>
+                    <option>Colombia</option>
+                </select>
+            </div>
+
+
+            <!--<div class="col-md-2">
+                <label class="form-label">Estado</label>
+                <select class="form-select" name="estado">
+                    <option value="">Seleccione...</option>
+                    <option>Ingresado</option>
+                    <option>Validado</option>
+                    <option>Rechazado</option>
+                </select>
+            </div>-->
+
+
+            <div class="col-md-2 me-5 mt-4 d-flex ms-auto justify-content-end">
+                <button type="submit" class="btn btn-sm btn-primary mt-3 col-md-9" style="background-color: var(--nuam-primary); border: none;">AGREGAR INSTRUMENTO</button>
+            </div>
+        </div>
+    </form>
+    <div class= " me-5 d-flex ms-auto justify-content-end">
+        <a href= {% url 'instrumentosFinancieros' %} class="btn btn-sm btn-primary" style="background-color: var(--nuam-primary); border: none;">Visualización de Instrumentos</a>
+    </div>
+
+
+{% endblock content %}

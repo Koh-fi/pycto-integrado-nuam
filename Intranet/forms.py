@@ -98,18 +98,22 @@ class CalificacionTributariaForm(forms.ModelForm):
 
 categorias_instrumentos = [("Renta Fija","Renta Fija"), ("Renta Variable","Renta Variable"), ("Derivados","Derivados"), ("Divisas","Divisas"), ("Estructurados","Estructurados")]
 
+
 bolsas_instrumentos = [("BCS", "Bolsa de Comercio de Santiago (Chile)"),("BVC","Bolsa de Valores de Colombia"), ('BVL',"Bolsa de Valores de Lima (Perú)")]
+
 
 mercados_instrumentos = [("Renta Fija", "Mercado de Renta Fija"),("Renta Variable","Mercado de Renta Variable"), ('Derivados',"Mercado de Derivados Financieros")]
 
+
 estados_instrumentos = [("Ingresado","Ingresado"),("Validado","Validado"),("Rechazado","Rechazado")]
 
+
 class formInstrumentoFinanciero(forms.Form):
-    codigo = forms.CharField(max_length=6, widget=forms.TextInput(attrs={'class':'form-control', 
+    codigo = forms.CharField(max_length=6, widget=forms.TextInput(attrs={'class':'form-control',
     'placeholder': '### ###'}))
-    descripcion = forms.CharField(max_length=6, widget=forms.Textarea(attrs={'class':'form-control', 
+    descripcion = forms.CharField(max_length=150, widget=forms.Textarea(attrs={'class':'form-control',
     'placeholder': 'Descripción...'}))
     categoria = forms.ChoiceField(widget=forms.Select(choices=categorias_instrumentos))#(attrs={'class':'form-select'})
     bolsa = forms.ChoiceField(widget=forms.Select(choices=bolsas_instrumentos))#(attrs={'class':'form-select'})
     mercado = forms.ChoiceField(widget=forms.Select(choices=mercados_instrumentos))#(attrs={'class':'form-select'})
-    estado = forms.ChoiceField(widget=forms.Select(choices=estados_instrumentos))#(attrs={'class':'form-select'})
+    #estado = forms.ChoiceField(widget=forms.Select(choices=estados_instrumentos))#(attrs={'class':'form-select'})

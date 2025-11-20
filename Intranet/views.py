@@ -132,32 +132,73 @@ def create_cal(request):
 def view_cal(request):
   return render(request, "Readers/calificaciones.html")
 
-def instrumentosFinancierosView(request):
-    if request.method == 'POST':
-        form = formInstrumentoFinanciero(request.POST)
-        if form.is_valid():
-            form.save() # Cambiar a ModelForm si se quiere hacer uso de la funcion ".save()"
-            return redirect('instrumentosFinancieros')
-    else:
-        form = formInstrumentoFinanciero()
+def cargar_archivo(request):
+    return render(request, 'Readers/calificaciones.html')
 
-    return render(request, 'Creates/instrumentos.html', {'form': form})
-  
-  
+def administracion_usuarios(request):
+    usuario_id = request.GET.get('usuario_id')
+    nombre = request.GET.get('nombre')
+    correo = request.GET.get('correo')
+    rol = request.GET.get('rol')
+
+    usuarios = usuario.objects.all()
+
+    if usuario_id:
+        usuarios = usuarios.filter(codigoicontains=usuario_id)
+    if nombre:
+        usuarios = usuarios.filter(nombreicontains=nombre)
+    if correo:
+        usuarios = usuarios.filter(correoicontains=correo)
+    if rol:
+        usuarios = usuarios.filter(rolnombreicontains=rol)
+
+    return render(request, 'Readers/usuarios.html', {'usuarios': usuarios})
+
+def gestion_solicitudes(request):
+    solicitud_id = request.GET.get('solicitud_id')
+    usuario = request.GET.get('usuario')
+    rol = request.GET.get('rol')
+    motivo = request.GET.get('motivo')
+    fecha = request.GET.get('fecha')
+
+    solicitudes = solicitud.objects.all()
+
+    if solicitud_id:
+        solicitudes = solicitudes.filter(solicitud_idicontains=solicitud_id)
+    if usuario:
+        solicitudes = solicitudes.filter(usuarioicontains=usuario)
+    if rol:
+        solicitudes = solicitudes.filter(rolicontains=rol)
+    if motivo:
+        solicitudes = solicitudes.filter(motivoicontains=motivo)
+    if fecha:
+        solicitudes = solicitudes.filter(fechaicontains=fecha)
+
+    return render(request, 'Readers/solicitudes.html', {'solicitudes': solicitudes})
+
 def gestionInstrumentos(request):
     instrumentos = instrumento_financiero.objects.all()
 
+
     if request.method == "POST":
+        form = formInstrumentoFinanciero(request.POST)
         if 'buscar' in request.POST:
+            instrumento_id = request.POST.get('instrumento_id', '')
             codigo = request.POST.get('codigo', '')
+            descripcion = request.POST.get('descripcion','')
             categoria = request.POST.get('categoria', '')
             bolsa = request.POST.get('bolsa', '')
             mercado = request.POST.get('mercado', '')
             estado = request.POST.get('estado','')
 
+
             instrumentos = instrumento_financiero.objects.all()
+            if instrumento_id:
+                instrumentos = instrumentos.filter(instrumento_id = instrumento_id)
             if codigo:
                 instrumentos = instrumentos.filter(codigo__icontains=codigo)
+            if descripcion:
+                instrumentos = instrumentos.filter(descripcion=descripcion)
             if categoria:
                 instrumentos = instrumentos.filter(categoria=categoria)
             if bolsa:
@@ -169,4 +210,52 @@ def gestionInstrumentos(request):
     else:
       form = formInstrumentoFinanciero()
 
+
     return render(request, 'Readers/instrumentos.html', {'form': form,'instrumentos':instrumentos})
+
+
+def eliminarInstrumento(request, instrumento_id):
+    instrumento = instrumento_financiero.objects.get(instrumento_id = instrumento_id)
+    instrumento.delete()
+    return redirect('instrumentosFinancieros')
+
+
+def agregarInstrumento(request):
+  form = formInstrumentoFinanciero()
+  if request.method == 'POST':
+    form = formInstrumentoFinanciero(request.POST)  # toma los datos rellenados correctamente
+    if form.is_valid():   # valida los datos limpios
+      #form.save()
+      inst = instrumento_financiero.objects.create(
+        codigo=form.cleaned_data['codigo'],
+        descripcion=form.cleaned_data['descripcion'],
+        categoria=form.cleaned_data['categoria'],
+        bolsa=form.cleaned_data['bolsa'],
+        mercado=form.cleaned_data['mercado'],
+        estado='Ingresado'
+      )
+      inst.save()
+      return redirect('instrumentosFinancieros')
+  data = {'form' : form}
+  return render(request, 'Creates/instrumentos.html', data)
+
+# dudas con el save
+def actualizarInstrumento(request, instrumento_id):
+    instrumento = instrumento_financiero.objects.get(instrumento_id = instrumento_id)
+    form = formInstrumentoFinanciero(request.POST)
+    if request.method == 'POST':
+        # modelsform tiene variables distintas, instance no pescaria, ya que estamos usando el form
+        instrumento.codigo      = form.cleaned_data['codigo'],
+        instrumento.descripcion = form.cleaned_data['descripcion'],
+        instrumento.categoria   = form.cleaned_data['categoria'],
+        instrumento.bolsa       = form.cleaned_data['bolsa'],
+        instrumento.mercado     = form.cleaned_data['mercado'],
+        instrumento.estado      = 'Ingresado'
+        instrumento.save()
+        return redirect('instrumentosFinancieros')
+    else:
+      form = formInstrumentoFinanciero()
+
+
+    return render(request, 'Updaters/instrumentos.html', {'form': form,'instrumento':instrumento})
+

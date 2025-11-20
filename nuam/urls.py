@@ -25,7 +25,14 @@ urlpatterns = [
     path('intranet/admin', intr.admin, name="admin"),
     path('intranet/corredor', intr.corredor, name="corredor"),
     path('intranet/auditor', intr.auditor, name="auditor"),
+    path('auditor/cargar/', intr.cargar_archivo, name='cargar_archivo'),
+    path('usuarios/', intr.administracion_usuarios, name='administracion_usuarios'),
+    path('solicitudes/', intr.gestion_solicitudes, name='gestion_solicitudes'),
     path('gestores/calificaciones/', intr.view_cal),
     path('gestores/calificaciones/nueva', intr.create_cal),
-    path('gestores/instrumentos/', intr.instrumentosFinancierosView, name='instrumentosFinancieros')
+    path('gestores/instrumentos/', intr.gestionInstrumentos, name='instrumentosFinancieros'),
+    path('gestores/instrumentos/nueva', intr.agregarInstrumento, name='agregarInstrumento'),
+    path('gestores/instrumentos/actualizar/<int:instrumento_id>', intr.actualizarInstrumento, name='actualizarInstrumento'),
+    path('gestores/instrumentos/eliminar/<int:instrumento_id>', intr.eliminarInstrumento, name='eliminarInstrumento' )
 ]
+
