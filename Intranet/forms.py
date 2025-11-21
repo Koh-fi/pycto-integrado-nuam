@@ -113,7 +113,7 @@ class formInstrumentoFinanciero(forms.Form):
     'placeholder': '### ###'}))
     descripcion = forms.CharField(max_length=150, widget=forms.Textarea(attrs={'class':'form-control',
     'placeholder': 'Descripción...'}))
-    categoria = forms.ChoiceField(widget=forms.Select(choices=categorias_instrumentos))#(attrs={'class':'form-select'})
-    bolsa = forms.ChoiceField(widget=forms.Select(choices=bolsas_instrumentos))#(attrs={'class':'form-select'})
-    mercado = forms.ChoiceField(widget=forms.Select(choices=mercados_instrumentos))#(attrs={'class':'form-select'})
+    categoria = forms.ChoiceField(choices=categorias_instrumentos, widget=forms.Select(attrs={'class':'form-select'}))
+    bolsa = forms.ChoiceField(choices=bolsas_instrumentos, widget=forms.Select(attrs={'class':'form-select'}))
+    mercado = forms.ChoiceField(choices=mercados_instrumentos, widget=forms.Select(attrs={'class':'form-select'}))
     #estado = forms.ChoiceField(widget=forms.Select(choices=estados_instrumentos))#(attrs={'class':'form-select'})

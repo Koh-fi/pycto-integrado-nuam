@@ -83,60 +83,51 @@ def create_cal(request):
     factores_sueltos = factor_calificacion.objects.filter(categoria__isnull=True)
 
     if request.method == 'POST':
-        form = CalificacionTributariaForm(request.POST)
-        if form.is_valid():
-            calificacion = form.save(commit=False)
-            calificacion.rol = "Corredor"
-            calificacion.estado = "Pendiente"
-
-            # Guardar
-            if "ingresar" in request.POST:
-                calificacion.save()
-                for f in factor_calificacion.objects.all():
-                    valor = form.cleaned_data.get(f"factor" + str(f.factor_id))
-                    if valor not in [None, ""]:
-                        califica.objects.create(
-                            calificacion=calificacion,
-                            factor=f,
-                            valor=valor
-                        )
-                return redirect('view_cal')
-
-            # Calcular
-            total = sum([
-                form.cleaned_data.get(f"factor{n}") or 0
-                for n in range(8, 20)
-            ])
-
-            updated = form.data.copy()
-
-            for n in range(8, 39):
-                valor = form.cleaned_data.get(f"factor{n}")
-                updated[f"factor{n}"] = round((valor or 0) / total, 6) if total else 0
-
-            updated["ingresoMontos"] = False
-
-            valores = {n: updated[f"factor{n}"] for n in range(8,39)}
-            for f in factores_sueltos:
-              valores[f.factor_id] = updated.get(f"factor{f.factor_id}", 0)
-
-            factores_sueltos_data = [{
-              "obj": factor,
-              "valor": valores.get(factor.factor_id, 0)
-            } for factor in factores_sueltos]
-
-            categorias_niveladas = []
-            for raiz in categorias_por_padre.get(None, []):
-              categorias_niveladas.extend(aplanar(raiz, valores=valores))
-
-            form = CalificacionTributariaForm(updated)
-
-            return render(request, 'Creates/calificaciones.html', {
-                "form_calificacion": form,
-                "alert": "Factores calculados correctamente.",
-                "categorias_niveladas": categorias_niveladas,
-                "factores_sueltos": factores_sueltos_data,
-            })
+      form = CalificacionTributariaForm(request.POST)
+      if form.is_valid():
+        calificacion = form.save(commit=False)
+        calificacion.rol = "Corredor"
+        calificacion.estado = "Pendiente"
+        # Guardar
+        if "ingresar" in request.POST:
+          calificacion.save()
+          for f in factor_calificacion.objects.all():
+            valor = form.cleaned_data.get(f"factor" + str(f.factor_id))
+            if valor not in [None, ""]:
+              califica.objects.create(
+                calificacion=calificacion,
+                factor=f,
+                valor=valor
+              )
+          return redirect('view_cal')
+        # Calcular
+        elif "calcular" in request.POST:
+          total = sum([
+            form.cleaned_data.get(f"factor{n}") or 0
+            for n in range(8, 20)
+          ])
+          updated = form.data.copy()
+          for n in range(8, 39):
+            valor = form.cleaned_data.get(f"factor{n}")
+            updated[f"factor{n}"] = round((valor or 0) / total, 6) if total else 0
+          updated["ingreso_montos"] = False
+          valores = {n: updated[f"factor{n}"] for n in range(8,39)}
+          for f in factores_sueltos:
+            valores[f.factor_id] = updated.get(f"factor{f.factor_id}", 0)
+          factores_sueltos_data = [{
+            "obj": factor,
+            "valor": valores.get(factor.factor_id, 0)
+          } for factor in factores_sueltos]
+          categorias_niveladas = []
+          for raiz in categorias_por_padre.get(None, []):
+            categorias_niveladas.extend(aplanar(raiz, valores=valores))
+          form = CalificacionTributariaForm(updated)
+          return render(request, 'Creates/calificaciones.html', {
+            "form_calificacion": form,
+            "alert": "Factores calculados correctamente.",
+            "categorias_niveladas": categorias_niveladas,
+            "factores_sueltos": factores_sueltos_data,
+          })
 
     # GET normal
     return render(request, 'Creates/calificaciones.html', {
@@ -232,15 +223,13 @@ def gestionInstrumentos(request):
 
     return render(request, 'Readers/instrumentos.html', {'form': form,'instrumentos':instrumentos})
 
-
 def eliminarInstrumento(request, instrumento_id):
     instrumento = instrumento_financiero.objects.get(instrumento_id = instrumento_id)
     instrumento.delete()
     return redirect('instrumentosFinancieros')
 
-
 def agregarInstrumento(request):
-  form = formInstrumentoFinanciero()
+  #form = formInstrumentoFinanciero()
   if request.method == 'POST':
     form = formInstrumentoFinanciero(request.POST)  # toma los datos rellenados correctamente
     if form.is_valid():   # valida los datos limpios
@@ -253,28 +242,36 @@ def agregarInstrumento(request):
         mercado=form.cleaned_data['mercado'],
         estado='Ingresado'
       )
-      inst.save()
+      #inst.save()
       return redirect('instrumentosFinancieros')
+  else:
+    form = formInstrumentoFinanciero()
   data = {'form' : form}
   return render(request, 'Creates/instrumentos.html', data)
-
-# dudas con el save
+  
 def actualizarInstrumento(request, instrumento_id):
     instrumento = instrumento_financiero.objects.get(instrumento_id = instrumento_id)
-    form = formInstrumentoFinanciero(request.POST)
+    #form = formInstrumentoFinanciero(request.POST)
     if request.method == 'POST':
+        form = formInstrumentoFinanciero(request.POST)
+        if form.is_valid():
         # modelsform tiene variables distintas, instance no pescaria, ya que estamos usando el form
-        instrumento.codigo      = form.cleaned_data['codigo'],
-        instrumento.descripcion = form.cleaned_data['descripcion'],
-        instrumento.categoria   = form.cleaned_data['categoria'],
-        instrumento.bolsa       = form.cleaned_data['bolsa'],
-        instrumento.mercado     = form.cleaned_data['mercado'],
-        instrumento.estado      = 'Ingresado'
-        instrumento.save()
-        return redirect('instrumentosFinancieros')
+          instrumento.codigo      = form.cleaned_data['codigo'],
+          instrumento.descripcion = form.cleaned_data['descripcion'],
+          instrumento.categoria   = form.cleaned_data['categoria'],
+          instrumento.bolsa       = form.cleaned_data['bolsa'],
+          instrumento.mercado     = form.cleaned_data['mercado'],
+          instrumento.estado      = 'Ingresado'
+          instrumento.save()
+          return redirect('instrumentosFinancieros')
     else:
-      form = formInstrumentoFinanciero()
+      #form = formInstrumentoFinanciero()
+      form = formInstrumentoFinanciero(initial={ # initial muestra los valores que ya estan establecidos, sino estuviera los campos se verian vacios reemplaza al instance, la accion es manual no automatica como instance
+            "codigo": instrumento.codigo,
+            "descripcion": instrumento.descripcion,
+            "categoria": instrumento.categoria,
+            "bolsa": instrumento.bolsa,
+            "mercado": instrumento.mercado
+        })
 
-
-    return render(request, 'Updaters/instrumentos.html', {'form': form,'instrumento':instrumento})
-
+    return render(request, 'Creates/instrumentos.html', {'form': form,'instrumento':instrumento})

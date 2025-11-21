@@ -96,9 +96,10 @@
             <table class="table table-bordered table-hover align-middle text-center">
                 <thead class="table-primary text-white" style="background-color: var(--nuam-primary);">
                     <tr>
-                        <th scope="col"><input type="checkbox" instrumento_id="selectAll"></th>
+                        <!--<th scope="col"><input type="checkbox" instrumento_id="selectAll"></th>-->
                         <th scope="col">ID</th>
                         <th scope="col">Código</th>
+                        <th scope="col">Descripción</th>
                         <th scope="col">Categoría</th>
                         <th scope="col">Bolsa</th>
                         <th scope="col">Mercado</th>
@@ -111,15 +112,16 @@
                 <tbody>
                     {% for i in instrumentos %}
                     <tr>
-                        <td><input type="checkbox" name="seleccionados" value="{{ i.instrumento_id }}"></td>
+                        <!--<td><input type="checkbox" name="seleccionados" value="{{ i.instrumento_id }}"></td>-->
                         <td>{{ i.instrumento_id }}</td>
                         <td>{{ i.codigo }}</td>
+                        <td>{{ i.descripcion }}</td>
                         <td>{{ i.categoria }}</td>
                         <td>{{ i.bolsa }}</td>
                         <td>{{ i.mercado }}</td>
                         <td>{{ i.estado }}</td>
-                        <td><a href="/actualizarInstrumento/{{ i.instrumento_id }}" class="btn btn-success btn-sm"><i class="bi bi-pencil"></i></td>
-                        <td><a href="/eliminarInstrumento/{{ i.instrumento_id }}" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></td>
+                        <td><a href="{% url 'actualizarInstrumento' i.instrumento_id %}" class="btn btn-success btn-sm"><i class="bi bi-pencil"></i></a></td>
+                        <td><a href="{% url 'eliminarInstrumento' i.instrumento_id %}" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></a></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -128,7 +130,8 @@
 
         <div class="d-flex justify-content-end mt-3 gap-3">
             <!--<button type="submit" name="ingresar" class="btn btn-success" style="background-color: var(--nuam-primary); border: none;">INGRESAR</button>-->
-            <a href="../Creates/instrumentos.html" class="btn btn-sm btn-primary">Agregar Instrumento</a>
+            <!--<a href="../Creates/instrumentos.html" class="btn btn-sm btn-primary">Agregar Instrumento</a>-->
+            <a href="{% url 'agregarInstrumento' %}" class="btn btn-sm btn-primary">Agregar Instrumento</a>
         </div>
     </form>
 </div>   
