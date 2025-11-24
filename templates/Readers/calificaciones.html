@@ -3,21 +3,9 @@
 
 {% block title %}Gestión de Calificaciones Tributarias{% endblock title %}
 
-{% block script %}
-<script>
-  function mostrarOpcionesCarga() {
-    const modal = new bootstrap.Modal(document.getElementById('modalCarga'));
-    modal.show();
-  }
-
-  function mostrarFormulario(tipo) {
-    document.getElementById('tipoCargaSeleccionada').value = tipo;
-    document.getElementById('formularioCarga').style.display = 'block';
-    const modal = bootstrap.Modal.getInstance(document.getElementById('modalCarga'));
-    modal.hide();
-  }
-</script>
-{% endblock script %}
+{% block dependencies %}
+  <script src="{% static 'js/ver_calificaciones.js' %}"></script>
+{% endblock dependencies %}
 
 {% block content %}
 <div class="container mt-4">
@@ -63,6 +51,7 @@
     </div>
   </form>
 
+  <div class="table-responsive">
   <table class="table table-hover table-primary">
     <thead>
       <tr>
@@ -77,43 +66,45 @@
         <th>Valor Histórico</th>
         <th>Estado</th>
         <th>Rol</th>
-        <th>Factores</th>
+      
+        {% for f in factores %}
+          <th class="th-cut" data-bs-toggle="tooltip" data-bs-placement="bottom" title="F.{{ f.factor_id }} — {{f.nombre_factor}}">
+              F.{{ f.factor_id }} — {{f.nombre_factor}}
+          </th>
+        {% endfor %}
       </tr>
     </thead>
     <tbody>
-      {% for item in calificaciones %}
+      {% for cal in calificaciones %}
       <tr>
-        <td>
-          <input type="radio" name="seleccion" value="{{ item.calificacion_id }}">
-        </td>
-        <td>{{ item.anio }}</td>
-        <td>{{ item.mercado }}</td>
-        <td>{{ item.instrumento.nombre }}</td>
-        <td>{{ item.fecha_pago }}</td>
-        <td>{{ item.descripcion }}</td>
-        <td>{{ item.secuencia_evento }}</td>
-        <td>{{ item.dividendo }}</td>
-        <td>{{ item.valor_historico }}</td>
-        <td>{{ item.estado }}</td>
-        <td>{{ item.rol.nombre }}</td>
-        <td>
-          <ul class="list-unstyled">
-            {% for f in item.califica_set.all %}
-              <li><li>{{ f.factor }}: {{ f.valor }}</li>
-            {% endfor %}
-          </ul>
-        </td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="11">No hay registros disponibles.</td>
+        <td><input type="radio" name="seleccion" value="{{ cal.obj.calificacion_id }}"></td>
+        <td>{{ cal.obj.anio }}</td>
+        <td>{{ cal.obj.mercado }}</td>
+        <td>{{ cal.obj.instrumento.descripcion }}</td>
+        <td>{{ cal.obj.fecha_pago }}</td>
+        <td>{{ cal.obj.descripcion }}</td>
+        <td>{{ cal.obj.secuencia_evento }}</td>
+        <td>{{ cal.obj.dividendo }}</td>
+        <td>{{ cal.obj.valor_historico }}</td>
+        <td>{{ cal.obj.estado }}</td>
+        <td>{{ cal.obj.rol.nombre_rol }}</td>
+        {% for f in factores %}
+          <td style="text-align:center;">
+            {% if f.factor_id in cal.valores %}
+              {{ cal.valores.f.factor_id }}
+            {% else %}
+              -
+            {% endif %}
+          </td>
+        {% endfor %}
       </tr>
       {% endfor %}
     </tbody>
   </table>
+  </div>
 
-  <div class="d-flex justify-content-end flex-wrap gap-2 mt-3">
-    <button class="btn btn-sm btn-primary"><i class="bi bi-plus-circle"></i> INGRESAR</button>
+  <div class="d-flex justify-content-end flex-wrap gap-2 my-3">
+    <a href="{% url 'create_cal' %}"><button class="btn btn-primary"><i class="bi bi-plus-circle"></i> INGRESAR</button></a>
     <button class="btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i> MODIFICAR</button>
     <button class="btn btn-sm btn-primary"><i class="bi bi-trash"></i> ELIMINAR</button>
     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Cargar archivo</button>

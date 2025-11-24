@@ -13,7 +13,7 @@ class instrumento_financiero(models.Model):
     mercado = models.CharField(max_length=50)
     estado = models.CharField(max_length=9) # Auto-Field - Ingresado | Validado | Rechazado
 
-    def str(self):
+    def __str__(self):
         return f"{self.codigo}{self.categoria}"
 
 ##### rol #####
@@ -93,7 +93,7 @@ class usuario(models.Model):
 class solicitud(models.Model):
     solicitud_id = models.AutoField(primary_key=True)
     usuario = models.ForeignKey(usuario, on_delete=models.CASCADE)
-    rol = models.ForeignKey(rol, on_delete=models.CASCADE)
+    group = models.ForeignKey(rol, on_delete=models.CASCADE)
     motivo = models.CharField(max_length=130)
     fecha = models.DateField()
 

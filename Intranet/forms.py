@@ -20,7 +20,7 @@ class CalificacionTributariaForm(forms.ModelForm):
         fields = [
             'mercado', 'instrumento', 'descripcion', 'fecha_pago',
             'secuencia_evento', 'dividendo', 'valor_historico',
-            'anio', 'rol'
+            'anio'
         ]
         widgets = {
             'mercado': forms.TextInput(attrs={
@@ -70,30 +70,29 @@ class CalificacionTributariaForm(forms.ModelForm):
                 'id': 'anio',
                 'name': 'anio',
                 'placeholder': '2025',
-            }),
-            'rol': forms.Select(attrs={
-                'class': 'form-control',
-                'id': 'rol',
-                'name': 'rol',
-            }),
+            })
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.fields['instrumento'].queryset = instrumento_financiero.objects.all().order_by('codigo')
+        self.fields['instrumento'].label_from_instance = lambda obj: f"{obj.codigo} — {obj.descripcion}"
+        
         # Agregar campos dinámicos para los factores desde la BD
         for f in factor_calificacion.objects.all():
-            self.fields[f"factor_{f.factor_id}"] = forms.DecimalField(
+            self.fields[f"factor{f.factor_id}"] = forms.DecimalField(
                 required=False,
                 label=f.nombre_factor,
                 widget=forms.NumberInput(attrs={
                     'class': 'form-control text-end',
                     'step': '0.0001',
                     'placeholder': '0.0000',
-                    'id': f'factor_{f.factor_id}',
-                    'name': f'factor_{f.factor_id}',
+                    'id': f'factor{f.factor_id}',
+                    'name': f'factor{f.factor_id}',
                 })
             )
+            
 
 
 categorias_instrumentos = [("Renta Fija","Renta Fija"), ("Renta Variable","Renta Variable"), ("Derivados","Derivados"), ("Divisas","Divisas"), ("Estructurados","Estructurados")]

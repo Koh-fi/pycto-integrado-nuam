@@ -211,3 +211,15 @@ body, html {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.th-cut {
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: help;
+}
+
+.th-tooltip {
+  --bs-tooltip-font-size: 0.1rem;
+}

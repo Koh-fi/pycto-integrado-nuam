@@ -86,7 +86,7 @@ def create_cal(request):
       form = CalificacionTributariaForm(request.POST)
       if form.is_valid():
         calificacion = form.save(commit=False)
-        calificacion.rol = "Corredor"
+        calificacion.rol = rol.objects.get(nombre_rol="Corredor")
         calificacion.estado = "Pendiente"
         # Guardar
         if "ingresar" in request.POST:
@@ -102,6 +102,7 @@ def create_cal(request):
           return redirect('view_cal')
         # Calcular
         elif "calcular" in request.POST:
+          
           total = sum([
             form.cleaned_data.get(f"factor{n}") or 0
             for n in range(8, 20)
@@ -109,7 +110,7 @@ def create_cal(request):
           updated = form.data.copy()
           for n in range(8, 39):
             valor = form.cleaned_data.get(f"factor{n}")
-            updated[f"factor{n}"] = round((valor or 0) / total, 6) if total else 0
+            updated[f"factor{n}"] = min(1,round((valor or 0) / total, 6)) if total else 0
           updated["ingreso_montos"] = False
           valores = {n: updated[f"factor{n}"] for n in range(8,39)}
           for f in factores_sueltos:
@@ -140,7 +141,27 @@ def create_cal(request):
 
 
 def view_cal(request):
-  return render(request, "Readers/calificaciones.html")
+    calificaciones = calificacion_tributaria.objects.prefetch_related('califica_set__factor')
+    factores = factor_calificacion.objects.all().order_by("factor_id")
+
+    # Construcción de una lista de datos ya "digeridos"
+    datos = []
+    for cal in calificaciones:
+        valores = {}
+        for c in cal.califica_set.all():
+            valores[c.factor.factor_id] = c.valor
+        
+        datos.append({
+            "obj": cal,      # El objeto calificación
+            "valores": valores  # Diccionario {idFactor: valor}
+        })
+
+    return render(request, "Readers/calificaciones.html", {
+        "calificaciones": datos,
+        "factores": factores
+    })
+
+
 
 def cargar_archivo(request):
     return render(request, 'Readers/calificaciones.html')
