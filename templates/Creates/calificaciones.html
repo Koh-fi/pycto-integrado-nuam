@@ -26,7 +26,7 @@
   <div class="row mb-3 justify-content-center" style="gap: 75px;">
       <div class="col-md-3">
         <label class="form-label">Mercado</label>
-        <input type="text" class="form-control" name="mercado" id="mercado" placeholder="AC" required="True">
+            {{ form_calificacion.mercado }}
       </div>
       <div class="col-md-3">
         <label class="form-label">Instrumento</label>
@@ -34,14 +34,14 @@
       </div>
       <div class="col-md-3">
         <label class="form-label">Valor Histórico</label>
-        <input type="number" class="form-control" name="valor_historico" id="valor_historico" placeholder="1000000" required="True">
+        {{ form_calificacion.valor_historico }}
       </div>
   </div>
 
   <div class="row mb-3 justify-content-center" style="gap: 75px;">
       <div class="col-md-3">
         <label class="form-label">Fecha Pago</label>
-        <input type="date" class="form-control" name="fecha_pago" id="fecha_pago" placeholder="2025-01-02" required="True">
+        {{ form_calificacion.fecha_pago }}
       </div>
       <div class="col-md-3">
         <label class="form-label">Evento Capital</label>
@@ -49,18 +49,18 @@
       </div>
       <div class="col-md-3">
         <label class="form-label">Descripción</label>
-        <input type="text" class="form-control" name="descripcion" id="descripcion" placeholder="JEEP ACC 1X1" required="True">
+        {{ form_calificacion.descripcion }}
       </div>
   </div>
 
   <div class="row mb-3 justify-content-center" style="gap: 75px;">
       <div class="col-md-3">
         <label class="form-label">Secuencia Evento</label>
-        <input type="number" class="form-control" name="secuencia_evento" id="secuencia_evento" placeholder="100000809" required="True">
+        {{ form_calificacion.secuencia_evento }}
       </div>
       <div class="col-md-3">
         <label class="form-label">Año</label>
-        <input type="number" min="1970" max="2200" class="form-control" name="anio" id="anio" placeholder="2025" required="True">
+        {{ form_calificacion.anio }}
       </div>
       <div class="col-md-3 d-flex align-items-center justify-content-between">
         <label class="form-label">Ingreso por Montos</label>
@@ -114,7 +114,7 @@
 {% endif %}
     <div class="d-flex justify-content-end mt-5 gap-3">
       <button type="submit" id="form-btn" name="ingresar" class="btn btn-primary px-4">INGRESAR</button>
-      <a href="{% url 'view_cal' %}"><button type="button" class="btn btn-secondary px-4">CANCELAR</button></a>
+      <a href="{% url 'ver_calificaciones' %}"><button type="button" class="btn btn-secondary px-4">CANCELAR</button></a>
     </div>
   </form>
   

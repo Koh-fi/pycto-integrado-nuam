@@ -3,76 +3,59 @@
 
 {% block title %}Gestión de Calificaciones Tributarias{% endblock title %}
 
-{% block navbar %}
-    <nav class="navbar bg-nuam-nav border-bottom">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-            <div class="row">
-                <div class="col">
-                    <img src="{% static 'img/logo.png' %}" alt="Logo" width="117" height="27"> |
-                </div>
-
-                <div class="col market-info">
-                    <span class="mt-3">
-                        MSCI NUAM USD
-                        </br>
-                        1.371 0.71% ▲
-                    </span>
-                </div>
-            </div>
-        </a>
-        <div class="justify-content-end">
-            <div class="profile-icon1">
-                <i class="bi bi-person-circle"></i>
-            </div>
-        </div>
-      </div>
-    </nav>
-{% endblock navbar %}
-
 {% block content %}
     <div class="admin-container">
 
         <div class="profile-column">
             <i class="bi bi-person-circle profile-icon2"></i>
             <div class="profile-info">
-                <p class="profile-label">Administrador</p>
-                <p class="profile-email">admin@nuam.com</p>
+                <p class="profile-label">{{ user.first_name}} {{user.last_name}}</p>
+                <p class="profile-email">{{ user.email }}</p>
             </div>
         </div>
 
         <div class="admin-column">
-            <a href="http://127.0.0.1:8000/usuarios/"><button class="admin-btn">
-                <i class="bi bi-people-fill"></i> Gestión de usuarios
-            </button></a>
-            <div class="sub-actions">
-                <button class="sub-btn"><i class="bi bi-person-plus-fill"></i> Creación</button>
-                <button class="sub-btn"><i class="bi bi-pencil-square"></i> Modificación</button>
-                <button class="sub-btn"><i class="bi bi-person-x-fill"></i> Eliminación</button>
-                <button class="sub-btn"><i class="bi bi-person-badge-fill"></i> Asignación de roles</button>
+            <div class="dropdown">
+                <button class="admin-btn dropdown-toggle bi bi-people-fill py-3 px-4 w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                  Gestión de Usuarios del Sistema
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <li><a class="dropdown-item" href="http://127.0.0.1:8000/usuarios/crear">Creación</a></li>
+                  <li><a class="dropdown-item" href="http://127.0.0.1:8000/usuarios/ver">Visualización</a></li>
+                </ul>
             </div>
 
-            <a href="http://127.0.0.1:8000/gestores/calificaciones"><button class="admin-btn">
-                <i class="bi bi-file-earmark-bar-graph-fill"></i> Gestión de calificaciones tributarias
-            </button></a>
+            <div class="dropdown">
+                <button class="admin-btn dropdown-toggle bi bi-file-earmark-bar-graph-fill py-3 px-4 w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                  Gestión de Calificaciones Tributarias
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <li><a class="dropdown-item" href="http://127.0.0.1:8000/gestores/calificaciones/nueva">Creación</a></li>
+                  <li><a class="dropdown-item" href="http://127.0.0.1:8000/gestores/calificaciones/">Visualización</a></li>
+                </ul>
+            </div>
         </div>
 
         <div class="admin-column">
-            <a href="http://127.0.0.1:8000/gestores/instrumentos/"><button class="admin-btn">
-                <i class="bi bi-currency-dollar"></i> Gestión de instrumentos financieros
-            </button></a>
+            <div class="dropdown">
+                <button class="admin-btn dropdown-toggle bi bi-currency-dollar py-3 px-4 w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                  Gestión de Instrumentos Financieros
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  <li><a class="dropdown-item" href="http://127.0.0.1:8000/gestores/instrumentos/nueva">Creación</a></li>
+                  <li><a class="dropdown-item" href="http://127.0.0.1:8000/gestores/instrumentos/">Visualización</a></li>
+                </ul>
+            </div>
 
-            <button class="admin-btn">
+            <!--<button class="admin-btn">
                 <i class="bi bi-shield-lock-fill"></i> Gestión de seguridad
-            </button>
-
+            </button>   
             <button class="admin-btn">
                 <i class="bi bi-hdd-fill"></i> Administración de respaldo
-            </button>
-
+            </button>   
             <button class="admin-btn">
                 <i class="bi bi-tools"></i> Mantenimiento del sistema
-            </button>
+            </button>-->
         </div>
     </div>
 {% endblock content %}

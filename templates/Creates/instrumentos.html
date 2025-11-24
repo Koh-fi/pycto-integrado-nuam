@@ -3,34 +3,6 @@
 
 
 {% block title %}Agregar Instrumento Financiero{% endblock title %}
-{% block navbar %}
-    <nav class="navbar bg-nuam-nav border-bottom">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-            <div class="row">
-              <div class="col">
-                <img src="{% static 'img/logo.png' %}" alt="Logo" width="117" height="27"> |
-              </div>
-
-
-              <div class="col">
-                <h5 class="mb-0 text-black">
-                  {% block navbar-title %}Creación de Instrumento Financiero{% endblock navbar-title %}
-                </h5>
-              </div>
-            </div>
-        </a>
-        <div class="justify-content-end">
-            <div class="profile-icon1">
-                <i class="bi bi-person-circle"></i>
-            </div>
-        </div>
-      </div>
-    </nav>
-{% endblock navbar %}
-
-
-
 
 {% block content %}
 <div class="container-fluid mt-5 mb-5 px-5">
@@ -39,17 +11,11 @@
         <div class="row mb-3 align-items-center">
 
 
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <label class="form-label">Código</label>
                 {{ form.codigo }}
                 <!--<input type="text" class="form-control" name="codigo" placeholder="Código...">-->
             </div>
-             <div class="col-md-2">
-                <label class="form-label">Descripción</label>
-                {{ form.descripcion }}
-                <!--<input type="text" class="form-control" name="descripcion" placeholder="Descripción...">-->
-            </div>
-
 
             <div class="col-md-3">
                 <label class="form-label">Categoría</label>
@@ -64,7 +30,7 @@
             </div>
 
 
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <label class="form-label">Bolsa</label>
                 {{ form.bolsa }}
                 <!--<select class="form-select" name="bolsa">
@@ -76,7 +42,7 @@
             </div>
 
 
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <label class="form-label">Mercado</label>
                 {{ form.mercado }}
                 <!--<select class="form-select" name="mercado">
@@ -85,6 +51,12 @@
                     <option>Perú</option>
                     <option>Colombia</option>
                 </select>-->
+            </div>
+
+            <div class="col-md-5 mt-3">
+                <label class="form-label">Descripción</label>
+                {{ form.descripcion }}
+                <!--<input type="text" class="form-control" name="descripcion" placeholder="Descripción...">-->
             </div>
 
 
@@ -105,7 +77,7 @@
         </div>
     </form>
     <div class= " me-5 d-flex ms-auto justify-content-end">
-        <a href= {% url 'instrumentosFinancieros' %} class="btn btn-sm btn-primary" style="background-color: var(--nuam-primary); border: none;">Visualización de Instrumentos</a>
+        <a href= {% url 'ver_instrumentos' %} class="btn btn-sm btn-primary" style="background-color: var(--nuam-primary); border: none;">Visualización de Instrumentos</a>
     </div>
 
 

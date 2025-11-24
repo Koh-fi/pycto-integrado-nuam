@@ -22,6 +22,26 @@
 
   <header>
     {% block navbar %}
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasRightLabel">Menú</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="card p-4">
+        <div class="text-center">
+            <i class="bi bi-person-circle" style="font-size: 4rem;"></i>
+        </div>
+        <div class="profile-info">
+            <p class="profile-label">{{ user.first_name}} {{user.last_name}}</p>
+            <p class="profile-email">{{ user.email }}</p>
+            <a href="{% url 'logout' %}" class="btn btn-sm btn-primary mt-3">Cerrar sesión</a>
+        </div>
+    </div>
+    </div>
+      </div>
+    </div>
+
     <nav class="navbar bg-nuam-nav border-bottom">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">
@@ -41,9 +61,9 @@
             </div>
         </a>
         <div class="justify-content-end">
-            <div class="profile-icon1">
+            <a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"><div class="profile-icon1">
                 <i class="bi bi-person-circle"></i>
-            </div>
+            </div></a>
         </div>
       </div>
     </nav>

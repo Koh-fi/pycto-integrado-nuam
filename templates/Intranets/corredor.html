@@ -3,67 +3,32 @@
 
 {% block title %}Inicio Corrodor de bolsas{% endblock title %}
 
-{% block navbar %}
-    <nav class="navbar bg-nuam-nav border-bottom">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-            <div class="row">
-                <div class="col">
-                    <img src="{% static 'img/logo.png' %}" alt="Logo" width="117" height="27"> |
-                </div>
-
-                <div class="col market-info">
-                    <span class="mt-3">
-                        MSCI NUAM USD
-                        </br>
-                        1.371 0.71% ▲
-                    </span>
-                </div>
-            </div>
-        </a>
-        <div class="justify-content-end">
-            <div class="profile-icon1">
-                <i class="bi bi-person-circle"></i>
-            </div>
-        </div>
-      </div>
-    </nav>
-{% endblock navbar %}
-
 {% block content %}
 <div class="broker-layout">
 
     <div class="profile-column">
-            <i class="bi bi-person-circle profile-icon2"></i>
-            <div class="profile-info">
-                <p class="profile-label">Corredor</p>
-                <p class="profile-email">corredor@nuam.com</p>
-            </div>
-        </div>
-
-    <div class="broker-column left-column">
-        <a href="http://127.0.0.1:8000/gestores/calificaciones"><button class="admin-btn">
-            <i class="bi bi-file-earmark-bar-graph-fill"></i> Gestión de calificaciones tributarias
-        </button></a>
-        <div class="sub-actions">
-            <a href="http://127.0.0.1:8000/gestores/calificaciones/nueva"><button class="sub-btn"><i class="bi bi-file-earmark-plus-fill"></i> Creación</button></a>
-            <button class="sub-btn"><i class="bi bi-pencil-fill"></i> Modificación</button>
-            <button class="sub-btn"><i class="bi bi-trash-fill"></i> Eliminación</button>
+        <i class="bi bi-person-circle profile-icon2"></i>
+        <div class="profile-info">
+            <p class="profile-label">{{ user.first_name}} {{user.last_name}}</p>
+            <p class="profile-email">{{ user.email }}</p>
         </div>
     </div>
 
-    <div class="broker-column right-column">
-        <button class="admin-btn">
-            <i class="bi bi-journal-plus"></i> Creación de instrumentos financieros
-        </button>
-
-        <button class="admin-btn">
-        <i class="bi bi-bar-chart-line-fill"></i> Módulo de calificaciones tributarias
-        </button>
-
-        <button class="admin-btn">
-            <i class="bi bi-graph-up-arrow"></i> Módulo de instrumentos financieros
-        </button>
+    <div class="broker-column left-column">
+        <div class="dropdown">
+            <button class="admin-btn dropdown-toggle bi bi-people-fill py-3 px-4 w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                Gestión de Calificaciones Tributarias
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <li><a class="dropdown-item" href="http://127.0.0.1:8000/gestores/calificaciones/nueva">Creación</a></li>
+                <li><a class="dropdown-item" href="http://127.0.0.1:8000/gestores/calificaciones/actualizar">Modificación</a></li>
+                <li><a class="dropdown-item" href="http://127.0.0.1:8000/gestores/calificaciones/eliminar">Eliminación</a></li>
+                <li><a class="dropdown-item" href="http://127.0.0.1:8000/gestores/calificaciones/">Visualización</a></li>
+            </ul>
+        </div>
+        <div>
+            <a class="dropdown-item admin-btn py-3 w-100" href="http://127.0.0.1:8000/gestores/instrumentos/nueva"> <i class="bi bi-journal-plus"></i> Creación de instrumentos financieros </a>
+        </div>
     </div>
 </div>
 {% endblock content %}

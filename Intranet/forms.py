@@ -23,11 +23,10 @@ class CalificacionTributariaForm(forms.ModelForm):
             'anio'
         ]
         widgets = {
-            'mercado': forms.TextInput(attrs={
+            'mercado': forms.Select(attrs={
                 'class': 'form-control',
                 'id': 'mercado',
                 'name': 'mercado',
-                'placeholder': 'AC',
             }),
             'instrumento': forms.Select(attrs={
                 'class': 'form-control',
@@ -36,22 +35,25 @@ class CalificacionTributariaForm(forms.ModelForm):
             }),
             'descripcion': forms.TextInput(attrs={
                 'class': 'form-control',
-                'id': 'descripcionf',
-                'name': 'descripcionf',
-                'placeholder': '',
+                'id': 'descripcion',
+                'name': 'descripcion',
+                'placeholder': 'JEEP ACC 1X1',
+                'required': True
             }),
             'fecha_pago': forms.DateInput(attrs={
                 'class': 'form-control',
-                'id': 'fechaPago',
-                'name': 'fechaPago',
+                'id': 'fecha_pago',
+                'name': 'fecha_pago',
                 'placeholder': '2025-01-02',
                 'type': 'date',
+                'required': True
             }),
-            'secuencia_evento': forms.TextInput(attrs={
+            'secuencia_evento': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'id': 'secuenciaEvento',
-                'name': 'secuenciaEvento',
+                'id': 'secuencia_evento',
+                'name': 'secuencia_evento',
                 'placeholder': '100000809',
+                'required': True
             }),
             'dividendo': forms.NumberInput(attrs={
                 'class': 'form-control',
@@ -61,15 +63,19 @@ class CalificacionTributariaForm(forms.ModelForm):
             }),
             'valor_historico': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'id': 'valorHistorico',
-                'name': 'valorHistorico',
-                'placeholder': 'JEEP ACC 1X1',
+                'id': 'valor_historico',
+                'name': 'valor_historico',
+                'placeholder': '1000000',
+                'required': True
             }),
             'anio': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'id': 'anio',
                 'name': 'anio',
                 'placeholder': '2025',
+                'min': "1970",
+                'max': "2200",
+                'required': True
             })
         }
 
@@ -78,7 +84,20 @@ class CalificacionTributariaForm(forms.ModelForm):
 
         self.fields['instrumento'].queryset = instrumento_financiero.objects.all().order_by('codigo')
         self.fields['instrumento'].label_from_instance = lambda obj: f"{obj.codigo} — {obj.descripcion}"
-        
+
+        #<select class="form-select" name="mercado">
+        #    <option value="">Seleccione...</option>
+        #    <option>Acciones</option>
+        #    <option>Renta Fija</option>
+        #    <option>Derivados Financieros</option>
+        #    <option>Fondos de Inversión-Mutuos</option>
+        #    <option>Instrumentos del Banco Central</option>
+        #    <option>Instrumentos del Estado-Tesorería</option>
+        #    <option>Mercado Monetario</option>
+        #    <option>Mercado Internacional</option>
+        #    <option>Mercado Bancario-Créditos</option>
+        #</select>
+
         # Agregar campos dinámicos para los factores desde la BD
         for f in factor_calificacion.objects.all():
             self.fields[f"factor{f.factor_id}"] = forms.DecimalField(
@@ -95,13 +114,13 @@ class CalificacionTributariaForm(forms.ModelForm):
             
 
 
-categorias_instrumentos = [("Renta Fija","Renta Fija"), ("Renta Variable","Renta Variable"), ("Derivados","Derivados"), ("Divisas","Divisas"), ("Estructurados","Estructurados")]
+categorias_instrumentos = [("Efectivo y Depósitos","Efectivo y Depósitos"), ("Títulos de Deuda (Renta Fija)","Títulos de Deuda (Renta Fija)"), ("Acciones y Participaciones","Acciones y Participaciones"), ("Derivados Financieros","Derivados Financieros"), ("Préstamos","Préstamos"), ("Fondos","Fondos"), ("Otras Cuentas-Derechos","Otras Cuentas-Derechos")]
 
 
 bolsas_instrumentos = [("BCS", "Bolsa de Comercio de Santiago (Chile)"),("BVC","Bolsa de Valores de Colombia"), ('BVL',"Bolsa de Valores de Lima (Perú)")]
 
 
-mercados_instrumentos = [("Renta Fija", "Mercado de Renta Fija"),("Renta Variable","Mercado de Renta Variable"), ('Derivados',"Mercado de Derivados Financieros")]
+mercados_instrumentos = [("Acciones", "Acciones"),("Renta Fija","Renta Fija"),("Derivados","Derivados Financieros"),("Fondos de Inversión-Mutuos","Fondos de Inversión-Mutuos" ),("Instrumentos del Banco Central","Instrumentos del Banco Central" ),("Instrumentos del Estado-Tesorería","Instrumentos del Estado-Tesorería" ), ("Mercado Monetario","Mercado Monetario"), ("Mercado Internacional","Mercado Internacional"), ("Mercado Bancario-Créditos","Mercado Bancario-Créditos")]
 
 
 estados_instrumentos = [("Ingresado","Ingresado"),("Validado","Validado"),("Rechazado","Rechazado")]
@@ -115,4 +134,4 @@ class formInstrumentoFinanciero(forms.Form):
     categoria = forms.ChoiceField(choices=categorias_instrumentos, widget=forms.Select(attrs={'class':'form-select'}))
     bolsa = forms.ChoiceField(choices=bolsas_instrumentos, widget=forms.Select(attrs={'class':'form-select'}))
     mercado = forms.ChoiceField(choices=mercados_instrumentos, widget=forms.Select(attrs={'class':'form-select'}))
-    #estado = forms.ChoiceField(widget=forms.Select(choices=estados_instrumentos))#(attrs={'class':'form-select'})
+    #estado = forms.ChoiceField(choices=estado_instrumentos, widget=forms.Select(attrs={'class':'form-select'}))

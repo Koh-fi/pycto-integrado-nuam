@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 17, 2025 at 07:00 AM
+-- Generation Time: Nov 24, 2025 at 04:56 PM
 -- Server version: 11.8.3-MariaDB
 -- PHP Version: 8.0.30
 
@@ -32,6 +32,15 @@ CREATE TABLE `auth_group` (
   `name` varchar(150) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `auth_group`
+--
+
+INSERT INTO `auth_group` (`id`, `name`) VALUES
+(1, 'Administrador'),
+(3, 'Auditor'),
+(2, 'Corredor');
+
 -- --------------------------------------------------------
 
 --
@@ -43,6 +52,67 @@ CREATE TABLE `auth_group_permissions` (
   `group_id` int(11) NOT NULL,
   `permission_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `auth_group_permissions`
+--
+
+INSERT INTO `auth_group_permissions` (`id`, `group_id`, `permission_id`) VALUES
+(1, 1, 21),
+(2, 1, 22),
+(3, 1, 23),
+(4, 1, 24),
+(5, 1, 25),
+(6, 1, 26),
+(7, 1, 27),
+(8, 1, 28),
+(9, 1, 29),
+(10, 1, 30),
+(11, 1, 31),
+(12, 1, 32),
+(13, 1, 33),
+(14, 1, 34),
+(15, 1, 35),
+(16, 1, 36),
+(17, 1, 37),
+(18, 1, 38),
+(19, 1, 39),
+(20, 1, 40),
+(21, 1, 41),
+(22, 1, 42),
+(23, 1, 43),
+(24, 1, 44),
+(25, 1, 45),
+(26, 1, 46),
+(27, 1, 47),
+(28, 1, 48),
+(29, 1, 49),
+(30, 1, 50),
+(31, 1, 51),
+(32, 1, 52),
+(33, 1, 53),
+(34, 1, 54),
+(35, 1, 55),
+(36, 1, 56),
+(42, 2, 21),
+(43, 2, 22),
+(44, 2, 23),
+(45, 2, 24),
+(46, 2, 25),
+(37, 2, 33),
+(38, 2, 34),
+(39, 2, 35),
+(40, 2, 36),
+(41, 2, 49),
+(50, 3, 22),
+(51, 3, 24),
+(52, 3, 25),
+(53, 3, 26),
+(54, 3, 27),
+(55, 3, 28),
+(47, 3, 34),
+(48, 3, 36),
+(49, 3, 49);
 
 -- --------------------------------------------------------
 
@@ -74,98 +144,50 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 (10, 'Can change group', 3, 'change_group'),
 (11, 'Can delete group', 3, 'delete_group'),
 (12, 'Can view group', 3, 'view_group'),
-(13, 'Can add user', 4, 'add_user'),
-(14, 'Can change user', 4, 'change_user'),
-(15, 'Can delete user', 4, 'delete_user'),
-(16, 'Can view user', 4, 'view_user'),
-(17, 'Can add content type', 5, 'add_contenttype'),
-(18, 'Can change content type', 5, 'change_contenttype'),
-(19, 'Can delete content type', 5, 'delete_contenttype'),
-(20, 'Can view content type', 5, 'view_contenttype'),
-(21, 'Can add session', 6, 'add_session'),
-(22, 'Can change session', 6, 'change_session'),
-(23, 'Can delete session', 6, 'delete_session'),
-(24, 'Can view session', 6, 'view_session'),
-(25, 'Can add usuario', 7, 'add_usuario'),
-(26, 'Can change usuario', 7, 'change_usuario'),
-(27, 'Can delete usuario', 7, 'delete_usuario'),
-(28, 'Can view usuario', 7, 'view_usuario'),
+(13, 'Can add content type', 4, 'add_contenttype'),
+(14, 'Can change content type', 4, 'change_contenttype'),
+(15, 'Can delete content type', 4, 'delete_contenttype'),
+(16, 'Can view content type', 4, 'view_contenttype'),
+(17, 'Can add session', 5, 'add_session'),
+(18, 'Can change session', 5, 'change_session'),
+(19, 'Can delete session', 5, 'delete_session'),
+(20, 'Can view session', 5, 'view_session'),
+(21, 'Can add calificacion_tributaria', 6, 'add_calificacion_tributaria'),
+(22, 'Can change calificacion_tributaria', 6, 'change_calificacion_tributaria'),
+(23, 'Can delete calificacion_tributaria', 6, 'delete_calificacion_tributaria'),
+(24, 'Can view calificacion_tributaria', 6, 'view_calificacion_tributaria'),
+(25, 'Can add instrumento_financiero', 7, 'add_instrumento_financiero'),
+(26, 'Can change instrumento_financiero', 7, 'change_instrumento_financiero'),
+(27, 'Can delete instrumento_financiero', 7, 'delete_instrumento_financiero'),
+(28, 'Can view instrumento_financiero', 7, 'view_instrumento_financiero'),
 (29, 'Can add rol', 8, 'add_rol'),
 (30, 'Can change rol', 8, 'change_rol'),
 (31, 'Can delete rol', 8, 'delete_rol'),
 (32, 'Can view rol', 8, 'view_rol'),
-(33, 'Can add factor', 9, 'add_factor'),
-(34, 'Can change factor', 9, 'change_factor'),
-(35, 'Can delete factor', 9, 'delete_factor'),
-(36, 'Can view factor', 9, 'view_factor'),
-(37, 'Can add instrumento_financiero', 10, 'add_instrumento_financiero'),
-(38, 'Can change instrumento_financiero', 10, 'change_instrumento_financiero'),
-(39, 'Can delete instrumento_financiero', 10, 'delete_instrumento_financiero'),
-(40, 'Can view instrumento_financiero', 10, 'view_instrumento_financiero'),
-(41, 'Can add calificacion_tributaria', 11, 'add_calificacion_tributaria'),
-(42, 'Can change calificacion_tributaria', 11, 'change_calificacion_tributaria'),
-(43, 'Can delete calificacion_tributaria', 11, 'delete_calificacion_tributaria'),
-(44, 'Can view calificacion_tributaria', 11, 'view_calificacion_tributaria'),
-(45, 'Can add califica', 12, 'add_califica'),
-(46, 'Can change califica', 12, 'change_califica'),
-(47, 'Can delete califica', 12, 'delete_califica'),
-(48, 'Can view califica', 12, 'view_califica'),
+(33, 'Can add califica', 9, 'add_califica'),
+(34, 'Can change califica', 9, 'change_califica'),
+(35, 'Can delete califica', 9, 'delete_califica'),
+(36, 'Can view califica', 9, 'view_califica'),
+(37, 'Can add categoria_factor', 10, 'add_categoria_factor'),
+(38, 'Can change categoria_factor', 10, 'change_categoria_factor'),
+(39, 'Can delete categoria_factor', 10, 'delete_categoria_factor'),
+(40, 'Can view categoria_factor', 10, 'view_categoria_factor'),
+(41, 'Can add factor_calificacion', 11, 'add_factor_calificacion'),
+(42, 'Can change factor_calificacion', 11, 'change_factor_calificacion'),
+(43, 'Can delete factor_calificacion', 11, 'delete_factor_calificacion'),
+(44, 'Can view factor_calificacion', 11, 'view_factor_calificacion'),
+(45, 'Can add usuario', 12, 'add_usuario'),
+(46, 'Can change usuario', 12, 'change_usuario'),
+(47, 'Can delete usuario', 12, 'delete_usuario'),
+(48, 'Can view usuario', 12, 'view_usuario'),
 (49, 'Can add solicitud', 13, 'add_solicitud'),
 (50, 'Can change solicitud', 13, 'change_solicitud'),
 (51, 'Can delete solicitud', 13, 'delete_solicitud'),
 (52, 'Can view solicitud', 13, 'view_solicitud'),
-(53, 'Can add factor_calificacion', 14, 'add_factor_calificacion'),
-(54, 'Can change factor_calificacion', 14, 'change_factor_calificacion'),
-(55, 'Can delete factor_calificacion', 14, 'delete_factor_calificacion'),
-(56, 'Can view factor_calificacion', 14, 'view_factor_calificacion'),
-(57, 'Can add categoria_factor', 15, 'add_categoria_factor'),
-(58, 'Can change categoria_factor', 15, 'change_categoria_factor'),
-(59, 'Can delete categoria_factor', 15, 'delete_categoria_factor'),
-(60, 'Can view categoria_factor', 15, 'view_categoria_factor');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `auth_user`
---
-
-CREATE TABLE `auth_user` (
-  `id` int(11) NOT NULL,
-  `password` varchar(128) NOT NULL,
-  `last_login` datetime(6) DEFAULT NULL,
-  `is_superuser` tinyint(1) NOT NULL,
-  `username` varchar(150) NOT NULL,
-  `first_name` varchar(150) NOT NULL,
-  `last_name` varchar(150) NOT NULL,
-  `email` varchar(254) NOT NULL,
-  `is_staff` tinyint(1) NOT NULL,
-  `is_active` tinyint(1) NOT NULL,
-  `date_joined` datetime(6) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `auth_user_groups`
---
-
-CREATE TABLE `auth_user_groups` (
-  `id` bigint(20) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `group_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `auth_user_user_permissions`
---
-
-CREATE TABLE `auth_user_user_permissions` (
-  `id` bigint(20) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `permission_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+(53, 'Can add user', 14, 'add_user'),
+(54, 'Can change user', 14, 'change_user'),
+(55, 'Can delete user', 14, 'delete_user'),
+(56, 'Can view user', 14, 'view_user');
 
 -- --------------------------------------------------------
 
@@ -181,8 +203,23 @@ CREATE TABLE `django_admin_log` (
   `action_flag` smallint(5) UNSIGNED NOT NULL CHECK (`action_flag` >= 0),
   `change_message` longtext NOT NULL,
   `content_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) NOT NULL
+  `user_id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `django_admin_log`
+--
+
+INSERT INTO `django_admin_log` (`id`, `action_time`, `object_id`, `object_repr`, `action_flag`, `change_message`, `content_type_id`, `user_id`) VALUES
+(1, '2025-11-24 13:16:53.505035', '1', 'Administrador', 1, '[{\"added\": {}}]', 3, 1),
+(2, '2025-11-24 13:18:24.382498', '2', 'Corredor', 1, '[{\"added\": {}}]', 3, 1),
+(3, '2025-11-24 13:20:13.961087', '3', 'Auditor', 1, '[{\"added\": {}}]', 3, 1),
+(4, '2025-11-24 13:24:14.048357', '2', 'corredor@nuam.com', 1, '[{\"added\": {}}]', 14, 1),
+(5, '2025-11-24 13:24:36.690909', '3', 'auditor@nuam.com', 1, '[{\"added\": {}}]', 14, 1),
+(6, '2025-11-24 13:24:54.030406', '4', 'admin@nuam.com', 1, '[{\"added\": {}}]', 14, 1),
+(7, '2025-11-24 13:45:16.354339', '4', 'admin@nuam.com', 2, '[{\"changed\": {\"fields\": [\"First name\", \"Last name\"]}}]', 14, 1),
+(8, '2025-11-24 13:45:25.861612', '3', 'auditor@nuam.com', 2, '[{\"changed\": {\"fields\": [\"First name\", \"Last name\"]}}]', 14, 1),
+(9, '2025-11-24 13:45:35.449998', '2', 'corredor@nuam.com', 2, '[{\"changed\": {\"fields\": [\"First name\", \"Last name\"]}}]', 14, 1);
 
 -- --------------------------------------------------------
 
@@ -204,18 +241,17 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 (1, 'admin', 'logentry'),
 (3, 'auth', 'group'),
 (2, 'auth', 'permission'),
-(4, 'auth', 'user'),
-(5, 'contenttypes', 'contenttype'),
-(12, 'Intranet', 'califica'),
-(11, 'Intranet', 'calificacion_tributaria'),
-(15, 'Intranet', 'categoria_factor'),
-(9, 'Intranet', 'factor'),
-(14, 'Intranet', 'factor_calificacion'),
-(10, 'Intranet', 'instrumento_financiero'),
+(4, 'contenttypes', 'contenttype'),
+(9, 'Intranet', 'califica'),
+(6, 'Intranet', 'calificacion_tributaria'),
+(10, 'Intranet', 'categoria_factor'),
+(11, 'Intranet', 'factor_calificacion'),
+(7, 'Intranet', 'instrumento_financiero'),
 (8, 'Intranet', 'rol'),
 (13, 'Intranet', 'solicitud'),
-(7, 'Intranet', 'usuario'),
-(6, 'sessions', 'session');
+(14, 'Intranet', 'user'),
+(12, 'Intranet', 'usuario'),
+(5, 'sessions', 'session');
 
 -- --------------------------------------------------------
 
@@ -235,29 +271,25 @@ CREATE TABLE `django_migrations` (
 --
 
 INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
-(1, 'contenttypes', '0001_initial', '2025-09-07 23:47:29.776784'),
-(2, 'auth', '0001_initial', '2025-09-07 23:47:39.385588'),
-(3, 'admin', '0001_initial', '2025-09-07 23:47:41.016874'),
-(4, 'admin', '0002_logentry_remove_auto_add', '2025-09-07 23:47:41.059650'),
-(5, 'admin', '0003_logentry_add_action_flag_choices', '2025-09-07 23:47:41.105271'),
-(6, 'contenttypes', '0002_remove_content_type_name', '2025-09-07 23:47:42.637567'),
-(7, 'auth', '0002_alter_permission_name_max_length', '2025-09-07 23:47:43.346579'),
-(8, 'auth', '0003_alter_user_email_max_length', '2025-09-07 23:47:43.764796'),
-(9, 'auth', '0004_alter_user_username_opts', '2025-09-07 23:47:43.807630'),
-(10, 'auth', '0005_alter_user_last_login_null', '2025-09-07 23:47:44.486616'),
-(11, 'auth', '0006_require_contenttypes_0002', '2025-09-07 23:47:44.533465'),
-(12, 'auth', '0007_alter_validators_add_error_messages', '2025-09-07 23:47:44.575890'),
-(13, 'auth', '0008_alter_user_username_max_length', '2025-09-07 23:47:45.122659'),
-(14, 'auth', '0009_alter_user_last_name_max_length', '2025-09-07 23:47:45.986604'),
-(15, 'auth', '0010_alter_group_name_max_length', '2025-09-07 23:47:46.489466'),
-(16, 'auth', '0011_update_proxy_permissions', '2025-09-07 23:47:46.520176'),
-(17, 'auth', '0012_alter_user_first_name_max_length', '2025-09-07 23:47:46.982678'),
-(18, 'sessions', '0001_initial', '2025-09-07 23:47:47.744907'),
-(19, 'Intranet', '0001_initial', '2025-10-27 10:49:05.784761'),
-(20, 'Intranet', '0002_factor_instrumento_financiero_alter_rol_rol_id_and_more', '2025-11-10 14:45:06.701959'),
-(21, 'Intranet', '0003_alter_califica_valor_categoria_factor_and_more', '2025-11-17 00:33:56.332635'),
-(22, 'Intranet', '0004_alter_factor_calificacion_categoria', '2025-11-17 00:51:28.645916'),
-(23, 'Intranet', '0005_alter_instrumento_financiero_categoria_and_more', '2025-11-17 05:59:51.672945');
+(1, 'contenttypes', '0001_initial', '2025-11-24 12:27:24.376079'),
+(2, 'contenttypes', '0002_remove_content_type_name', '2025-11-24 12:27:25.485118'),
+(3, 'auth', '0001_initial', '2025-11-24 12:27:29.775182'),
+(4, 'auth', '0002_alter_permission_name_max_length', '2025-11-24 12:27:30.563318'),
+(5, 'auth', '0003_alter_user_email_max_length', '2025-11-24 12:27:30.605554'),
+(6, 'auth', '0004_alter_user_username_opts', '2025-11-24 12:27:30.639522'),
+(7, 'auth', '0005_alter_user_last_login_null', '2025-11-24 12:27:30.782822'),
+(8, 'auth', '0006_require_contenttypes_0002', '2025-11-24 12:27:30.828354'),
+(9, 'auth', '0007_alter_validators_add_error_messages', '2025-11-24 12:27:30.869979'),
+(10, 'auth', '0008_alter_user_username_max_length', '2025-11-24 12:27:30.915854'),
+(11, 'auth', '0009_alter_user_last_name_max_length', '2025-11-24 12:27:30.953852'),
+(12, 'auth', '0010_alter_group_name_max_length', '2025-11-24 12:27:31.430591'),
+(13, 'auth', '0011_update_proxy_permissions', '2025-11-24 12:27:31.469590'),
+(14, 'auth', '0012_alter_user_first_name_max_length', '2025-11-24 12:27:31.503685'),
+(15, 'Intranet', '0001_initial', '2025-11-24 12:27:46.754847'),
+(16, 'admin', '0001_initial', '2025-11-24 12:27:49.403272'),
+(17, 'admin', '0002_logentry_remove_auto_add', '2025-11-24 12:27:49.447495'),
+(18, 'admin', '0003_logentry_add_action_flag_choices', '2025-11-24 12:27:49.481534'),
+(19, 'sessions', '0001_initial', '2025-11-24 12:27:51.542795');
 
 -- --------------------------------------------------------
 
@@ -270,6 +302,13 @@ CREATE TABLE `django_session` (
   `session_data` longtext NOT NULL,
   `expire_date` datetime(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `django_session`
+--
+
+INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
+('wgfxcjrvgpy8gkyzrviwsacmjvpgs1zt', '.eJxVjDsOwjAQBe_iGlnrP6ak5wzWrtfgALKlOKkQd4dIKaB9M_NeIuG61LSOMqeJxUlYcfjdCPOjtA3wHduty9zbMk8kN0XudMhL5_I87-7fQcVRv7UCUjroTF4ZY5kzeIqooouGCYJXBTRRztEHz1cXCrByLgBYHcMRjXh_AMvBNwE:1vNYYi:BhSBFz81XiCkgz7kr8vdgNIlMqfOB9L0300PQRiSrx4', '2025-12-08 15:32:56.196829');
 
 -- --------------------------------------------------------
 
@@ -292,7 +331,7 @@ CREATE TABLE `intranet_califica` (
 
 CREATE TABLE `intranet_calificacion_tributaria` (
   `calificacion_id` int(11) NOT NULL,
-  `mercado` varchar(30) NOT NULL,
+  `mercado` varchar(50) NOT NULL,
   `descripcion` varchar(150) NOT NULL,
   `fecha_pago` date NOT NULL,
   `secuencia_evento` bigint(20) NOT NULL,
@@ -300,8 +339,8 @@ CREATE TABLE `intranet_calificacion_tributaria` (
   `valor_historico` bigint(20) DEFAULT NULL,
   `anio` int(11) NOT NULL,
   `estado` varchar(30) NOT NULL,
-  `rol_id` int(11) NOT NULL,
-  `instrumento_id` int(11) NOT NULL
+  `instrumento_id` int(11) NOT NULL,
+  `rol_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -400,6 +439,23 @@ CREATE TABLE `intranet_instrumento_financiero` (
   `estado` varchar(9) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `intranet_instrumento_financiero`
+--
+
+INSERT INTO `intranet_instrumento_financiero` (`instrumento_id`, `codigo`, `descripcion`, `categoria`, `bolsa`, `mercado`, `estado`) VALUES
+(4, 'ADP', 'DEPOSITO A PLAZO', 'Efectivo y Depósitos', 'BCS', 'Mercado Internacional', 'Ingresado'),
+(5, 'ADPCL', 'DEPOSITO A PLAZO CHILE', 'Efectivo y Depósitos', 'BCS', 'Mercado Monetario', 'Ingresado'),
+(6, 'AGG', 'FONDOS ETF´s', 'Fondos', 'BVL', 'Fondos de Inversión-Mutuos', 'Ingresado'),
+(7, 'AGGCL', 'FONDOS MUTUOS - FONDOS ETF´s', 'Fondos', 'BCS', 'Fondos de Inversión-Mutuos', 'Ingresado'),
+(8, 'AIG', 'American International Group. - Dolares', 'Acciones y Participaciones', 'BVC', 'Mercado Internacional', 'Ingresado'),
+(9, 'AIGCL', 'American International Group. - Pesos Chilenos', 'Acciones y Participaciones', 'BCS', 'Acciones', 'Ingresado'),
+(10, 'AMGN', 'Amgen Inc. opciones, ETFs, fondos, divisas, materias primas y criptomonedas.', 'Fondos', 'BCS', 'Mercado Internacional', 'Ingresado'),
+(11, 'AMGCL', 'Amgen Inc.  \r\nPatrocinador en Chile: BCI Corredor de Bolsa S.A. - Pesos Chilenos', 'Acciones y Participaciones', 'BCS', 'Acciones', 'Ingresado'),
+(12, 'AXP', 'American Express Compan', 'Otras Cuentas-Derechos', 'BVL', 'Mercado Internacional', 'Ingresado'),
+(13, 'AXPCL', 'American Express Compan - Pesos Chilenos', 'Acciones y Participaciones', 'BCS', 'Acciones', 'Ingresado'),
+(14, 'BAC', 'Bank Of America Corp - Dolares', 'Otras Cuentas-Derechos', 'BVL', 'Mercado Internacional', 'Ingresado');
+
 -- --------------------------------------------------------
 
 --
@@ -430,8 +486,72 @@ CREATE TABLE `intranet_solicitud` (
   `solicitud_id` int(11) NOT NULL,
   `motivo` varchar(130) NOT NULL,
   `fecha` date NOT NULL,
-  `rol_id` int(11) NOT NULL,
+  `group_id` int(11) NOT NULL,
   `usuario_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `intranet_user`
+--
+
+CREATE TABLE `intranet_user` (
+  `id` bigint(20) NOT NULL,
+  `password` varchar(128) NOT NULL,
+  `last_login` datetime(6) DEFAULT NULL,
+  `is_superuser` tinyint(1) NOT NULL,
+  `first_name` varchar(150) NOT NULL,
+  `last_name` varchar(150) NOT NULL,
+  `is_staff` tinyint(1) NOT NULL,
+  `is_active` tinyint(1) NOT NULL,
+  `date_joined` datetime(6) NOT NULL,
+  `email` varchar(254) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `intranet_user`
+--
+
+INSERT INTO `intranet_user` (`id`, `password`, `last_login`, `is_superuser`, `first_name`, `last_name`, `is_staff`, `is_active`, `date_joined`, `email`) VALUES
+(1, 'pbkdf2_sha256$1000000$kDjZrdIQqVExwC3yqJiZVs$gVDCvnJSy+Uae7PdBVbPmJbyT785qyxrbi+Eq7K5pNo=', '2025-11-24 13:43:42.877969', 1, '', '', 1, 1, '2025-11-24 12:59:59.201753', 'superuser@nuam.com'),
+(2, 'pbkdf2_sha256$1000000$lo7TUIpiNkYeNiAJ47gUyp$egZcACjqC4DSFeqYM7ybIfbLfGdIRfumWihEmJHV5aM=', '2025-11-24 14:01:19.096864', 0, 'Corredor', 'Doe', 0, 1, '2025-11-24 13:24:13.000000', 'corredor@nuam.com'),
+(3, 'pbkdf2_sha256$1000000$H0R3W2f7zlGNhOiEzEUKP2$gh2OokEfUXIBXycbOC//qe8sD4vqlKo/bcKgU0r/kh4=', '2025-11-24 15:24:14.253526', 0, 'Auditor', 'Doe', 0, 1, '2025-11-24 13:24:35.000000', 'auditor@nuam.com'),
+(4, 'pbkdf2_sha256$1000000$Ef4KbRWGEOASMDE73AOrp3$cIZWExkmuGLQSujKGfXUQfasyQva/n9Ufhd7D72giLg=', '2025-11-24 15:32:56.152397', 0, 'Admin', 'Doe', 0, 1, '2025-11-24 13:24:53.000000', 'admin@nuam.com'),
+(7, '!2WVKpENPc5YoeOhFAcDn78Zm1dtRfhaRy5xhtsoU', NULL, 0, 'John', 'Doe 2', 0, 1, '2025-11-24 15:13:41.947885', 'auditor2@nuam.com');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `intranet_user_groups`
+--
+
+CREATE TABLE `intranet_user_groups` (
+  `id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `group_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `intranet_user_groups`
+--
+
+INSERT INTO `intranet_user_groups` (`id`, `user_id`, `group_id`) VALUES
+(1, 2, 2),
+(2, 3, 3),
+(3, 4, 1),
+(7, 7, 3);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `intranet_user_user_permissions`
+--
+
+CREATE TABLE `intranet_user_user_permissions` (
+  `id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
+  `permission_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -484,35 +604,12 @@ ALTER TABLE `auth_permission`
   ADD UNIQUE KEY `auth_permission_content_type_id_codename_01ab375a_uniq` (`content_type_id`,`codename`);
 
 --
--- Indexes for table `auth_user`
---
-ALTER TABLE `auth_user`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`);
-
---
--- Indexes for table `auth_user_groups`
---
-ALTER TABLE `auth_user_groups`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `auth_user_groups_user_id_group_id_94350c0c_uniq` (`user_id`,`group_id`),
-  ADD KEY `auth_user_groups_group_id_97559544_fk_auth_group_id` (`group_id`);
-
---
--- Indexes for table `auth_user_user_permissions`
---
-ALTER TABLE `auth_user_user_permissions`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `auth_user_user_permissions_user_id_permission_id_14a6b632_uniq` (`user_id`,`permission_id`),
-  ADD KEY `auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm` (`permission_id`);
-
---
 -- Indexes for table `django_admin_log`
 --
 ALTER TABLE `django_admin_log`
   ADD PRIMARY KEY (`id`),
   ADD KEY `django_admin_log_content_type_id_c4bce8eb_fk_django_co` (`content_type_id`),
-  ADD KEY `django_admin_log_user_id_c564eba6_fk_auth_user_id` (`user_id`);
+  ADD KEY `django_admin_log_user_id_c564eba6_fk_Intranet_user_id` (`user_id`);
 
 --
 -- Indexes for table `django_content_type`
@@ -539,8 +636,8 @@ ALTER TABLE `django_session`
 --
 ALTER TABLE `intranet_califica`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `Intranet_califica_calificacion_id_4ede9fe8_fk_Intranet_` (`calificacion_id`),
-  ADD KEY `Intranet_califica_factor_id_d90edd10_fk_Intranet_` (`factor_id`);
+  ADD KEY `Intranet_califica_factor_id_d90edd10_fk_Intranet_` (`factor_id`),
+  ADD KEY `Intranet_califica_calificacion_id_4ede9fe8_fk_Intranet_` (`calificacion_id`);
 
 --
 -- Indexes for table `intranet_calificacion_tributaria`
@@ -568,7 +665,8 @@ ALTER TABLE `intranet_factor_calificacion`
 -- Indexes for table `intranet_instrumento_financiero`
 --
 ALTER TABLE `intranet_instrumento_financiero`
-  ADD PRIMARY KEY (`instrumento_id`);
+  ADD PRIMARY KEY (`instrumento_id`),
+  ADD UNIQUE KEY `codigo` (`codigo`);
 
 --
 -- Indexes for table `intranet_rol`
@@ -581,15 +679,38 @@ ALTER TABLE `intranet_rol`
 --
 ALTER TABLE `intranet_solicitud`
   ADD PRIMARY KEY (`solicitud_id`),
-  ADD KEY `Intranet_solicitud_rol_id_5462e1a3_fk_Intranet_rol_rol_id` (`rol_id`),
+  ADD KEY `Intranet_solicitud_group_id_eb4f1179_fk_Intranet_rol_rol_id` (`group_id`),
   ADD KEY `Intranet_solicitud_usuario_id_72a2a0c5_fk_Intranet_` (`usuario_id`);
+
+--
+-- Indexes for table `intranet_user`
+--
+ALTER TABLE `intranet_user`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `intranet_user_groups`
+--
+ALTER TABLE `intranet_user_groups`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `Intranet_user_groups_user_id_group_id_89ebf548_uniq` (`user_id`,`group_id`),
+  ADD KEY `Intranet_user_groups_group_id_23c3b620_fk_auth_group_id` (`group_id`);
+
+--
+-- Indexes for table `intranet_user_user_permissions`
+--
+ALTER TABLE `intranet_user_user_permissions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `Intranet_user_user_permi_user_id_permission_id_8d2bc6ed_uniq` (`user_id`,`permission_id`),
+  ADD KEY `Intranet_user_user_p_permission_id_de1b018a_fk_auth_perm` (`permission_id`);
 
 --
 -- Indexes for table `intranet_usuario`
 --
 ALTER TABLE `intranet_usuario`
   ADD PRIMARY KEY (`usuario_id`),
-  ADD KEY `Intranet_usuario_rol_id_40863af3_fk` (`rol_id`);
+  ADD KEY `Intranet_usuario_rol_id_40863af3_fk_Intranet_rol_rol_id` (`rol_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -599,55 +720,37 @@ ALTER TABLE `intranet_usuario`
 -- AUTO_INCREMENT for table `auth_group`
 --
 ALTER TABLE `auth_group`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `auth_group_permissions`
 --
 ALTER TABLE `auth_group_permissions`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
 
 --
 -- AUTO_INCREMENT for table `auth_permission`
 --
 ALTER TABLE `auth_permission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
-
---
--- AUTO_INCREMENT for table `auth_user`
---
-ALTER TABLE `auth_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `auth_user_groups`
---
-ALTER TABLE `auth_user_groups`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `auth_user_user_permissions`
---
-ALTER TABLE `auth_user_user_permissions`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `django_admin_log`
 --
 ALTER TABLE `django_admin_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `django_content_type`
 --
 ALTER TABLE `django_content_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `intranet_califica`
@@ -677,7 +780,7 @@ ALTER TABLE `intranet_factor_calificacion`
 -- AUTO_INCREMENT for table `intranet_instrumento_financiero`
 --
 ALTER TABLE `intranet_instrumento_financiero`
-  MODIFY `instrumento_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `instrumento_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `intranet_rol`
@@ -690,6 +793,24 @@ ALTER TABLE `intranet_rol`
 --
 ALTER TABLE `intranet_solicitud`
   MODIFY `solicitud_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `intranet_user`
+--
+ALTER TABLE `intranet_user`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `intranet_user_groups`
+--
+ALTER TABLE `intranet_user_groups`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `intranet_user_user_permissions`
+--
+ALTER TABLE `intranet_user_user_permissions`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `intranet_usuario`
@@ -715,25 +836,11 @@ ALTER TABLE `auth_permission`
   ADD CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`);
 
 --
--- Constraints for table `auth_user_groups`
---
-ALTER TABLE `auth_user_groups`
-  ADD CONSTRAINT `auth_user_groups_group_id_97559544_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`),
-  ADD CONSTRAINT `auth_user_groups_user_id_6a12ed8b_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
-
---
--- Constraints for table `auth_user_user_permissions`
---
-ALTER TABLE `auth_user_user_permissions`
-  ADD CONSTRAINT `auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`),
-  ADD CONSTRAINT `auth_user_user_permissions_user_id_a95ead1b_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
-
---
 -- Constraints for table `django_admin_log`
 --
 ALTER TABLE `django_admin_log`
   ADD CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
-  ADD CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
+  ADD CONSTRAINT `django_admin_log_user_id_c564eba6_fk_Intranet_user_id` FOREIGN KEY (`user_id`) REFERENCES `intranet_user` (`id`);
 
 --
 -- Constraints for table `intranet_califica`
@@ -765,14 +872,28 @@ ALTER TABLE `intranet_factor_calificacion`
 -- Constraints for table `intranet_solicitud`
 --
 ALTER TABLE `intranet_solicitud`
-  ADD CONSTRAINT `Intranet_solicitud_rol_id_5462e1a3_fk_Intranet_rol_rol_id` FOREIGN KEY (`rol_id`) REFERENCES `intranet_rol` (`rol_id`),
+  ADD CONSTRAINT `Intranet_solicitud_group_id_eb4f1179_fk_Intranet_rol_rol_id` FOREIGN KEY (`group_id`) REFERENCES `intranet_rol` (`rol_id`),
   ADD CONSTRAINT `Intranet_solicitud_usuario_id_72a2a0c5_fk_Intranet_` FOREIGN KEY (`usuario_id`) REFERENCES `intranet_usuario` (`usuario_id`);
+
+--
+-- Constraints for table `intranet_user_groups`
+--
+ALTER TABLE `intranet_user_groups`
+  ADD CONSTRAINT `Intranet_user_groups_group_id_23c3b620_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`),
+  ADD CONSTRAINT `Intranet_user_groups_user_id_3e881222_fk_Intranet_user_id` FOREIGN KEY (`user_id`) REFERENCES `intranet_user` (`id`);
+
+--
+-- Constraints for table `intranet_user_user_permissions`
+--
+ALTER TABLE `intranet_user_user_permissions`
+  ADD CONSTRAINT `Intranet_user_user_p_permission_id_de1b018a_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`),
+  ADD CONSTRAINT `Intranet_user_user_p_user_id_85bc83e0_fk_Intranet_` FOREIGN KEY (`user_id`) REFERENCES `intranet_user` (`id`);
 
 --
 -- Constraints for table `intranet_usuario`
 --
 ALTER TABLE `intranet_usuario`
-  ADD CONSTRAINT `Intranet_usuario_rol_id_40863af3_fk` FOREIGN KEY (`rol_id`) REFERENCES `intranet_rol` (`rol_id`);
+  ADD CONSTRAINT `Intranet_usuario_rol_id_40863af3_fk_Intranet_rol_rol_id` FOREIGN KEY (`rol_id`) REFERENCES `intranet_rol` (`rol_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

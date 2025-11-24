@@ -39,21 +39,16 @@
     </div>
 
     <div class="col-md-3 d-flex align-items-end">
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" name="pendiente" id="pendiente">
-        <label class="form-check-label" for="pendiente">Calificación pendiente</label>
+      <div class="col-md-12 d-flex gap-2">
+        <button type="submit" class="btn btn-primary">BUSCAR</button>
+        <button type="reset" class="btn btn-primary">LIMPIAR</button>
       </div>
-    </div>
-
-    <div class="col-md-12 d-flex justify-content-end gap-2">
-      <button type="submit" class="btn btn-primary">BUSCAR</button>
-      <button type="reset" class="btn btn-primary">LIMPIAR</button>
     </div>
   </form>
 
   <div class="table-responsive">
-  <table class="table table-hover table-primary">
-    <thead>
+  <table class="table table-hover">
+    <thead class="table-primary">
       <tr>
         <th></th>
         <th>Ejercicio</th>
@@ -88,13 +83,9 @@
         <td>{{ cal.obj.valor_historico }}</td>
         <td>{{ cal.obj.estado }}</td>
         <td>{{ cal.obj.rol.nombre_rol }}</td>
-        {% for f in factores %}
-          <td style="text-align:center;">
-            {% if f.factor_id in cal.valores %}
-              {{ cal.valores.f.factor_id }}
-            {% else %}
-              -
-            {% endif %}
+        {% for v in cal.valores %}
+          <td class="text-center">
+            {{ v }}
           </td>
         {% endfor %}
       </tr>
@@ -103,15 +94,22 @@
   </table>
   </div>
 
-  <div class="d-flex justify-content-end flex-wrap gap-2 my-3">
-    <a href="{% url 'create_cal' %}"><button class="btn btn-primary"><i class="bi bi-plus-circle"></i> INGRESAR</button></a>
-    <button class="btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i> MODIFICAR</button>
-    <button class="btn btn-sm btn-primary"><i class="bi bi-trash"></i> ELIMINAR</button>
+  <div class="d-flex justify-content-start flex-wrap gap-2 my-3">
+    <a href="{% url 'crear_calificacion' %}"><button class="btn btn-primary"><i class="bi bi-plus-circle"></i> INGRESAR</button></a>
+    <button type="button" class="btn btn-sm btn-primary" onclick="editarSeleccionado()">
+      <i class="bi bi-pencil-square"></i> MODIFICAR
+    </button>
+
+    <button type="button" class="btn btn-sm btn-primary" onclick="eliminarSeleccionado()">
+      <i class="bi bi-trash"></i> ELIMINAR
+    </button>
+
     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Cargar archivo</button>
     <ul class="dropdown-menu">
       <li><a class="dropdown-item" href="#">Cargar X monto</a></li>
       <li><a class="dropdown-item" href="#">Cargar X factor</a></li>
     </ul>
+    <a href="{% url 'intranet' %}" class="btn btn btn-secondary mt-3 float-end">Volver</a>
   </div>
 </div>
 {% endblock content %}
