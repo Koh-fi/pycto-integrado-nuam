@@ -87,34 +87,35 @@
    
 -------------------------------------------------------------------------------------------------------------------------
 
-# 10-11-2025 -- TO DO LIST SEMANAL
+# 17-11-2025 -- TO DO LIST SEMANAL
 
 ------------------------------------------------------------------------------------------------------------------------
 
 ## Lunes
 
-- [ ] Terminar de Desarrollar al menos 2 Funcionalidades Críticas
-   - [ ] CRUD Calificaciones Tributarias
-   - [ ] CRUD Instrumentos Financieros
+- [X] Terminar de Desarrollar al menos 2 Funcionalidades Críticas
+   - [X] CRUD Calificaciones Tributarias
+   - [X] CRUD Instrumentos Financieros
 
 ## Martes - Miércoles
 
 - [ ] Terminar de Desarrollar Cronograma
-   - [ ] Incorporar detalles de desarrollo de tareas
-   - [ ] Incorporar TO-DO LIST General
-   - [ ] (Si no se ha hecho el cronograma aún) Incorporar TO DO LIST Semanal (Semana 10-11-2025)
-- [ ] Realizar un avance significativo de lo trabajado hasta el momento en el Documento a Presentar
+   - [X] Incorporar detalles de desarrollo de tareas
+   - [X] Incorporar TO-DO LIST General
+   - [X] (Si no se ha hecho el cronograma aún) Incorporar TO DO LIST Semanal (Semana 10-11-2025)
+- [X] Realizar un avance significativo de lo trabajado hasta el momento en el Documento a Presentar
 
 ## Jueves - Domingo
 
-- [ ] Terminar de Desarrollar Funcionalidades CRUD
-   - [ ] Calificaciones Tributarias
-   - [ ] Instrumentos Financieros
-   - [ ] Usuarios
-- [ ] Terminar de Desarrollar Templates de Funcionalidades CRUD
-   - [ ] Calificaciones Tributarias
-   - [ ] Instrumentos Financieros
-   - [ ] Usuarios
-- [ ] Seleccionar método de Implementación sistema Login.
-- [ ] Implementar Sistema de Login seleccionado (Ya sea Django integrado, Django modificado o Personalizado)
+- [X] Terminar de Desarrollar Funcionalidades CRUD
+   - [X] Calificaciones Tributarias
+   - [X] Instrumentos Financieros
+   - [X] Usuarios
+- [X] Terminar de Desarrollar Templates de Funcionalidades CRUD
+   - [X] Calificaciones Tributarias
+   - [X] Instrumentos Financieros
+   - [X] Usuarios
+- [X] Seleccionar método de Implementación sistema Login.
+- [X] Implementar Sistema de Login seleccionado (Ya sea Django integrado, Django modificado o Personalizado)
 - [ ] Levantar sistema en AWS para probar el funcionamiento del programa en la Nube.
+
