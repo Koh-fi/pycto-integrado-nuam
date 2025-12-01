@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 01, 2025 at 05:47 PM
+-- Generation Time: Dec 01, 2025 at 10:10 AM
 -- Server version: 11.8.3-MariaDB
 -- PHP Version: 8.0.30
 
@@ -187,15 +187,7 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 (45, 'Can add solicitud', 12, 'add_solicitud'),
 (46, 'Can change solicitud', 12, 'change_solicitud'),
 (47, 'Can delete solicitud', 12, 'delete_solicitud'),
-(48, 'Can view solicitud', 12, 'view_solicitud'),
-(49, 'Can add chat_privado', 13, 'add_chat_privado'),
-(50, 'Can change chat_privado', 13, 'change_chat_privado'),
-(51, 'Can delete chat_privado', 13, 'delete_chat_privado'),
-(52, 'Can view chat_privado', 13, 'view_chat_privado'),
-(53, 'Can add mensaje_privado', 14, 'add_mensaje_privado'),
-(54, 'Can change mensaje_privado', 14, 'change_mensaje_privado'),
-(55, 'Can delete mensaje_privado', 14, 'delete_mensaje_privado'),
-(56, 'Can view mensaje_privado', 14, 'view_mensaje_privado');
+(48, 'Can view solicitud', 12, 'view_solicitud');
 
 -- --------------------------------------------------------
 
@@ -257,10 +249,8 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 (8, 'Intranet', 'califica'),
 (6, 'Intranet', 'calificacion_tributaria'),
 (9, 'Intranet', 'categoria_factor'),
-(13, 'Intranet', 'chat_privado'),
 (10, 'Intranet', 'factor_calificacion'),
 (7, 'Intranet', 'instrumento_financiero'),
-(14, 'Intranet', 'mensaje_privado'),
 (12, 'Intranet', 'solicitud'),
 (11, 'Intranet', 'user'),
 (5, 'sessions', 'session');
@@ -301,8 +291,7 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 (16, 'admin', '0001_initial', '2025-12-01 08:17:31.585900'),
 (17, 'admin', '0002_logentry_remove_auto_add', '2025-12-01 08:17:31.623304'),
 (18, 'admin', '0003_logentry_add_action_flag_choices', '2025-12-01 08:17:31.665326'),
-(19, 'sessions', '0001_initial', '2025-12-01 08:17:32.464430'),
-(20, 'Intranet', '0002_chat_privado_mensaje_privado', '2025-12-01 16:44:03.295175');
+(19, 'sessions', '0001_initial', '2025-12-01 08:17:32.464430');
 
 -- --------------------------------------------------------
 
@@ -321,7 +310,7 @@ CREATE TABLE `django_session` (
 --
 
 INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
-('y8wlxdngjpge47wjqvuy0i6lylrphfly', '.eJxVjDsOgzAQRO_iOrIW_NE6ZfqcwVp7l5gkMhKGCuXuAYki0XTz3symIq1LiWuTOY6srqoDdfktE-WX1IPwk-pj0nmqyzwmfSj6pE3fJ5b37XT_Dgq1sq8NZgeuSxYp0eAcBGRGFoYAlMVYJjSGPeyxHiVbAScG-j6Q8QOpzxcHFTf2:1vQ700:dYdDED1GY0Sw41XV55eCQMZYw3uxVFuB6iJyJRr_cYw', '2025-12-15 16:43:40.759756');
+('bwt46fx2sp2qftfuxyw252kocp3huqaf', '.eJxVjDsOwjAQBe_iGlneXX9iSnrOYK29NgmgRMqnQtwdIqWA9s3Me6nE29qnbalzGkSdFajT75a5POq4A7nzeJt0mcZ1HrLeFX3QRV8nqc_L4f4d9Lz037p0BaypFAOKYGjWuQCG0UHMENBiy8wILUrsPHGgjALekrcmOPKk3h_A-jZ4:1vPzvA:uh8IdwIrfcI-rL2xHmdGVLPMCpP2n-KmojOPcReoOPc', '2025-12-15 09:10:12.790910');
 
 -- --------------------------------------------------------
 
@@ -335,192 +324,6 @@ CREATE TABLE `intranet_califica` (
   `calificacion_id` bigint(20) NOT NULL,
   `factor_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `intranet_califica`
---
-
-INSERT INTO `intranet_califica` (`id`, `valor`, `calificacion_id`, `factor_id`) VALUES
-(1, 0.174669, 6846521, 8),
-(2, 0.145878, 6846521, 9),
-(3, 0, 6846521, 10),
-(4, 0, 6846521, 11),
-(5, 0, 6846521, 12),
-(6, 0, 6846521, 13),
-(7, 0, 6846521, 14),
-(8, 0.281169, 6846521, 15),
-(9, 0.252406, 6846521, 16),
-(10, 0, 6846521, 17),
-(11, 0, 6846521, 18),
-(12, 0.145878, 6846521, 19),
-(13, 0, 6846521, 20),
-(14, 0.018045, 6846521, 21),
-(15, 0.145906, 6846521, 22),
-(16, 0, 6846521, 23),
-(17, 0.039349, 6846521, 24),
-(18, 0, 6846521, 25),
-(19, 0, 6846521, 26),
-(20, 0, 6846521, 27),
-(21, 0, 6846521, 28),
-(22, 0.145878, 6846521, 29),
-(23, 0, 6846521, 30),
-(24, 0, 6846521, 31),
-(25, 0.00739, 6846521, 32),
-(26, 0, 6846521, 33),
-(27, 0.014588, 6846521, 34),
-(28, 0, 6846521, 35),
-(29, 0, 6846521, 36),
-(30, 0.001453, 6846521, 37),
-(31, 0.4, 10000, 8),
-(32, 0.45, 10000, 9),
-(33, 0.5, 10000, 10),
-(34, 0.55, 10000, 11),
-(35, 0.6, 10000, 12),
-(36, 0.65, 10000, 13),
-(37, 0.7, 10000, 14),
-(38, 0.75, 10000, 15),
-(39, 0.8, 10000, 16),
-(40, 0.85, 10000, 17),
-(41, 0.9, 10000, 18),
-(42, 0.95, 10000, 19),
-(43, 0, 10000, 20),
-(44, 0.05, 10000, 21),
-(45, 0.1, 10000, 22),
-(46, 0.15, 10000, 23),
-(47, 0.2, 10000, 24),
-(48, 0.25, 10000, 25),
-(49, 0.3, 10000, 26),
-(50, 0.35, 10000, 27),
-(51, 0.4, 10000, 28),
-(52, 0.45, 10000, 29),
-(53, 0.5, 10000, 30),
-(54, 0.55, 10000, 31),
-(55, 0.6, 10000, 32),
-(56, 0.65, 10000, 33),
-(57, 0.7, 10000, 34),
-(58, 0.75, 10000, 35),
-(59, 0.8, 10000, 36),
-(60, 0, 10000, 37),
-(61, 0.8, 10001, 8),
-(62, 0.9, 10001, 9),
-(63, 1, 10001, 10),
-(64, 0.05, 10001, 11),
-(65, 0.1, 10001, 12),
-(66, 0.15, 10001, 13),
-(67, 0.2, 10001, 14),
-(68, 0.25, 10001, 15),
-(69, 0.3, 10001, 16),
-(70, 0.35, 10001, 17),
-(71, 0.4, 10001, 18),
-(72, 0.45, 10001, 19),
-(73, 0.5, 10001, 20),
-(74, 0.55, 10001, 21),
-(75, 0.6, 10001, 22),
-(76, 0.65, 10001, 23),
-(77, 0.7, 10001, 24),
-(78, 0.75, 10001, 25),
-(79, 0.8, 10001, 26),
-(80, 0.85, 10001, 27),
-(81, 0.9, 10001, 28),
-(82, 0.95, 10001, 29),
-(83, 0, 10001, 30),
-(84, 0.05, 10001, 31),
-(85, 0.1, 10001, 32),
-(86, 0.15, 10001, 33),
-(87, 0.2, 10001, 34),
-(88, 0.25, 10001, 35),
-(89, 0.3, 10001, 36),
-(90, 0, 10001, 37),
-(91, 0.2, 10002, 8),
-(92, 0.25, 10002, 9),
-(93, 0.3, 10002, 10),
-(94, 0.35, 10002, 11),
-(95, 0.4, 10002, 12),
-(96, 0.45, 10002, 13),
-(97, 0.5, 10002, 14),
-(98, 0.55, 10002, 15),
-(99, 0.6, 10002, 16),
-(100, 0.65, 10002, 17),
-(101, 0.7, 10002, 18),
-(102, 0.75, 10002, 19),
-(103, 0.8, 10002, 20),
-(104, 0.85, 10002, 21),
-(105, 0.9, 10002, 22),
-(106, 0.95, 10002, 23),
-(107, 0, 10002, 24),
-(108, 0.05, 10002, 25),
-(109, 0.1, 10002, 26),
-(110, 0.15, 10002, 27),
-(111, 0.2, 10002, 28),
-(112, 0.25, 10002, 29),
-(113, 0.3, 10002, 30),
-(114, 0.35, 10002, 31),
-(115, 0.4, 10002, 32),
-(116, 0.45, 10002, 33),
-(117, 0.5, 10002, 34),
-(118, 0.55, 10002, 35),
-(119, 0.6, 10002, 36),
-(120, 0, 10002, 37),
-(121, 0.6, 10003, 8),
-(122, 0.65, 10003, 9),
-(123, 0.7, 10003, 10),
-(124, 0.75, 10003, 11),
-(125, 0.8, 10003, 12),
-(126, 0.85, 10003, 13),
-(127, 0.9, 10003, 14),
-(128, 0.95, 10003, 15),
-(129, 0, 10003, 16),
-(130, 0.05, 10003, 17),
-(131, 0.1, 10003, 18),
-(132, 0.15, 10003, 19),
-(133, 0.2, 10003, 20),
-(134, 0.25, 10003, 21),
-(135, 0.3, 10003, 22),
-(136, 0.35, 10003, 23),
-(137, 0.4, 10003, 24),
-(138, 0.45, 10003, 25),
-(139, 0.5, 10003, 26),
-(140, 0.55, 10003, 27),
-(141, 0.6, 10003, 28),
-(142, 0.65, 10003, 29),
-(143, 0.7, 10003, 30),
-(144, 0.75, 10003, 31),
-(145, 0.8, 10003, 32),
-(146, 0.85, 10003, 33),
-(147, 0.9, 10003, 34),
-(148, 0.95, 10003, 35),
-(149, 0, 10003, 36),
-(150, 0, 10003, 37),
-(151, 0, 10004, 8),
-(152, 0.05, 10004, 9),
-(153, 0.1, 10004, 10),
-(154, 0.15, 10004, 11),
-(155, 0.2, 10004, 12),
-(156, 0.25, 10004, 13),
-(157, 0.3, 10004, 14),
-(158, 0.35, 10004, 15),
-(159, 0.4, 10004, 16),
-(160, 0.45, 10004, 17),
-(161, 0.5, 10004, 18),
-(162, 0.55, 10004, 19),
-(163, 0.6, 10004, 20),
-(164, 0.65, 10004, 21),
-(165, 0.7, 10004, 22),
-(166, 0.75, 10004, 23),
-(167, 0.8, 10004, 24),
-(168, 0.85, 10004, 25),
-(169, 0.9, 10004, 26),
-(170, 0.95, 10004, 27),
-(171, 0, 10004, 28),
-(172, 0.05, 10004, 29),
-(173, 0.1, 10004, 30),
-(174, 0.15, 10004, 31),
-(175, 0.2, 10004, 32),
-(176, 0.25, 10004, 33),
-(177, 0.3, 10004, 34),
-(178, 0.35, 10004, 35),
-(179, 0.4, 10004, 36),
-(180, 0, 10004, 37);
 
 -- --------------------------------------------------------
 
@@ -543,18 +346,6 @@ CREATE TABLE `intranet_calificacion_tributaria` (
   `evento_capital` int(11) DEFAULT NULL,
   `instrumento_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `intranet_calificacion_tributaria`
---
-
-INSERT INTO `intranet_calificacion_tributaria` (`secuencia_evento`, `mercado`, `descripcion`, `fecha_pago`, `dividendo`, `valor_historico`, `anio`, `estado`, `origen_calificacion`, `isfut`, `factor_actualizacion`, `evento_capital`, `instrumento_id`) VALUES
-(10000, 'MERCADO INTERNACIONAL', 'Descripcion prueba 1', '2024-01-15', 100, 1000, 2024, 'PENDIENTE', 'SISTEMA', 1, 0.000000, NULL, 1),
-(10001, 'MERCADO MONETARIO', 'Descripcion prueba 2', '2024-02-15', 110, 1200, 2024, 'PENDIENTE', 'SISTEMA', 0, 0.000000, NULL, 2),
-(10002, 'FONDOS DE INVERSIÓN-MUTUOS', 'Descripcion prueba 3', '2024-03-15', 120, 1400, 2024, 'PENDIENTE', 'SISTEMA', 0, 0.000000, NULL, 3),
-(10003, 'FONDOS DE INVERSIÓN-MUTUOS', 'Descripcion prueba 4', '2024-04-15', 130, 1600, 2024, 'PENDIENTE', 'SISTEMA', 0, 0.000000, NULL, 4),
-(10004, 'ACCIONES', 'Descripcion prueba 5', '2024-05-15', 140, 1800, 2024, 'PENDIENTE', 'SISTEMA', 1, 0.000000, NULL, 6),
-(6846521, 'FONDOS DE INVERSIÓN-MUTUOS', 'fdgsdfg', '2025-12-18', 1, 6546, 2023, 'PENDIENTE', 'SISTEMA', 1, 0.000000, NULL, 5);
 
 -- --------------------------------------------------------
 
@@ -708,9 +499,9 @@ CREATE TABLE `intranet_user` (
 
 INSERT INTO `intranet_user` (`id`, `password`, `last_login`, `is_superuser`, `first_name`, `last_name`, `is_staff`, `is_active`, `date_joined`, `email`) VALUES
 (1, 'pbkdf2_sha256$1000000$i8LhXJDBLc5YQGa5E4YLsV$yai5huDhI7JPC6jw/Ep4YljGHDTFJimIHUb0JqutZow=', '2025-12-01 09:10:12.763213', 1, 'Super', 'User', 1, 1, '2025-12-01 08:21:10.000000', 'superuser@nuam.com'),
-(10, 'pbkdf2_sha256$1000000$kZjmsKAkZmv2Y6rNiuzIIf$jDtd76wjXYKWn8fCf/6MIYGavCmo2xZVznOuKXEmxho=', '2025-12-01 16:43:40.724062', 0, 'Admin', 'Doe', 0, 1, '2025-12-01 08:54:55.605816', 'admin@nuam.com'),
-(11, 'pbkdf2_sha256$1000000$wGHVjTK3pJKIse8untiViI$P0ByaJ/3WPyLsObwgAbIbbiHDdxITQWz4pOYZVsnpj4=', '2025-12-01 10:02:36.628189', 0, 'Auditor', 'Doe', 0, 1, '2025-12-01 08:55:12.114170', 'auditor@nuam.com'),
-(12, 'pbkdf2_sha256$1000000$1dK7hqKUsmy3gVvu6H5gTF$4PvVj5c6D5+p8ubLEt5V9CnawiRaixCmfruwpG29H7M=', '2025-12-01 09:59:50.934637', 0, 'Corredor', 'Doe', 0, 1, '2025-12-01 08:55:35.700550', 'corredor@nuam.com'),
+(10, 'pbkdf2_sha256$1000000$kZjmsKAkZmv2Y6rNiuzIIf$jDtd76wjXYKWn8fCf/6MIYGavCmo2xZVznOuKXEmxho=', '2025-12-01 09:10:03.876233', 0, 'Admin', 'Doe', 0, 1, '2025-12-01 08:54:55.605816', 'admin@nuam.com'),
+(11, 'pbkdf2_sha256$1000000$wGHVjTK3pJKIse8untiViI$P0ByaJ/3WPyLsObwgAbIbbiHDdxITQWz4pOYZVsnpj4=', NULL, 0, 'Auditor', 'Doe', 0, 1, '2025-12-01 08:55:12.114170', 'auditor@nuam.com'),
+(12, 'pbkdf2_sha256$1000000$1dK7hqKUsmy3gVvu6H5gTF$4PvVj5c6D5+p8ubLEt5V9CnawiRaixCmfruwpG29H7M=', NULL, 0, 'Corredor', 'Doe', 0, 1, '2025-12-01 08:55:35.700550', 'corredor@nuam.com'),
 (13, 'pbkdf2_sha256$1000000$rubUklbzI5varzZW2G0wel$ojaa4cNA42MLo67ew6Yjoxo5XvbUZ0/FAyR5yJh+HBE=', NULL, 0, 'Bolsa', 'Comercio Santiago', 0, 1, '2025-12-01 08:59:30.477192', 'bcs@nuam.com'),
 (14, 'pbkdf2_sha256$1000000$2ou3fxtUjxQeKyR7uh3fId$7eU2JJ+19W5C21nUSn+DE7TWltB1tt3b5EVczVL/Je0=', NULL, 0, 'Bolsa', 'Valores Lima', 0, 1, '2025-12-01 08:59:47.313347', 'bvl@nuam.com'),
 (15, 'pbkdf2_sha256$1000000$PMhigRh0PeSOyHBkKbuMYt$qKfh8muQ4naFoEfjZn/8OkzetseLzMag9UGTz372urs=', NULL, 0, 'Bolsa', 'Valores Colombia', 0, 1, '2025-12-01 09:00:05.090741', 'bvc@nuam.com'),
@@ -895,7 +686,7 @@ ALTER TABLE `auth_group_permissions`
 -- AUTO_INCREMENT for table `auth_permission`
 --
 ALTER TABLE `auth_permission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `django_admin_log`
@@ -907,19 +698,19 @@ ALTER TABLE `django_admin_log`
 -- AUTO_INCREMENT for table `django_content_type`
 --
 ALTER TABLE `django_content_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `intranet_califica`
 --
 ALTER TABLE `intranet_califica`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=181;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `intranet_categoria_factor`
@@ -949,13 +740,13 @@ ALTER TABLE `intranet_solicitud`
 -- AUTO_INCREMENT for table `intranet_user`
 --
 ALTER TABLE `intranet_user`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `intranet_user_groups`
 --
 ALTER TABLE `intranet_user_groups`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `intranet_user_user_permissions`

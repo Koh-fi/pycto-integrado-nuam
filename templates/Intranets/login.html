@@ -10,6 +10,12 @@
 
 {% block content %}
 
+{% if motivo %}
+  <div class="alert alert-danger z-2 position-fixed mt-5 top-0 start-50 translate-middle" role="alert">
+    <i class="bi bi-exclamation-triangle-fill"></i> ERROR: {{ motivo }}
+  </div>
+{% endif %}
+
 <div class="dark-bg-overlay">
   <div id="carouselExampleAutoplaying" class="carousel slide carousel-fade z-n1" data-bs-ride="carousel">
     <div class="carousel-inner">

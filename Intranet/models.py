@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager, Group
 
 ## Create your models here.
 
@@ -40,41 +40,17 @@ class User(AbstractUser):
 
     objects = UserManager()
 
-
-##### rol #####
-
-class rol(models.Model):
-    rol_id = models.AutoField(primary_key=True)
-    nombre_rol = models.CharField(max_length=20)
-
-    def __str__(self):
-        return self.nombre_rol
-
-##### usuario #####
-
-class usuario(models.Model):
-    usuario_id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50)
-    email = models.CharField(max_length=150)
-    password = models.CharField(max_length=256)
-    rol = models.ForeignKey(rol, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.nombre
-
-
-
 ##### solicitud #####
 
 class solicitud(models.Model):
     solicitud_id = models.AutoField(primary_key=True)
-    usuario = models.ForeignKey(usuario, on_delete=models.CASCADE)
-    group = models.ForeignKey(rol, on_delete=models.CASCADE)
-    motivo = models.CharField(max_length=130)
-    fecha = models.DateField()
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    motivo = models.TextField()
+    fecha = models.DateField(auto_now_add=True, null=True, blank=True)
 
-    def __str__(self):
-        return f"solicitud {self.solicitud_id}{self.motivo}"
+    def str(self):
+        return f"Solicitud {self.solicitud_id} de {self.usuario.username}"
 
 ##### instrumento financiero #####
 
@@ -110,8 +86,7 @@ class factor_calificacion(models.Model):
 
 ##### calificacion tributaria #####
 
-class calificacion_tributaria(models.Model):
-    MERCADOS = [
+MERCADOS = [
         ("ACCIONES", "Acciones"),
         ("RENTA FIJA", "Renta Fija"),
         ("DERIVADOS FINANCIEROS", "Derivados Financieros"),
@@ -122,23 +97,42 @@ class calificacion_tributaria(models.Model):
         ("MERCADO INTERNACIONAL", "Mercado Internacional"),
         ("MERCADO BANCARIO-CRÉDITOS", "Mercado Bancario-Créditos"),
     ]  
-    
-    calificacion_id = models.AutoField(primary_key=True)
+
+ORIGENES = [
+    ("CORREDOR", "Corredor"),
+    ("BOLSA", "Bolsa"),
+    ("SISTEMA", "Sistema Interno"),
+]
+
+ESTADOS = [
+    ("PENDIENTE", "Pendiente"),
+    ("VALIDADA", "Validada"),
+    ("RECHAZADA", "Rechazada"),
+]
+
+class calificacion_tributaria(models.Model):
+    secuencia_evento = models.BigIntegerField(primary_key=True)
+
     mercado = models.CharField(max_length=50, choices=MERCADOS)
     instrumento = models.ForeignKey(instrumento_financiero, on_delete=models.CASCADE)
     descripcion = models.CharField(max_length=150)
     fecha_pago = models.DateField()
-    secuencia_evento = models.BigIntegerField()
     dividendo = models.IntegerField(null=True, blank=True)
     valor_historico = models.BigIntegerField(null=True, blank=True)
     anio = models.IntegerField()
-    estado = models.CharField(max_length=30)
-    rol = models.ForeignKey(rol, on_delete=models.CASCADE)
+    estado = models.CharField(max_length=30, choices=ESTADOS)
 
-    factores = models.ManyToManyField(factor_calificacion,through='califica')
+    origen_calificacion = models.CharField(max_length=20, choices=ORIGENES, default="SISTEMA")
+
+    isfut = models.BooleanField(default=False)
+    factor_actualizacion = models.DecimalField(max_digits=10, decimal_places=6, default=0)
+    evento_capital = models.IntegerField(null=True, blank=True)
+
+    factores = models.ManyToManyField(factor_calificacion, through='califica')
 
     def __str__(self):
-        return f"calificación {self.calificacion_id}{self.descripcion}"
+        return f"Calificación {self.secuencia_evento} — {self.descripcion}"
+
 
 
 ##### califica #####
@@ -150,3 +144,24 @@ class califica(models.Model):
 
     def __str__(self):
         return f"{self.factor}{self.calificacion} ({self.valor})"
+    
+############ chat privado uno a uno ##############
+
+class chat_privado(models.Model):
+    usuario1 = models.ForeignKey(User, related_name="privado_usuario1", on_delete=models.CASCADE)
+    usuario2 = models.ForeignKey(User, related_name="privado_usuario2", on_delete=models.CASCADE)
+    fecha_creacion = models.DateTimeField(auto_now_add=True) # Esto permite que  Django guardarde esa fecha y ya no se pueda cambiar
+
+    def __str__(self):
+        return f"Conversación entre {self.usuario1.username} y {self.usuario2.username}"
+
+############ mensajes privados uno a uno ##############
+
+class mensaje_privado(models.Model):
+    chat = models.ForeignKey(chat_privado, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    mensaje = models.TextField()
+    fecha_envio = models.DateTimeField(auto_now_add=True) 
+
+    def __str__(self):
+        return self.mensaje

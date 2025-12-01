@@ -26,3 +26,25 @@ function eliminarSeleccionado() {
     window.location.href = `http://127.0.0.1:8000/gestores/calificaciones/eliminar/${id}`;
   }
 }
+
+function startFakeLoader() {
+    const bar = document.getElementById("loader-bar");
+    const loader = document.getElementById("loader");
+
+    loader.style.display = "block";
+    bar.style.width = "0%";
+
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += Math.random() * 15;  // efecto random tipo realista
+        bar.style.width = Math.min(progress, 100) + "%";
+
+        if (progress >= 100) {
+            clearInterval(interval);
+        }
+    }, 200);
+}
+
+document.querySelector("input[type='file']").addEventListener("change", () => {
+    startFakeLoader();
+});

@@ -26,6 +26,7 @@
                 <option value="">Seleccione rol</option>
                 <option value="auditor">Auditor Tributario</option>
                 <option value="corredor">Corredor de Bolsas</option>
+                <option value="bolsa">Bolsa de Valores</option>
             </select>
         </div>
         <div class="col-md-12 d-flex justify-content-end gap-2">
@@ -34,10 +35,9 @@
         </div>
     </form>
 
-    <table class="table table-hover table-primary">
-        <thead>
+    <table class="table table-hover">
+        <thead class="table-primary">
           <tr>
-            <th></th>
             <th>ID</th>
             <th>Nombre</th>
             <th>Apellido</th>
@@ -49,8 +49,25 @@
         </thead>
         <tbody>
           {% for usuario in usuarios %}
+          <div class="modal fade" id="Modal_{{usuario.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Eliminar Usuario #{{usuario.id}}</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Está a punto de eliminar al usuario #{{usuario.id}}, {{usuario.first_name}} {{usuario.last_name}} ({{usuario.groups.all.0.name}})
+                            ¿Está Seguro?
+                          </div>
+                          <div class="modal-footer">
+                            <a href="{% url 'eliminar_usuario' usuario.id %}"><button type="button" class="btn btn-danger">Eliminar</button></a>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
           <tr>
-            <td><input type="radio" name="seleccion" value="{{ usuario.id }}"></td>
             <td>{{ usuario.id }}</td>
             <td>{{ usuario.first_name }}</td>
             <td>{{ usuario.last_name }}</td>
@@ -63,7 +80,7 @@
                 {% endif %}
             </td>
             <td><a href="{% url 'modificar_usuario' usuario.id %}" class="btn btn-success btn-sm"><i class="bi bi-pencil"></i></a></td>
-            <td><a href="{% url 'eliminar_usuario' usuario.id %}" class="btn btn-danger btn-sm"onclick="return confirm('¿Estás seguro de que deseas eliminar este usuario?');"><i class="bi bi-trash"></i></a></td>
+            <td><button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#Modal_{{usuario.id}}"><i class="bi bi-trash"></i></button></td>
           </tr>
           {% empty %}
           <tr>

@@ -47,24 +47,21 @@ INSERT INTO `intranet_factor_calificacion` (`factor_id`, `nombre_factor`, `categ
 (37, 'Devolución de capital Art. 17 Nº7 LIR', NULL);
 
 INSERT INTO `intranet_instrumento_financiero` (`instrumento_id`, `codigo`, `descripcion`, `categoria`, `bolsa`, `mercado`, `estado`) VALUES
-(4, 'ADP', 'DEPOSITO A PLAZO', 'Efectivo y Depósitos', 'BCS', 'Mercado Internacional', 'Ingresado'),
-(5, 'ADPCL', 'DEPOSITO A PLAZO CHILE', 'Efectivo y Depósitos', 'BCS', 'Mercado Monetario', 'Ingresado'),
-(6, 'AGG', 'FONDOS ETF´s', 'Fondos', 'BVL', 'Fondos de Inversión-Mutuos', 'Ingresado'),
-(7, 'AGGCL', 'FONDOS MUTUOS - FONDOS ETF´s', 'Fondos', 'BCS', 'Fondos de Inversión-Mutuos', 'Ingresado'),
-(8, 'AIG', 'American International Group. - Dolares', 'Acciones y Participaciones', 'BVC', 'Mercado Internacional', 'Ingresado'),
-(9, 'AIGCL', 'American International Group. - Pesos Chilenos', 'Acciones y Participaciones', 'BCS', 'Acciones', 'Ingresado'),
-(10, 'AMGN', 'Amgen Inc. opciones, ETFs, fondos, divisas, materias primas y criptomonedas.', 'Fondos', 'BCS', 'Mercado Internacional', 'Ingresado'),
-(11, 'AMGCL', 'Amgen Inc.  \r\nPatrocinador en Chile: BCI Corredor de Bolsa S.A. - Pesos Chilenos', 'Acciones y Participaciones', 'BCS', 'Acciones', 'Ingresado'),
-(12, 'AXP', 'American Express Compan', 'Otras Cuentas-Derechos', 'BVL', 'Mercado Internacional', 'Ingresado'),
-(13, 'AXPCL', 'American Express Compan - Pesos Chilenos', 'Acciones y Participaciones', 'BCS', 'Acciones', 'Ingresado'),
-(14, 'BAC', 'Bank Of America Corp - Dolares', 'Otras Cuentas-Derechos', 'BVL', 'Mercado Internacional', 'Ingresado');
+(1, 'ADP', 'DEPOSITO A PLAZO', 'Efectivo y Depósitos', 'BCS', 'Mercado Internacional', 'Ingresado'),
+(2, 'ADPCL', 'DEPOSITO A PLAZO CHILE', 'Efectivo y Depósitos', 'BCS', 'Mercado Monetario', 'Ingresado'),
+(3, 'AGG', 'FONDOS ETF´s', 'Fondos', 'BVL', 'Fondos de Inversión-Mutuos', 'Ingresado'),
+(4, 'AGGCL', 'FONDOS MUTUOS - FONDOS ETF´s', 'Fondos', 'BCS', 'Fondos de Inversión-Mutuos', 'Ingresado'),
+(5, 'AIG', 'American International Group. - Dolares', 'Acciones y Participaciones', 'BVC', 'Mercado Internacional', 'Ingresado'),
+(6, 'AIGCL', 'American International Group. - Pesos Chilenos', 'Acciones y Participaciones', 'BCS', 'Acciones', 'Ingresado'),
+(7, 'AMGN', 'Amgen Inc. opciones, ETFs, fondos, divisas, materias primas y criptomonedas.', 'Fondos', 'BCS', 'Mercado Internacional', 'Ingresado'),
+(8, 'AMGCL', 'Amgen Inc.  \r\nPatrocinador en Chile: BCI Corredor de Bolsa S.A. - Pesos Chilenos', 'Acciones y Participaciones', 'BCS', 'Acciones', 'Ingresado'),
+(9, 'AXP', 'American Express Compan', 'Otras Cuentas-Derechos', 'BVL', 'Mercado Internacional', 'Ingresado'),
+(10, 'AXPCL', 'American Express Compan - Pesos Chilenos', 'Acciones y Participaciones', 'BCS', 'Acciones', 'Ingresado'),
+(11, 'BAC', 'Bank Of America Corp - Dolares', 'Otras Cuentas-Derechos', 'BVL', 'Mercado Internacional', 'Ingresado');
 
-INSERT INTO `intranet_rol` (`rol_id`, `nombre_rol`) VALUES
-(1, 'Administrador'),
-(2, 'Auditor'),
-(3, 'Corredor');
-
-INSERT INTO `intranet_usuario` (`usuario_id`, `nombre`, `email`, `password`, `rol_id`) VALUES
-(1, 'Admin Doe', 'admin@nuam.com', '971e4e7eb25f230e29b2fdfa4b34bfd543d75958cc9eb7b01064ecbc6d4667a4eab79fe81169f3498a3c8af44131d7be811615a395013c097de72b66c129e386', 1),
-(2, 'Auditor Doe', 'auditor@nuam.com', '0c33fd99344eb07491d674c8737113dff876d1ade54b339df61c0755e10fc2fc1f7e83872aefa0fd432b982e00b3054a36cd941d05679d3b5889deb0e9afbb4b', 2),
-(3, 'Corredor Doe', 'corredor@nuam.com', '440bf545e36d4656a1ec83c7db64eb278487ab05d3ede782afdec78d7734feecc6370515793ed182285acda04315110d3fb6f72f7460a80673aa30795cffac5c', 3);
+INSERT INTO `intranet_user` (`id`, `password`, `last_login`, `is_superuser`, `first_name`, `last_name`, `is_staff`, `is_active`, `date_joined`, `email`) VALUES
+(1, 'pbkdf2_sha256$1000000$kDjZrdIQqVExwC3yqJiZVs$gVDCvnJSy+Uae7PdBVbPmJbyT785qyxrbi+Eq7K5pNo=', '2025-11-24 13:43:42.877969', 1, '', '', 1, 1, '2025-11-24 12:59:59.201753', 'superuser@nuam.com'),
+(2, 'pbkdf2_sha256$1000000$lo7TUIpiNkYeNiAJ47gUyp$egZcACjqC4DSFeqYM7ybIfbLfGdIRfumWihEmJHV5aM=', '2025-11-24 14:01:19.096864', 0, 'Corredor', 'Doe', 0, 1, '2025-11-24 13:24:13.000000', 'corredor@nuam.com'),
+(3, 'pbkdf2_sha256$1000000$H0R3W2f7zlGNhOiEzEUKP2$gh2OokEfUXIBXycbOC//qe8sD4vqlKo/bcKgU0r/kh4=', '2025-11-24 15:24:14.253526', 0, 'Auditor', 'Doe', 0, 1, '2025-11-24 13:24:35.000000', 'auditor@nuam.com'),
+(4, 'pbkdf2_sha256$1000000$Ef4KbRWGEOASMDE73AOrp3$cIZWExkmuGLQSujKGfXUQfasyQva/n9Ufhd7D72giLg=', '2025-11-24 15:32:56.152397', 0, 'Admin', 'Doe', 0, 1, '2025-11-24 13:24:53.000000', 'admin@nuam.com'),
+(7, '!2WVKpENPc5YoeOhFAcDn78Zm1dtRfhaRy5xhtsoU', NULL, 0, 'John', 'Doe 2', 0, 1, '2025-11-24 15:13:41.947885', 'auditor2@nuam.com');

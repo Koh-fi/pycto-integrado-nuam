@@ -28,12 +28,12 @@
 
         <div class="col-md-4">
             <label class="form-label">{% if usuario %}Nueva contraseña (opcional){% else %}Contraseña{% endif %}</label>
-            <input type="password" class="form-control" name="contraseña1" {% if not usuario %}required{% endif %}>
+            <input type="password" class="form-control" name="password1" {% if not usuario %}required{% endif %}>
         </div>
 
         <div class="col-md-4">
             <label class="form-label">Confirmar Contraseña</label>
-            <input type="password" class="form-control" name="contraseña2" {% if not usuario %}required{% endif %}>
+            <input type="password" class="form-control" name="password2" {% if not usuario %}required{% endif %}>
         </div>
 
         <div class="col-md-4">
@@ -43,6 +43,7 @@
                 <option value="auditor" {% if initial.rol == "Auditor" %}selected{% endif %}>Auditor Tributario</option>
                 <option value="corredor" {% if initial.rol == "Corredor" %}selected{% endif %}>Corredor de Bolsas</option>
                 <option value="administrador" {% if initial.rol == "Administrador" %}selected{% endif %}>Administrador</option>
+                <option value="bolsa" {% if initial.rol == "Bolsa" %}selected{% endif %}>Bolsa</option>
             </select>
         </div>
 

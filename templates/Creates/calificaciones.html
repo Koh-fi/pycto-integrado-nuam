@@ -17,13 +17,67 @@
 
 
 {% block content %}
-<div class="container mt-5 mb-5">
+<div class="container my-5">
 
-  <form method="POST" class="p-4 rounded shadow bg-light">
+  <form method="POST" class="p-4 rounded shadow bg-light wizard-container">
   {% csrf_token %}
 
-<div>
-  <div class="row mb-3 justify-content-center" style="gap: 75px;">
+  <input type="hidden" name="paso" id="paso" value="1">
+  <div id="wizard" class="carousel slide carousel-fade" data-bs-interval="false" data-bs-touch="false">
+    <div class="carousel-inner">
+      <div class="carousel-item active p-2" id="step1">
+        <div class="row mb-3 justify-content-center" style="gap: 75px;">
+  <div class="col-md-3">
+    <label class="form-label">Mercado</label>
+    {{ form_calificacion.mercado }}
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Instrumento</label>
+    {{ form_calificacion.instrumento }}
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Valor Histórico</label>
+    {{ form_calificacion.valor_historico }}
+  </div>
+</div>
+
+<div class="row mb-3 justify-content-center" style="gap: 75px;">
+  <div class="col-md-3">
+    <label class="form-label">Fecha Pago</label>
+    {{ form_calificacion.fecha_pago }}
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Dividendo</label>
+    {{ form_calificacion.dividendo }}
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Descripción</label>
+    {{ form_calificacion.descripcion }}
+  </div>
+</div>
+
+<div class="row mb-3 justify-content-center" style="gap: 75px;">
+  <div class="col-md-3">
+    <label class="form-label">Secuencia Evento</label>
+    {{ form_calificacion.secuencia_evento }}
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Año</label>
+    {{ form_calificacion.anio }}
+  </div>
+  <div class="col-md-3 d-flex align-items-center justify-content-between">
+    <label class="form-label">ISFUT</label>
+    {{ form_calificacion.isfut }}
+  </div>
+</div>
+        <div class="mt-4 d-flex justify-content-between">
+  <a href="{% url 'ver_calificaciones' %}" class="btn btn-secondary px-4">CANCELAR</a>
+  <button type="button" class="btn btn-primary" onclick="goStep2()">Siguiente</button>
+</div>
+      </div>
+      <div class="carousel-item p-2" id="step2">
+  <div>
+    <div class="row mb-3 justify-content-center" style="gap: 75px;">
       <div class="col-md-3">
         <label class="form-label">Mercado</label>
             {{ form_calificacion.mercado }}
@@ -36,24 +90,24 @@
         <label class="form-label">Valor Histórico</label>
         {{ form_calificacion.valor_historico }}
       </div>
-  </div>
+    </div>
 
-  <div class="row mb-3 justify-content-center" style="gap: 75px;">
+    <div class="row mb-3 justify-content-center" style="gap: 75px;">
       <div class="col-md-3">
         <label class="form-label">Fecha Pago</label>
         {{ form_calificacion.fecha_pago }}
       </div>
       <div class="col-md-3">
-        <label class="form-label">Evento Capital</label>
-        <input type="text" class="form-control"name="evento_capital" id="evento_capital" placeholder="">
+        <label class="form-label">Dividendo</label>
+        <input type="text" class="form-control"name="dividendo" id="dividendo" placeholder="0">
       </div>
       <div class="col-md-3">
         <label class="form-label">Descripción</label>
         {{ form_calificacion.descripcion }}
       </div>
-  </div>
+    </div>
 
-  <div class="row mb-3 justify-content-center" style="gap: 75px;">
+    <div class="row mb-3 justify-content-center" style="gap: 75px;">
       <div class="col-md-3">
         <label class="form-label">Secuencia Evento</label>
         {{ form_calificacion.secuencia_evento }}
@@ -66,9 +120,9 @@
         <label class="form-label">Ingreso por Montos</label>
         <input type="checkbox" class="form-check-input" name="ingreso_montos" id="ingreso_montos" style="margin-top: 0; margin-left: 150px;" onchange="swap()">
       </div>
+    </div>
+    <br>
   </div>
-  <br>
-</div>
 {% for item in categorias_niveladas %}
   
   {% if item.nivel == 0 %}
@@ -112,10 +166,20 @@
     {% endfor %}
   </div>
 {% endif %}
-    <div class="d-flex justify-content-end mt-5 gap-3">
-      <button type="submit" id="form-btn" name="ingresar" class="btn btn-primary px-4">INGRESAR</button>
-      <a href="{% url 'ver_calificaciones' %}"><button type="button" class="btn btn-secondary px-4">CANCELAR</button></a>
+        <div class="row mt-4 d-flex justify-content-between">
+          <div class="col-9">
+            <a href="{% url 'ver_calificaciones' %}"><button type="button" class="btn btn-secondary px-4">CANCELAR</button></a>
+          </div>
+          <div class="col-auto pe-5">
+            <button type="button" class="btn btn-secondary" onclick="goStep1()">Atrás</button>
+            <button type="submit" id="form-btn" name="ingresar" class="btn btn-primary">Ingresar</button>
+          </div>
+        </div>
+        
+      </div>
     </div>
+  </div>
+  
   </form>
   
 </div>

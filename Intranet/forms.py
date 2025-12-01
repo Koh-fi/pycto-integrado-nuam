@@ -1,6 +1,7 @@
 from django import forms
 from .models import *
 
+# LOGIN
 class LoginForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={
         'class': 'form-control',
@@ -11,16 +12,14 @@ class LoginForm(forms.Form):
         'placeholder': 'Contraseña'
     }))
 
-from django import forms
-from .models import calificacion_tributaria, califica, factor_calificacion
-
+# CALIFICACIONES
 class CalificacionTributariaForm(forms.ModelForm):
     class Meta:
         model = calificacion_tributaria
         fields = [
             'mercado', 'instrumento', 'descripcion', 'fecha_pago',
             'secuencia_evento', 'dividendo', 'valor_historico',
-            'anio'
+            'anio', 'isfut'
         ]
         widgets = {
             'mercado': forms.Select(attrs={
@@ -111,27 +110,62 @@ class CalificacionTributariaForm(forms.ModelForm):
                     'name': f'factor{f.factor_id}',
                 })
             )
-            
 
+# INSTRUMENTOS
+categorias_instrumentos = [
+  ("Efectivo y Depósitos","Efectivo y Depósitos"), 
+  ("Títulos de Deuda (Renta Fija)","Títulos de Deuda (Renta Fija)"), 
+  ("Acciones y Participaciones","Acciones y Participaciones"), 
+  ("Derivados Financieros","Derivados Financieros"), 
+  ("Préstamos","Préstamos"), 
+  ("Fondos","Fondos"), 
+  ("Otras Cuentas-Derechos","Otras Cuentas-Derechos")
+  ]
 
-categorias_instrumentos = [("Efectivo y Depósitos","Efectivo y Depósitos"), ("Títulos de Deuda (Renta Fija)","Títulos de Deuda (Renta Fija)"), ("Acciones y Participaciones","Acciones y Participaciones"), ("Derivados Financieros","Derivados Financieros"), ("Préstamos","Préstamos"), ("Fondos","Fondos"), ("Otras Cuentas-Derechos","Otras Cuentas-Derechos")]
+bolsas_instrumentos = [
+  ("BCS", "Bolsa de Comercio de Santiago (Chile)"),
+  ("BVC","Bolsa de Valores de Colombia"), 
+  ('BVL',"Bolsa de Valores de Lima (Perú)")
+  ]
 
+mercados_instrumentos = [
+  ("Acciones", "Acciones"),
+  ("Renta Fija","Renta Fija"),
+  ("Derivados","Derivados Financieros"),
+  ("Fondos de Inversión-Mutuos","Fondos de Inversión-Mutuos" ),
+  ("Instrumentos del Banco Central","Instrumentos del Banco Central" ),
+  ("Instrumentos del Estado-Tesorería","Instrumentos del Estado-Tesorería" ), 
+  ("Mercado Monetario","Mercado Monetario"), 
+  ("Mercado Internacional","Mercado Internacional"), 
+  ("Mercado Bancario-Créditos","Mercado Bancario-Créditos")]
 
-bolsas_instrumentos = [("BCS", "Bolsa de Comercio de Santiago (Chile)"),("BVC","Bolsa de Valores de Colombia"), ('BVL',"Bolsa de Valores de Lima (Perú)")]
-
-
-mercados_instrumentos = [("Acciones", "Acciones"),("Renta Fija","Renta Fija"),("Derivados","Derivados Financieros"),("Fondos de Inversión-Mutuos","Fondos de Inversión-Mutuos" ),("Instrumentos del Banco Central","Instrumentos del Banco Central" ),("Instrumentos del Estado-Tesorería","Instrumentos del Estado-Tesorería" ), ("Mercado Monetario","Mercado Monetario"), ("Mercado Internacional","Mercado Internacional"), ("Mercado Bancario-Créditos","Mercado Bancario-Créditos")]
-
-
-estados_instrumentos = [("Ingresado","Ingresado"),("Validado","Validado"),("Rechazado","Rechazado")]
-
+estados_instrumentos = [
+  ("Ingresado","Ingresado"),
+  ("Validado","Validado"),
+  ("Rechazado","Rechazado")
+  ]
 
 class formInstrumentoFinanciero(forms.Form):
-    codigo = forms.CharField(max_length=6, widget=forms.TextInput(attrs={'class':'form-control',
-    'placeholder': '### ###'}))
-    descripcion = forms.CharField(max_length=150, widget=forms.Textarea(attrs={'class':'form-control',
-    'placeholder': 'Descripción...'}))
-    categoria = forms.ChoiceField(choices=categorias_instrumentos, widget=forms.Select(attrs={'class':'form-select'}))
-    bolsa = forms.ChoiceField(choices=bolsas_instrumentos, widget=forms.Select(attrs={'class':'form-select'}))
-    mercado = forms.ChoiceField(choices=mercados_instrumentos, widget=forms.Select(attrs={'class':'form-select'}))
-    #estado = forms.ChoiceField(choices=estado_instrumentos, widget=forms.Select(attrs={'class':'form-select'}))
+  codigo = forms.CharField(max_length=6, widget=forms.TextInput(attrs={'class':'form-control',
+  'placeholder': '### ###'}))
+  descripcion = forms.CharField(max_length=150, widget=forms.Textarea(attrs={'class':'form-control',
+  'placeholder': 'Descripción...'}))
+  categoria = forms.ChoiceField(choices=categorias_instrumentos, widget=forms.Select(attrs={'class':'form-select'}))
+  bolsa = forms.ChoiceField(choices=bolsas_instrumentos, widget=forms.Select(attrs={'class':'form-select'}))
+  mercado = forms.ChoiceField(choices=mercados_instrumentos, widget=forms.Select(attrs={'class':'form-select'}))
+  #estado = forms.ChoiceField(choices=estado_instrumentos, widget=forms.Select(attrs={'class':'form-select'}))
+
+class formSolicitud(forms.ModelForm):
+  class Meta:
+    model = solicitud
+    fields = ['usuario', 'group', 'motivo']
+    widgets = {
+      'usuario': forms.Select(attrs={'class': 'form-control'}),
+      'group': forms.Select(attrs={'class': 'form-control'}),
+      'motivo': forms.Textarea(attrs={'class': 'form-control'}),
+    }
+    labels = {
+      'usuario': 'Usuario',
+      'group': 'Rol',
+      'motivo': 'Motivo'
+    }

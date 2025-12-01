@@ -5,7 +5,10 @@ from hashlib import sha512
 from django.contrib.auth.models import Group, Permission
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login, logout
-from .decorators import role_required
+from .decorators import role_required, with_contactos
+from csv import DictReader as csvr
+from io import StringIO as stringify
+from django.db.models import Q
 
 # Create your views here.
 
@@ -13,6 +16,30 @@ def index(request):
   return render(request, "Intranets/index.html")
 
 def VW_login(request):
+  motivo_qs = request.GET.get("required")
+    
+  if motivo_qs == "forbidden":
+      motivo = "Para acceder a esta página debe iniciar sesión."
+  elif motivo_qs == "no_permission":
+      motivo = "No tiene permisos suficientes para acceder a esta sección."
+  else:
+      motivo = None
+
+  if request.user.is_authenticated and not motivo:
+    if request.user.groups.filter(name="Administrador").exists() or request.user.is_superuser:
+      return redirect("admin")
+    elif request.user.groups.filter(name="Auditor").exists():
+      return redirect("auditor")
+    elif request.user.groups.filter(name="Corredor").exists():
+      return redirect("corredor")
+    else:
+      # Usuario logueado pero sin rol válido
+      # Podrías redirigir a una página neutral o mostrar error
+      return render(request, "Intranets/login.html", {
+        "form": LoginForm(),
+        "motivo": "Su usuario no tiene un rol válido asociado."
+      })
+
   error = None
   if request.method == "POST":
     form = LoginForm(request.POST)
@@ -20,14 +47,14 @@ def VW_login(request):
       email = form.cleaned_data["email"]
       password = form.cleaned_data["password"]
       
-      user = authenticate(username = email, password = password)
+      user = authenticate(request, email = email, password = password)
 
       if user is None:
         error = "Correo o Contraseña Incorrectos"
         return render(request, "Intranets/login.html", {"form": form, "error": error})
 
       login(request, user)
-      if user.groups.filter(name="Administrador").exists():
+      if user.groups.filter(name="Administrador").exists() or user.is_superuser:
         return redirect("admin")
       elif user.groups.filter(name="Auditor").exists():
         return redirect("auditor")
@@ -38,51 +65,26 @@ def VW_login(request):
   else:
     form = LoginForm()
 
-  return render(request, "Intranets/login.html", {"form": form, "error": error})
-
-def VW_login_required(request):
-  error = None
-  if request.method == "POST":
-    form = LoginForm(request.POST)
-    if form.is_valid():
-      email = form.cleaned_data["email"]
-      password = form.cleaned_data["password"]
-      
-      user = authenticate(username = email, password = password)
-
-      if user is None:
-        error = "Correo o Contraseña Incorrectos"
-        return render(request, "Validators/login_required.html", {"form": form, "error": error})
-
-      login(request, user)
-      if user.groups.filter(name="Administrador").exists():
-        return redirect("admin")
-      elif user.groups.filter(name="Auditor").exists():
-        return redirect("auditor")
-      elif user.groups.filter(name="Corredor").exists():
-        return redirect("corredor")
-      else:
-        error = "Rol Corrupto o No Válido"
-  else:
-    form = LoginForm()
-
-  return render(request, "Validators/login_required.html", {"form": form, "error": error})
+  return render(request, "Intranets/login.html", {"form": form, "error": error, "motivo": motivo})
 
 @login_required()
+@with_contactos
 def VW_intranet(request):
     redirecciones = {
         "Auditor": "auditor",
         "Corredor": "corredor",
         "Administrador": "admin",
+        "Bolsa": "bolsa"
     }
 
     grupo = request.user.groups.first()
     return redirect(redirecciones.get(grupo.name, "login"))
 
 @login_required()
+@with_contactos
 def VW_logout(request):
   logout(request)
-  return redirect('login_not_required')
+  return redirect('login')
 
 #def VW_login(request): # OG Function
 #  error = None
@@ -118,16 +120,19 @@ def VW_logout(request):
 #  return render(request, "Intranets/login.html", {"form": form, "error": error})
 
 @login_required()
+@with_contactos
 @role_required(["Administrador"])
 def admin(request):
   return render(request, "Intranets/admin.html")
 
 @login_required()
+@with_contactos
 @role_required(["Auditor"])
 def auditor(request):
   return render(request, "Intranets/auditor.html")
 
 @login_required()
+@with_contactos
 @role_required(["Corredor"])
 def corredor(request):
   return render(request, "Intranets/corredor.html")
@@ -163,7 +168,26 @@ def build_factores_sueltos(valores=None):
         for f in sueltos
     ]
 
+def calcular_factores(factores, factores_total):
+  total = sum(factores.get(fid, 0) for fid in factores_total)
+
+  result = {}
+
+  for factor in factor_calificacion.objects.all():
+    fid = factor.factor_id
+    valor = factores.get(fid, 0)
+
+    if total > 0:
+      valor_calc = round(valor / total, 6)
+
+      if fid in factores_total:
+        valor_calc = min(1, valor_calc)
+    
+    result[fid] = valor_calc
+  return result
+
 @login_required()
+@with_contactos
 @role_required(["Administrador", "Corredor"])
 def crear_calificacion(request):
 
@@ -176,10 +200,21 @@ def crear_calificacion(request):
       form = CalificacionTributariaForm(request.POST)
       if form.is_valid():
         calificacion = form.save(commit=False)
-        calificacion.rol = rol.objects.get(nombre_rol="Corredor")
-        calificacion.estado = "Pendiente"
+
+        if request.user.groups.filter(name="Corredor").exists():
+            calificacion.origen_calificacion = "CORREDOR"
+        elif request.user.groups.filter(name="Bolsa").exists():
+          calificacion.origen_calificacion = "BOLSA"
+        else: 
+          calificacion.origen_calificacion = "SISTEMA"
+        
+        calificacion.estado = "PENDIENTE"
+        
         # Guardar
         if "ingresar" in request.POST:
+          calificacion.isfut = form.cleaned_data["isfut"]
+          calificacion.factor_actualizacion = 0
+          calificacion.dividendo = form.cleaned_data["dividendo"]
           calificacion.save()
           for f in factor_calificacion.objects.all():
             valor = form.cleaned_data.get(f"factor" + str(f.factor_id))
@@ -192,36 +227,40 @@ def crear_calificacion(request):
           return redirect('ver_calificaciones')
         # Calcular
         elif "calcular" in request.POST:
-          
-          total = sum([
-            form.cleaned_data.get(f"factor{n}") or 0
-            for n in range(8, 20)
-          ])
+
+          valores_dict = {}
+          for f in factor_calificacion.objects.all():
+              raw = form.cleaned_data.get(f"factor" + str(f.factor_id), 0)
+              try:
+                  valores_dict[f.factor_id] = float(raw)
+              except:
+                  valores_dict[f.factor_id] = 0
+
+          total_ids = list(range(8, 20))
+
+          valores_calculados = calcular_factores(valores_dict, total_ids)
 
           updated = form.data.copy()
 
-          for n in range(8, 39):
-            valor = form.cleaned_data.get(f"factor{n}")
-            updated[f"factor{n}"] = min(1,round((valor or 0) / total, 6)) if total else 0
-          updated["ingreso_montos"] = False
+          for fid, valor in valores_calculados.items():
+              updated.setlist(f"factor{fid}", [str(valor)])
 
-          valores = {n: updated[f"factor{n}"] for n in range(8,39)}
+          updated.setlist("ingreso_montos", ["False"])
 
-          for f in factores_sueltos:
-            valores[f.factor_id] = updated.get(f"factor{f.factor_id}", 0)
+          factores_sueltos_data = [
+              {"obj": factor, "valor": valores_calculados[factor.factor_id]}
+              for factor in factores_sueltos
+          ]
 
-          factores_sueltos_data = [{
-            "obj": factor,
-            "valor": valores.get(factor.factor_id, 0)
-          } for factor in factores_sueltos]
+          categorias_niveladas = build_categorias_niveladas(valores_calculados)
 
-          categorias_niveladas = build_categorias_niveladas(valores=valores)
           form = CalificacionTributariaForm(updated)
-          return render(request, 'Creates/calificaciones.html', {
-            "form_calificacion": form,
-            "alert": "Factores calculados correctamente.",
-            "categorias_niveladas": categorias_niveladas,
-            "factores_sueltos": factores_sueltos_data,
+
+          return render(request, "Creates/calificaciones.html", {
+              "form_calificacion": form,
+              "alert": "Factores calculados correctamente.",
+              "categorias_niveladas": categorias_niveladas,
+              "factores_sueltos": factores_sueltos_data,
           })
 
     # GET normal
@@ -234,6 +273,7 @@ def crear_calificacion(request):
     })
 
 @login_required()
+@with_contactos
 @role_required(["Administrador", "Corredor"])
 def ver_calificaciones(request):
     calificaciones = calificacion_tributaria.objects.prefetch_related('califica_set__factor')
@@ -254,6 +294,237 @@ def ver_calificaciones(request):
     })
 
 @login_required()
+@with_contactos
+@role_required(["Administrador", "Corredor", "Bolsa"])
+def carga_por_monto(request):
+    factores = factor_calificacion.objects.all().order_by("factor_id")
+
+    # GET → mostrar tabla con datos de sesión (si existen)
+    if request.method == "GET":
+        datos = request.session.get("carga_monto", None)
+        return render(request, "Creates/Carga/por_monto.html", {
+            "factores": factores,
+            "datos": datos
+        })
+
+    # POST → SUBIR ARCHIVO
+    print("POST keys:", list(request.POST.keys()), f'{"calcular" in request.POST = }', f'{"grabar" in request.POST = }', sep="\n")
+    if "archivo" in request.FILES:
+        archivo = request.FILES["archivo"]
+        contenido = archivo.read().decode("utf-8")
+        lector = csvr(contenido.splitlines())
+
+        filas = []
+        for row in lector:
+            # convertir factores automáticamente según la BD
+            factores_row = []
+            for f in factores:
+                val = row.get(f"F{f.factor_id}", "0")
+                try:
+                    factores_row.append(float(val))
+                except:
+                    factores_row.append(0.0)
+
+            filas.append({
+                "anio": row.get("Ejercicio", ""),
+                "mercado": row.get("Mercado", ""),
+                "instrumento": row.get("Instrumento", ""),
+                "fecha_pago": row.get("Fecha_Pago", ""),
+                "descripcion": row.get("Descripcion", ""),
+                "secuencia_evento": row.get("Secuencia_Evento", ""),
+                "dividendo": row.get("Dividendo", ""),
+                "valor_historico": row.get("Valor_Historico", ""),
+                "factores": factores_row
+            })
+
+        # guardar en sesión
+        request.session["carga_monto"] = filas
+        request.session.modified = True
+
+    # POST → CALCULAR
+    if "calcular" in request.POST:
+        filas = request.session.get("carga_monto", [])
+        factores_total = list(range(8, 20))
+
+        for fila in filas:
+            valores_dict = {
+                factores[i].factor_id: fila["factores"][i]
+                for i in range(len(factores))
+            }
+
+            resultado = calcular_factores(valores_dict, factores_total)
+
+            fila["factores"] = [
+                resultado[f.factor_id] for f in factores
+            ]
+        request.session["carga_monto"] = filas
+        
+        return render(request, "Creates/Carga/por_monto.html", {
+          "factores": factores,
+          "datos": filas,
+        })
+
+
+    # POST → GRABAR
+    if "grabar" in request.POST:
+      filas = request.session.get("carga_monto", [])
+      
+      user_group = None
+      if request.user.groups.exists():
+          user_group = request.user.groups.first().name.upper()
+      
+      origen = "SISTEMA"
+      if user_group == "CORREDOR":
+          origen = "CORREDOR"
+      elif user_group == "BOLSA":
+          origen = "BOLSA"
+      
+      for fila in filas:
+          inst = instrumento_financiero.objects.filter(
+              codigo__iexact=fila["instrumento"]
+          ).first()
+          if not inst:
+              continue
+                
+          # 1) Buscar existente por secuencia
+          cal = calificacion_tributaria.objects.filter(
+              secuencia_evento=fila["secuencia_evento"]
+          ).first()
+      
+          if cal:
+              # UPDATE
+              cal.anio = fila["anio"]
+              cal.mercado = fila["mercado"]
+              cal.instrumento = inst
+              cal.fecha_pago = fila["fecha_pago"]
+              cal.descripcion = fila["descripcion"]
+              cal.dividendo = fila["dividendo"]
+              cal.valor_historico = fila["valor_historico"]
+              cal.origen_calificacion = origen
+              cal.save()
+          else:
+              # CREATE
+              cal = calificacion_tributaria.objects.create(
+                  anio=fila["anio"],
+                  mercado=fila["mercado"],
+                  instrumento=inst,
+                  fecha_pago=fila["fecha_pago"],
+                  descripcion=fila["descripcion"],
+                  secuencia_evento=fila["secuencia_evento"],
+                  dividendo=fila["dividendo"],
+                  valor_historico=fila["valor_historico"],
+                  estado="PENDIENTE",
+                  origen_calificacion=origen,
+                  isfut=False
+              )
+      
+          # FACTORES
+          for i, f in enumerate(factores):
+              califica.objects.update_or_create(
+                  calificacion=cal,
+                  factor=f,
+                  defaults={"valor": fila["factores"][i]}
+              )
+
+    if "carga_monto" in request.session:
+        del request.session["carga_monto"]
+
+    return redirect("ver_calificaciones")
+
+
+@login_required()
+@with_contactos
+@role_required(["Administrador", "Corredor", "Bolsa"])
+def carga_por_factor(request):
+    factores = factor_calificacion.objects.all().order_by("factor_id")
+
+    # GET → muestra datos si quedaron guardados en sesión
+    if request.method == "GET":
+        datos = request.session.get("carga_factor", None)
+        return render(request, "Creates/Carga/por_factor.html", {
+            "factores": factores,
+            "datos": datos,
+        })
+
+    # POST → subir archivo
+    if "archivo" in request.FILES:
+        archivo = request.FILES["archivo"]
+        contenido = archivo.read().decode("utf-8")
+        lector = csvr(contenido.splitlines())
+
+        filas = []
+        for row in lector:
+            factores_row = []
+            for f in factores:
+                val = row.get(f"F{f.factor_id}", "0")
+                try:
+                    factores_row.append(float(val))
+                except:
+                    factores_row.append(0.0)
+
+            filas.append({
+                "anio": row.get("Ejercicio", ""),
+                "mercado": row.get("Mercado", ""),
+                "instrumento": row.get("Instrumento", ""),
+                "fecha_pago": row.get("Fecha_Pago", ""),
+                "descripcion": row.get("Descripcion", ""),
+                "secuencia_evento": row.get("Secuencia_Evento", ""),
+                "dividendo": row.get("Dividendo", ""),
+                "valor_historico": row.get("Valor_Historico", ""),
+                "factores": factores_row,
+            })
+
+        request.session["carga_factor"] = filas
+        request.session.modified = True
+
+        return render(request, "Creates/Carga/por_factor.html", {
+            "factores": factores,
+            "datos": filas,
+        })
+
+    # POST → grabar directo en BD
+    if "grabar" in request.POST:
+        filas = request.session.get("carga_factor", [])
+
+        for fila in filas:
+            inst = instrumento_financiero.objects.filter(
+                codigo__iexact=fila["instrumento"]
+            ).first()
+            if not inst:
+                print("Instrumento inexistente:", fila["instrumento"])
+                continue
+
+            cal, created = calificacion_tributaria.objects.update_or_create(
+                secuencia_evento=fila["secuencia_evento"],
+                defaults=dict(
+                    anio=fila["anio"],
+                    mercado=fila["mercado"],
+                    instrumento=inst,
+                    fecha_pago=fila["fecha_pago"],
+                    descripcion=fila["descripcion"],
+                    dividendo=fila["dividendo"],
+                    valor_historico=fila["valor_historico"],
+                    estado="PENDIENTE",
+                    origen_calificacion="ARCHIVO",
+                    isfut=False
+                )
+            )
+
+            # actualizar factores
+            for i, f in enumerate(factores):
+                califica.objects.update_or_create(
+                    calificacion=cal,
+                    factor=f,
+                    defaults={"valor": fila["factores"][i]}
+                )
+
+        # limpiar sesión
+        request.session.pop("carga_factor", None)
+
+        return redirect("ver_calificaciones")
+
+@login_required()
+@with_contactos
 @role_required(["Administrador", "Corredor"])
 def editar_calificacion(request, cal_id):
     calificacion = calificacion_tributaria.objects.get(pk=cal_id)
@@ -291,13 +562,15 @@ def editar_calificacion(request, cal_id):
     })
 
 @login_required()
+@with_contactos
 @role_required(["Administrador", "Corredor"])
 def eliminar_calificacion(request, cal_id):
-  calificacion = calificacion_tributaria.objects.get(calificacion_id = cal_id)
+  calificacion = calificacion_tributaria.objects.get(pk = cal_id)
   calificacion.delete()
   return redirect('ver_calificaciones')
 
 @login_required()
+@with_contactos
 @role_required(["Administrador", "Auditor"])
 def validar_calificacion(request):
     if request.method == 'GET':
@@ -325,35 +598,13 @@ def validar_calificacion(request):
         return render(request, 'Validators/calificaciones.html', {'msg': f'Calificación actualizada correctamente a: {nuevo_estado}.'})
 
 @login_required()
+@with_contactos
 @role_required(["Administrador", "Corredor"])
 def cargar_archivo(request):
     return render(request, 'Readers/calificaciones.html')
 
 @login_required()
-@role_required(["Administrador", "Auditor"])
-def gestion_solicitudes(request):
-    solicitud_id = request.GET.get('solicitud_id')
-    usuario = request.GET.get('usuario')
-    rol = request.GET.get('rol')
-    motivo = request.GET.get('motivo')
-    fecha = request.GET.get('fecha')
-
-    solicitudes = solicitud.objects.all()
-
-    if solicitud_id:
-        solicitudes = solicitudes.filter(solicitud_idicontains=solicitud_id)
-    if usuario:
-        solicitudes = solicitudes.filter(usuarioicontains=usuario)
-    if rol:
-        solicitudes = solicitudes.filter(rolicontains=rol)
-    if motivo:
-        solicitudes = solicitudes.filter(motivoicontains=motivo)
-    if fecha:
-        solicitudes = solicitudes.filter(fechaicontains=fecha)
-
-    return render(request, 'Readers/solicitudes.html', {'solicitudes': solicitudes})
-
-@login_required()
+@with_contactos
 @role_required(["Administrador", "Auditor"])
 def ver_instrumentos(request):
     instrumentos = instrumento_financiero.objects.all()
@@ -393,6 +644,7 @@ def ver_instrumentos(request):
     return render(request, 'Readers/instrumentos.html', {'form': form,'instrumentos':instrumentos})
 
 @login_required()
+@with_contactos
 @role_required(["Administrador", "Auditor"])
 def eliminar_instrumento(request, instrumento_id):
     instrumento = instrumento_financiero.objects.get(instrumento_id = instrumento_id)
@@ -400,6 +652,7 @@ def eliminar_instrumento(request, instrumento_id):
     return redirect('ver_instrumentos')
 
 @login_required()
+@with_contactos
 @role_required(["Administrador", "Auditor", "Corredor"])
 def agregar_instrumento(request):
   #form = formInstrumentoFinanciero()
@@ -423,6 +676,7 @@ def agregar_instrumento(request):
   return render(request, 'Creates/instrumentos.html', data)
   
 @login_required()
+@with_contactos
 @role_required(["Administrador", "Auditor"])
 def editar_instrumento(request, instrumento_id):
     instrumento = instrumento_financiero.objects.get(instrumento_id = instrumento_id)
@@ -452,6 +706,7 @@ def editar_instrumento(request, instrumento_id):
     return render(request, 'Creates/instrumentos.html', {'form': form,'instrumento':instrumento})
 
 @login_required()
+@with_contactos
 @role_required(["Administrador"])
 def ver_usuarios(request):
   usuarios = User.objects.exclude(is_superuser=True)
@@ -472,6 +727,7 @@ def ver_usuarios(request):
   return render(request, 'Readers/usuarios.html', {'usuarios': usuarios})
 
 @login_required()
+@with_contactos
 @role_required(["Administrador"])
 def crear_usuario(request):
   alert = ''
@@ -495,6 +751,7 @@ def crear_usuario(request):
   return render(request, 'Creates/usuarios.html', {'alert': alert})
   
 @login_required()
+@with_contactos
 @role_required(["Administrador"])
 def modificar_usuario(request, user_id):
   alert = ''
@@ -516,7 +773,7 @@ def modificar_usuario(request, user_id):
     apellido = request.POST.get('apellido')
     correo = request.POST.get('correo')
     rol = request.POST.get('rol')
-    contraseña = request.POST.get('contraseña')
+    contraseña = request.POST.get('password')
     
     if User.objects.filter(email=correo).exclude(id=user_id).exists():
       alert = "El correo ya está en uso."
@@ -545,6 +802,7 @@ def modificar_usuario(request, user_id):
   return render(request, 'Creates/usuarios.html', {'usuario': usuario, 'initial': initial_data, 'alert': alert})
 
 @login_required()
+@with_contactos
 @role_required(["Administrador"])
 def eliminar_usuario(request, user_id):
   usuario = User.objects.filter(id=user_id).first()
@@ -554,3 +812,102 @@ def eliminar_usuario(request, user_id):
   usuario.delete()
   msg = f"Usuario {correo} eliminado correctamente."
   return redirect('administracion_usuarios')
+
+@login_required()
+@with_contactos
+@role_required(["Administrador", "Auditor"])
+def gestion_solicitudes(request):
+    contactos = lista_contactos(request)
+
+    solicitud_id = request.GET.get('solicitud_id')
+    usuario = request.GET.get('usuario')
+    rol = request.GET.get('rol')
+    motivo = request.GET.get('motivo')
+    fecha = request.GET.get('fecha')
+
+    solicitudes = solicitud.objects.all()
+
+    if solicitud_id:
+        solicitudes = solicitudes.filter(solicitud_id__icontains=solicitud_id)
+
+    if usuario:
+        solicitudes = solicitudes.filter(
+            Q(usuario__first_name__icontains=usuario) |
+            Q(usuario__last_name__icontains=usuario) |
+            Q(usuario__email__icontains=usuario)
+        )
+
+    if rol:
+        solicitudes = solicitudes.filter(group__name__icontains=rol)
+
+    if motivo:
+        solicitudes = solicitudes.filter(motivo__icontains=motivo)
+
+    if fecha:
+        solicitudes = solicitudes.filter(fecha__icontains=fecha)
+
+    return render(request, 'Readers/solicitudes.html', {
+        'solicitudes': solicitudes,
+        'contactos': contactos
+    })
+
+@login_required()
+@with_contactos
+@role_required(["Corredor", "Auditor", "Administrador"])
+def agregar_solicitud(request):
+  if request.method == "POST":
+    form = formSolicitud(request.POST)
+
+    if form.is_valid():
+      form.save()
+      return redirect("gestion_solicitudes")
+
+    return render(request, "Creates/solicitudes.html", {"form": form})
+
+
+  form = formSolicitud()
+  return render(request, "Creates/solicitudes.html", {"form": form})
+
+
+@login_required()
+@with_contactos
+@role_required(["Administrador", "Auditor", "Corredor"])
+def editar_solicitud(request, solicitud_id):
+  try:
+    solic = solicitud.objects.get(solicitud_id=solicitud_id)
+  except:
+    return redirect("gestion_solicitudes")
+
+  if request.method == "POST":
+    form = formSolicitud(request.POST, instance=solic)
+    if form.is_valid():
+      form.save()
+      return redirect("gestion_solicitudes")
+  else:
+    form = formSolicitud(instance=solic)
+
+  return render(request, "Creates/solicitudes.html", {"form": form, "solicitud": solic})
+
+@login_required()
+@with_contactos
+@role_required(["Administrador", "Auditor", "Corredor"])
+def eliminar_solicitud(request, solicitud_id):
+  try:
+    solic = solicitud.objects.get(solicitud_id=solicitud_id)
+    solic.delete()
+  except:
+    pass
+
+  return redirect("gestion_solicitudes")
+
+def lista_contactos(request):
+    try:
+        user_actual = User.objects.get(email=request.user.email)
+        print(user_actual)
+    except User.DoesNotExist:
+        return []
+
+    rol_actual = user_actual.groups.first()  # o user_actual.rol según lo que tengas implementado
+    contactos = User.objects.filter(groups=rol_actual).exclude(id=user_actual.id)
+
+    return contactos

@@ -223,3 +223,48 @@ body, html {
 .th-tooltip {
   --bs-tooltip-font-size: 0.1rem;
 }
+
+.wizard-container {
+  max-height: 575px;
+}
+
+#wizard .carousel-item {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 500px;
+}
+
+
+/* --- Ajuste base del fade --- */
+#wizard.carousel-fade .carousel-item {
+  opacity: 0;
+  transition: opacity .6s ease-in-out;
+  z-index: 0;
+}
+
+/* --- Slide activo (fully visible) --- */
+#wizard.carousel-fade .carousel-item.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+/* --- Slide que entra (fade in) --- */
+#wizard.carousel-fade .carousel-item-next.carousel-item-start,
+#wizard.carousel-fade .carousel-item-prev.carousel-item-end {
+  opacity: 1;
+  z-index: 2;
+}
+
+/* --- Slide que sale (fade out) --- */
+#wizard.carousel-fade .carousel-item.active.carousel-item-start,
+#wizard.carousel-fade .carousel-item.active.carousel-item-end {
+  opacity: 0;
+  z-index: 0;
+}
+
+/* Deshabilita cualquier movimiento */
+#wizard.carousel-fade .carousel-item-next,
+#wizard.carousel-fade .carousel-item-prev,
+#wizard.carousel-fade .carousel-item.active {
+  transform: none !important;
+}

@@ -22,6 +22,7 @@
 
   <header>
     {% block navbar %}
+
     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
       <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasRightLabel">Menú</h5>
@@ -35,12 +36,25 @@
         <div class="profile-info">
             <p class="profile-label">{{ user.first_name}} {{user.last_name}}</p>
             <p class="profile-email">{{ user.email }}</p>
+
             <a href="{% url 'logout' %}" class="btn btn-sm btn-primary mt-3">Cerrar sesión</a>
         </div>
     </div>
     </div>
       </div>
     </div>
+
+    <!--    modificación  se agrega contenido al offcanvas -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="chatCanvas" aria-labelledby="chatCanvasLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="chatCanvasLabel">Conversaciones</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+      </div>
+      <div class="offcanvas-body p-0">
+        {% include "chat.html" %}
+      </div>
+    </div>
+
 
     <nav class="navbar bg-nuam-nav border-bottom">
       <div class="container-fluid">
@@ -60,7 +74,14 @@
                 {% endblock navbar_title %}
             </div>
         </a>
-        <div class="justify-content-end">
+        <!--modificación : d-flex align-items-center  y el primer a -->
+        <div class="justify-content-end d-flex align-items-center">
+            <a href="#" data-bs-toggle="offcanvas" data-bs-target="#chatCanvas" aria-controls="chatCanvas">
+                <div class="profile-icon1 me-3">
+                    <i class="bi bi-chat-fill"></i>
+                </div>
+            </a>
+
             <a href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"><div class="profile-icon1">
                 <i class="bi bi-person-circle"></i>
             </div></a>
