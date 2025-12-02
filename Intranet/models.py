@@ -165,3 +165,31 @@ class mensaje_privado(models.Model):
 
     def __str__(self):
         return self.mensaje
+
+###### AUDITORÍA
+
+# root/app/models.py
+
+from django.db import models
+
+class Auditoria(models.Model):
+    ACCION_CHOICES = [
+        ("CREAR", "Creación"),
+        ("EDITAR", "Edición"),
+        ("BORRAR", "Eliminación"),
+        ("VALIDAR", "Validación"),
+        ("RECHAZAR", "Rechazo"),
+    ]
+
+    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    tabla = models.CharField(max_length=100)
+    registro_id = models.CharField(max_length=100)
+    accion = models.CharField(max_length=20, choices=ACCION_CHOICES)
+    descripcion = models.TextField(blank=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    valores_antes = models.JSONField(null=True, blank=True)
+    valores_despues = models.JSONField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.fecha} - {self.usuario} - {self.accion}"

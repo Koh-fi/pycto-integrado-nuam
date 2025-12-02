@@ -9,33 +9,27 @@
     <div class="profile-column">
             <i class="bi bi-person-circle profile-icon2"></i>
             <div class="profile-info">
-                <p class="profile-label">Auditor</p>
-                <p class="profile-email">auditor@nuam.com</p>
+                <p class="profile-label">{{ user.first_name}} {{user.last_name}}</p>
+                <p class="profile-email">{{ user.email }}</p>
             </div>
         </div>
 
     <div class="auditor-column">
-        <button class="admin-btn">
+        <a href="{% url 'validacion_calificaciones' %}"><button class="admin-btn">
             <i class="bi bi-check2-circle"></i> Validación de calificaciones tributarias
-        </button>
+        </button></a>
 
         <button class="admin-btn">
             <i class="bi bi-check2-square"></i> Validación de instrumentos financieros
         </button>
 
-        <button class="admin-btn">
-            <i class="bi bi-clock-history"></i> Acceso a historial
-        </button>
+        <a href="{% url 'auditoria' %}"><button class="admin-btn">
+            <i class="bi bi-journal-text"></i> Registro de auditoria
+        </button></a>
+
     </div>
 
     <div class="auditor-column">
-        <button class="admin-btn">
-            <i class="bi bi-journal-text"></i> Registro de auditoria
-        </button>
-
-        <button class="admin-btn">
-            <i class="bi bi-arrow-counterclockwise"></i> Solicitud de restauraciones de datos
-        </button>
 
         <div class="dropdown">
             <button class="admin-btn dropdown-toggle bi bi-file-earmark-bar-graph-fill py-3 px-4 w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">

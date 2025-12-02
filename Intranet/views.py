@@ -2,13 +2,13 @@ from django.shortcuts import render, redirect
 from .models import *
 from .forms import *
 from hashlib import sha512
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login, logout
 from .decorators import role_required, with_contactos
 from csv import DictReader as csvr
-from io import StringIO as stringify
 from django.db.models import Q
+from .utils import *
 
 # Create your views here.
 
@@ -216,6 +216,7 @@ def crear_calificacion(request):
           calificacion.factor_actualizacion = 0
           calificacion.dividendo = form.cleaned_data["dividendo"]
           calificacion.save()
+          registrar_auditoria(request.user, instancia_despues=calificacion, accion="CREAR", descripcion="Ingreso de Calificación Tributaria")
           for f in factor_calificacion.objects.all():
             valor = form.cleaned_data.get(f"factor" + str(f.factor_id))
             if valor not in [None, ""]:
@@ -299,7 +300,7 @@ def ver_calificaciones(request):
 def carga_por_monto(request):
     factores = factor_calificacion.objects.all().order_by("factor_id")
 
-    # GET → mostrar tabla con datos de sesión (si existen)
+    
     if request.method == "GET":
         datos = request.session.get("carga_monto", None)
         return render(request, "Creates/Carga/por_monto.html", {
@@ -307,8 +308,6 @@ def carga_por_monto(request):
             "datos": datos
         })
 
-    # POST → SUBIR ARCHIVO
-    print("POST keys:", list(request.POST.keys()), f'{"calcular" in request.POST = }', f'{"grabar" in request.POST = }', sep="\n")
     if "archivo" in request.FILES:
         archivo = request.FILES["archivo"]
         contenido = archivo.read().decode("utf-8")
@@ -357,6 +356,7 @@ def carga_por_monto(request):
             fila["factores"] = [
                 resultado[f.factor_id] for f in factores
             ]
+
         request.session["carga_monto"] = filas
         
         return render(request, "Creates/Carga/por_monto.html", {
@@ -368,6 +368,129 @@ def carga_por_monto(request):
     # POST → GRABAR
     if "grabar" in request.POST:
       filas = request.session.get("carga_monto", [])
+      factores_total = list(range(8, 20))
+      for fila in filas:
+          valores_dict = {
+              factores[i].factor_id: fila["factores"][i]
+              for i in range(len(factores))
+          }
+          resultado = calcular_factores(valores_dict, factores_total)
+          fila["factores"] = [
+              resultado[f.factor_id] for f in factores
+          ]
+      
+      user_group = None
+      if request.user.groups.exists():
+          user_group = request.user.groups.first().name.upper()
+      
+      origen = "SISTEMA"
+      if user_group == "CORREDOR":
+          origen = "CORREDOR"
+      elif user_group == "BOLSA":
+          origen = "BOLSA"
+      
+      for fila in filas:
+          inst = instrumento_financiero.objects.filter(
+              codigo__iexact=fila["instrumento"]
+          ).first()
+          if not inst:
+              continue
+                
+          # 1) Buscar existente por secuencia
+          cal = calificacion_tributaria.objects.filter(
+              secuencia_evento=fila["secuencia_evento"]
+          ).first()
+      
+          if cal:
+              # UPDATE
+              cal.anio = fila["anio"]
+              cal.mercado = fila["mercado"]
+              cal.instrumento = inst
+              cal.fecha_pago = fila["fecha_pago"]
+              cal.descripcion = fila["descripcion"]
+              cal.dividendo = fila["dividendo"]
+              cal.valor_historico = fila["valor_historico"]
+              cal.origen_calificacion = origen
+              cal.save()
+          else:
+              # CREATE
+              cal = calificacion_tributaria.objects.create(
+                  anio=fila["anio"],
+                  mercado=fila["mercado"],
+                  instrumento=inst,
+                  fecha_pago=fila["fecha_pago"],
+                  descripcion=fila["descripcion"],
+                  secuencia_evento=fila["secuencia_evento"],
+                  dividendo=fila["dividendo"],
+                  valor_historico=fila["valor_historico"],
+                  estado="PENDIENTE",
+                  origen_calificacion=origen,
+                  isfut=False
+              )
+      
+          # FACTORES
+          print(fila["factores"][8])
+          for i, f in enumerate(factores):
+              califica.objects.update_or_create(
+                  calificacion=cal,
+                  factor=f,
+                  defaults={"valor": fila["factores"][i]}
+              )
+
+    if "carga_monto" in request.session:
+        del request.session["carga_monto"]
+
+    return redirect("ver_calificaciones")
+
+
+@login_required()
+@with_contactos
+@role_required(["Administrador", "Corredor", "Bolsa"])
+def carga_por_factor(request):
+    factores = factor_calificacion.objects.all().order_by("factor_id")
+
+    
+    if request.method == "GET":
+        datos = request.session.get("carga_factor", None)
+        return render(request, "Creates/Carga/por_factor.html", {
+            "factores": factores,
+            "datos": datos
+        })
+    if "archivo" in request.FILES:
+        archivo = request.FILES["archivo"]
+        contenido = archivo.read().decode("utf-8")
+        lector = csvr(contenido.splitlines())
+
+        filas = []
+        for row in lector:
+            # convertir factores automáticamente según la BD
+            factores_row = []
+            for f in factores:
+                val = row.get(f"F{f.factor_id}", "0")
+                try:
+                    factores_row.append(float(val))
+                except:
+                    factores_row.append(0.0)
+
+            filas.append({
+                "anio": row.get("Ejercicio", ""),
+                "mercado": row.get("Mercado", ""),
+                "instrumento": row.get("Instrumento", ""),
+                "fecha_pago": row.get("Fecha_Pago", ""),
+                "descripcion": row.get("Descripcion", ""),
+                "secuencia_evento": row.get("Secuencia_Evento", ""),
+                "dividendo": row.get("Dividendo", ""),
+                "valor_historico": row.get("Valor_Historico", ""),
+                "factores": factores_row
+            })
+
+        # guardar en sesión
+        request.session["carga_factor"] = filas
+        request.session.modified = True
+
+    # POST → GRABAR
+    if "grabar" in request.POST:
+      filas = request.session.get("carga_factor", [])
       
       user_group = None
       if request.user.groups.exists():
@@ -427,101 +550,9 @@ def carga_por_monto(request):
               )
 
     if "carga_monto" in request.session:
-        del request.session["carga_monto"]
+        del request.session["carga_factor"]
 
     return redirect("ver_calificaciones")
-
-
-@login_required()
-@with_contactos
-@role_required(["Administrador", "Corredor", "Bolsa"])
-def carga_por_factor(request):
-    factores = factor_calificacion.objects.all().order_by("factor_id")
-
-    # GET → muestra datos si quedaron guardados en sesión
-    if request.method == "GET":
-        datos = request.session.get("carga_factor", None)
-        return render(request, "Creates/Carga/por_factor.html", {
-            "factores": factores,
-            "datos": datos,
-        })
-
-    # POST → subir archivo
-    if "archivo" in request.FILES:
-        archivo = request.FILES["archivo"]
-        contenido = archivo.read().decode("utf-8")
-        lector = csvr(contenido.splitlines())
-
-        filas = []
-        for row in lector:
-            factores_row = []
-            for f in factores:
-                val = row.get(f"F{f.factor_id}", "0")
-                try:
-                    factores_row.append(float(val))
-                except:
-                    factores_row.append(0.0)
-
-            filas.append({
-                "anio": row.get("Ejercicio", ""),
-                "mercado": row.get("Mercado", ""),
-                "instrumento": row.get("Instrumento", ""),
-                "fecha_pago": row.get("Fecha_Pago", ""),
-                "descripcion": row.get("Descripcion", ""),
-                "secuencia_evento": row.get("Secuencia_Evento", ""),
-                "dividendo": row.get("Dividendo", ""),
-                "valor_historico": row.get("Valor_Historico", ""),
-                "factores": factores_row,
-            })
-
-        request.session["carga_factor"] = filas
-        request.session.modified = True
-
-        return render(request, "Creates/Carga/por_factor.html", {
-            "factores": factores,
-            "datos": filas,
-        })
-
-    # POST → grabar directo en BD
-    if "grabar" in request.POST:
-        filas = request.session.get("carga_factor", [])
-
-        for fila in filas:
-            inst = instrumento_financiero.objects.filter(
-                codigo__iexact=fila["instrumento"]
-            ).first()
-            if not inst:
-                print("Instrumento inexistente:", fila["instrumento"])
-                continue
-
-            cal, created = calificacion_tributaria.objects.update_or_create(
-                secuencia_evento=fila["secuencia_evento"],
-                defaults=dict(
-                    anio=fila["anio"],
-                    mercado=fila["mercado"],
-                    instrumento=inst,
-                    fecha_pago=fila["fecha_pago"],
-                    descripcion=fila["descripcion"],
-                    dividendo=fila["dividendo"],
-                    valor_historico=fila["valor_historico"],
-                    estado="PENDIENTE",
-                    origen_calificacion="ARCHIVO",
-                    isfut=False
-                )
-            )
-
-            # actualizar factores
-            for i, f in enumerate(factores):
-                califica.objects.update_or_create(
-                    calificacion=cal,
-                    factor=f,
-                    defaults={"valor": fila["factores"][i]}
-                )
-
-        # limpiar sesión
-        request.session.pop("carga_factor", None)
-
-        return redirect("ver_calificaciones")
 
 @login_required()
 @with_contactos
@@ -538,14 +569,40 @@ def editar_calificacion(request, cal_id):
     if request.method == "POST":
         form = CalificacionTributariaForm(request.POST, instance=calificacion)
         if form.is_valid():
+            calificacion_antes = calificacion
             calificacion = form.save()
+            calificacion_despues = calificacion
+            registrar_auditoria(request.user, instancia_despues=calificacion, accion="EDITAR", descripcion="Modificación de Calificación Tributaria")
             for f in factor_calificacion.objects.all():
                 valor = form.cleaned_data.get(f"factor" + str(f.factor_id)) or 0
-                califica.objects.update_or_create(
+                try:
+                    existed = califica.objects.get(calificacion=cal, factor=f)
+                    antes = model_to_dict(existed)
+                except califica.DoesNotExist:
+                    existed = None
+                    antes = None
+                obj, created = califica.objects.update_or_create(
                     calificacion=calificacion,
                     factor=f,
                     defaults={"valor": valor},
                 )
+                if created:
+                    registrar_auditoria(
+                        usuario=request.user,
+                        instancia_antes=None,
+                        instancia_despues=obj,
+                        accion="CREAR",
+                        descripcion=f"Califica creada para factor {f.factor_id}"
+                    )
+                else:
+                    despues = model_to_dict(obj)
+                    registrar_auditoria(
+                        usuario=request.user,
+                        instancia_antes=antes,
+                        instancia_despues=despues,
+                        accion="EDITAR",
+                        descripcion=f"Actualización del factor {f.factor_id}"
+                    )
             return redirect("ver_calificaciones")
     else:
         # Inicializamos valores en el form
@@ -566,6 +623,7 @@ def editar_calificacion(request, cal_id):
 @role_required(["Administrador", "Corredor"])
 def eliminar_calificacion(request, cal_id):
   calificacion = calificacion_tributaria.objects.get(pk = cal_id)
+  registrar_auditoria(request.user, instancia_antes=calificacion, accion="ELIMINAR", descripcion="Eliminación de Calificación Tributaria")
   calificacion.delete()
   return redirect('ver_calificaciones')
 
@@ -648,6 +706,7 @@ def ver_instrumentos(request):
 @role_required(["Administrador", "Auditor"])
 def eliminar_instrumento(request, instrumento_id):
     instrumento = instrumento_financiero.objects.get(instrumento_id = instrumento_id)
+    registrar_auditoria(request.user, instancia_antes=instrumento, accion="ELIMINAR", descripcion="Eliminación de Instrumento Financiero")
     instrumento.delete()
     return redirect('ver_instrumentos')
 
@@ -668,6 +727,7 @@ def agregar_instrumento(request):
         mercado=form.cleaned_data['mercado'],
         estado='Ingresado'
       )
+      registrar_auditoria(request.user, instancia_despues=inst, accion="CREAR", descripcion="Ingreso de Instrumento Financiero")
       #inst.save()
       return redirect('ver_instrumentos')
   else:
@@ -685,6 +745,7 @@ def editar_instrumento(request, instrumento_id):
         form = formInstrumentoFinanciero(request.POST)
         if form.is_valid():
         # modelsform tiene variables distintas, instance no pescaria, ya que estamos usando el form
+          antes = instrumento
           instrumento.codigo      = form.cleaned_data['codigo']
           instrumento.descripcion = form.cleaned_data['descripcion']
           instrumento.categoria   = form.cleaned_data['categoria']
@@ -692,6 +753,8 @@ def editar_instrumento(request, instrumento_id):
           instrumento.mercado     = form.cleaned_data['mercado']
           instrumento.estado      = 'Ingresado'
           instrumento.save()
+          despues = instrumento
+          registrar_auditoria(request.user, instancia_antes=antes ,instancia_despues=despues, accion="EDITAR", descripcion="Modificacion de Instrumento Financiero")
           return redirect('ver_instrumentos')
     else:
       #form = formInstrumentoFinanciero()
@@ -745,6 +808,7 @@ def crear_usuario(request):
       return render(request, 'Creates/usuarios.html', {'alert': 'Las contraseñas no coinciden'})
         
     usuario = User.objects.create_user(email=correo, password=password1, first_name=nombre, last_name=apellido)
+    registrar_auditoria(request.user, instancia_despues=usuario, accion="CREAR", descripcion="Ingreso de Usuario")
     grupo = Group.objects.get(name=rol.capitalize())
     usuario.groups.add(grupo)
     alert = f'Usuario creado correctamente.'
@@ -779,6 +843,7 @@ def modificar_usuario(request, user_id):
       alert = "El correo ya está en uso."
       return render(request, 'Creates/usuarios.html', {'usuario': usuario, 'alert': alert})
     
+    antes = usuario
     usuario.first_name = nombre
     usuario.last_name = apellido
     usuario.email = correo
@@ -789,6 +854,8 @@ def modificar_usuario(request, user_id):
     grupo = Group.objects.get(name=rol.capitalize())
     usuario.groups.add(grupo)
     usuario.save()
+    despues = usuario
+    registrar_auditoria(request.user, instancia_antes=antes, instancia_despues=despues, accion="EDITAR", descripcion="Modificación de Usuario")
     alert = f"Usuario {usuario.first_name} {usuario.last_name} modificado correctamente."
     
     initial_data = {
@@ -809,6 +876,7 @@ def eliminar_usuario(request, user_id):
   if not usuario:
     return render(request, 'Creates/usuarios.html', {'msg': "Usuario no encontrado"})
   correo = usuario.email
+  registrar_auditoria(request.user, instancia_antes=usuario, accion="CREAR", descripcion="Eliminación de Usuario")
   usuario.delete()
   msg = f"Usuario {correo} eliminado correctamente."
   return redirect('administracion_usuarios')
@@ -911,3 +979,16 @@ def lista_contactos(request):
     contactos = User.objects.filter(groups=rol_actual).exclude(id=user_actual.id)
 
     return contactos
+
+# AUDITORÍA
+@login_required
+@role_required(["Administrador", "Auditor"])
+def historial_auditoria(request):
+    registros = Auditoria.objects.order_by("-fecha")
+
+    return render(request, "Readers/auditoria.html", {
+        "auditorias": registros
+    })
+
+def validacion_calificaciones(request):
+  return render(request, "Validators/calificaciones.html")

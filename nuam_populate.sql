@@ -59,9 +59,35 @@ INSERT INTO `intranet_instrumento_financiero` (`instrumento_id`, `codigo`, `desc
 (10, 'AXPCL', 'American Express Compan - Pesos Chilenos', 'Acciones y Participaciones', 'BCS', 'Acciones', 'Ingresado'),
 (11, 'BAC', 'Bank Of America Corp - Dolares', 'Otras Cuentas-Derechos', 'BVL', 'Mercado Internacional', 'Ingresado');
 
+CREATE TABLE `intranet_user` (
+  `id` bigint(20) NOT NULL,
+  `password` varchar(128) NOT NULL,
+  `last_login` datetime(6) DEFAULT NULL,
+  `is_superuser` tinyint(1) NOT NULL,
+  `first_name` varchar(150) NOT NULL,
+  `last_name` varchar(150) NOT NULL,
+  `is_staff` tinyint(1) NOT NULL,
+  `is_active` tinyint(1) NOT NULL,
+  `date_joined` datetime(6) NOT NULL,
+  `email` varchar(254) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `intranet_user`
+--
+
 INSERT INTO `intranet_user` (`id`, `password`, `last_login`, `is_superuser`, `first_name`, `last_name`, `is_staff`, `is_active`, `date_joined`, `email`) VALUES
-(1, 'pbkdf2_sha256$1000000$kDjZrdIQqVExwC3yqJiZVs$gVDCvnJSy+Uae7PdBVbPmJbyT785qyxrbi+Eq7K5pNo=', '2025-11-24 13:43:42.877969', 1, '', '', 1, 1, '2025-11-24 12:59:59.201753', 'superuser@nuam.com'),
-(2, 'pbkdf2_sha256$1000000$lo7TUIpiNkYeNiAJ47gUyp$egZcACjqC4DSFeqYM7ybIfbLfGdIRfumWihEmJHV5aM=', '2025-11-24 14:01:19.096864', 0, 'Corredor', 'Doe', 0, 1, '2025-11-24 13:24:13.000000', 'corredor@nuam.com'),
-(3, 'pbkdf2_sha256$1000000$H0R3W2f7zlGNhOiEzEUKP2$gh2OokEfUXIBXycbOC//qe8sD4vqlKo/bcKgU0r/kh4=', '2025-11-24 15:24:14.253526', 0, 'Auditor', 'Doe', 0, 1, '2025-11-24 13:24:35.000000', 'auditor@nuam.com'),
-(4, 'pbkdf2_sha256$1000000$Ef4KbRWGEOASMDE73AOrp3$cIZWExkmuGLQSujKGfXUQfasyQva/n9Ufhd7D72giLg=', '2025-11-24 15:32:56.152397', 0, 'Admin', 'Doe', 0, 1, '2025-11-24 13:24:53.000000', 'admin@nuam.com'),
-(7, '!2WVKpENPc5YoeOhFAcDn78Zm1dtRfhaRy5xhtsoU', NULL, 0, 'John', 'Doe 2', 0, 1, '2025-11-24 15:13:41.947885', 'auditor2@nuam.com');
+(1, 'pbkdf2_sha256$1000000$i8LhXJDBLc5YQGa5E4YLsV$yai5huDhI7JPC6jw/Ep4YljGHDTFJimIHUb0JqutZow=', '2025-12-01 09:10:12.763213', 1, 'Super', 'User', 1, 1, '2025-12-01 08:21:10.000000', 'superuser@nuam.com'),
+(10, 'pbkdf2_sha256$1000000$kZjmsKAkZmv2Y6rNiuzIIf$jDtd76wjXYKWn8fCf/6MIYGavCmo2xZVznOuKXEmxho=', '2025-12-01 16:43:40.724062', 0, 'Admin', 'Doe', 0, 1, '2025-12-01 08:54:55.605816', 'admin@nuam.com'),
+(11, 'pbkdf2_sha256$1000000$wGHVjTK3pJKIse8untiViI$P0ByaJ/3WPyLsObwgAbIbbiHDdxITQWz4pOYZVsnpj4=', '2025-12-01 10:02:36.628189', 0, 'Auditor', 'Doe', 0, 1, '2025-12-01 08:55:12.114170', 'auditor@nuam.com'),
+(12, 'pbkdf2_sha256$1000000$1dK7hqKUsmy3gVvu6H5gTF$4PvVj5c6D5+p8ubLEt5V9CnawiRaixCmfruwpG29H7M=', '2025-12-01 09:59:50.934637', 0, 'Corredor', 'Doe', 0, 1, '2025-12-01 08:55:35.700550', 'corredor@nuam.com'),
+(13, 'pbkdf2_sha256$1000000$rubUklbzI5varzZW2G0wel$ojaa4cNA42MLo67ew6Yjoxo5XvbUZ0/FAyR5yJh+HBE=', NULL, 0, 'Bolsa', 'Comercio Santiago', 0, 1, '2025-12-01 08:59:30.477192', 'bcs@nuam.com'),
+(14, 'pbkdf2_sha256$1000000$2ou3fxtUjxQeKyR7uh3fId$7eU2JJ+19W5C21nUSn+DE7TWltB1tt3b5EVczVL/Je0=', NULL, 0, 'Bolsa', 'Valores Lima', 0, 1, '2025-12-01 08:59:47.313347', 'bvl@nuam.com'),
+(15, 'pbkdf2_sha256$1000000$PMhigRh0PeSOyHBkKbuMYt$qKfh8muQ4naFoEfjZn/8OkzetseLzMag9UGTz372urs=', NULL, 0, 'Bolsa', 'Valores Colombia', 0, 1, '2025-12-01 09:00:05.090741', 'bvc@nuam.com'),
+(16, 'pbkdf2_sha256$1000000$qQeA7iPPqe2ia04vvDF4rS$3GBgZIdDyuB7PVrlGrM0Lxhi2Nr84cZP3A0rcDZol48=', NULL, 0, 'Bolsa', 'Valores', 0, 1, '2025-12-01 09:00:19.154876', 'bolsa@nuam.com');
+
+INSERT INTO `auth_group` (`id`, `name`) VALUES
+(1, 'Administrador'),
+(2, 'Auditor'),
+(4, 'Bolsa'),
+(3, 'Corredor');
