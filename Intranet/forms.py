@@ -156,16 +156,24 @@ class formInstrumentoFinanciero(forms.Form):
   #estado = forms.ChoiceField(choices=estado_instrumentos, widget=forms.Select(attrs={'class':'form-select'}))
 
 class formSolicitud(forms.ModelForm):
-  class Meta:
-    model = solicitud
-    fields = ['usuario', 'group', 'motivo']
-    widgets = {
-      'usuario': forms.Select(attrs={'class': 'form-control'}),
-      'group': forms.Select(attrs={'class': 'form-control'}),
-      'motivo': forms.Textarea(attrs={'class': 'form-control'}),
-    }
-    labels = {
-      'usuario': 'Usuario',
-      'group': 'Rol',
-      'motivo': 'Motivo'
-    }
+    usuario_display = forms.CharField(
+        label="Usuario",
+        disabled=True,
+        required=False,
+        widget=forms.TextInput(attrs={
+            "class": "form-control text-white bg-dark border-secondary",
+            "style": "color: white;"
+        })
+    )
+
+    class Meta:
+        model = solicitud
+        fields = ["motivo"]
+        widgets = {
+            "motivo": forms.Textarea(attrs={
+                "rows": 4,
+                "class": "form-control text-white bg-dark border-secondary",
+                "placeholder": "Escribe el motivo...",
+                "style": "color: white;"
+            })
+        }

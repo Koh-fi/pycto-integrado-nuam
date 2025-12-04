@@ -2,6 +2,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from functools import wraps
 from urllib.parse import urlencode
+from functools import wraps
+from django.contrib.auth.models import User
+from django.template.response import TemplateResponse
 
 def role_required(roles):
     def decorator(view_func):
@@ -22,24 +25,3 @@ def role_required(roles):
 
         return wrapper
     return decorator
-
-def with_contactos(view_func):
-    @wraps(view_func)
-    def wrapper(request, *args, **kwargs):
-        response = view_func(request, *args, **kwargs)
-
-        if hasattr(response, "context_data"):
-
-            from django.contrib.auth.models import User
-
-            try:
-                user_actual = User.objects.get(email=request.user.email)
-                rol_actual = user_actual.groups.first()
-                contactos = User.objects.filter(groups=rol_actual).exclude(id=user_actual.id)
-            except:
-                contactos = []
-
-            response.context_data["contactos"] = contactos
-
-        return response
-    return wrapper

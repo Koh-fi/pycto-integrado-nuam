@@ -33,11 +33,9 @@ def make_json_serializable(value):
 
     # Instancia de modelo Django (FK, OneToOne, ManyToOne)
     if isinstance(value, Model):
-        # Esto guarda solo el PK, y evita el problema COMPLETAMENTE
         return value.pk
 
     return value
-
 
 def registrar_auditoria(usuario, accion, descripcion="", instancia_antes= None, instancia_despues = None, ):
     antes = model_to_dict(instancia_antes) if instancia_antes else None
@@ -65,3 +63,44 @@ def registrar_auditoria(usuario, accion, descripcion="", instancia_antes= None, 
         valores_antes=antes,
         valores_despues=despues
     )
+    
+def update_or_create_with_auditoria(
+    usuario,
+    model_class,
+    lookup: dict,
+    defaults: dict,
+    descripcion_crear="Creación de registro",
+    descripcion_editar="Edición de registro",
+):
+    try:
+        existente = model_class.objects.get(**lookup)
+        antes = existente
+        creado = False
+    except model_class.DoesNotExist:
+        existente = None
+        antes = None
+        creado = True
+
+    obj, created_flag = model_class.objects.update_or_create(
+        **lookup, defaults=defaults
+    )
+
+    if creado or created_flag:
+        registrar_auditoria(
+            usuario=usuario,
+            accion="CREAR",
+            descripcion=descripcion_crear,
+            instancia_antes=None,
+            instancia_despues=obj,
+        )
+    else:
+        despues = obj
+        registrar_auditoria(
+            usuario=usuario,
+            accion="EDITAR",
+            descripcion=descripcion_editar,
+            instancia_antes=antes,
+            instancia_despues=obj,
+        )
+
+    return obj

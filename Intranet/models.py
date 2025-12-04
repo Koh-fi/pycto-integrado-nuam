@@ -52,6 +52,31 @@ class solicitud(models.Model):
     def str(self):
         return f"Solicitud {self.solicitud_id} de {self.usuario.username}"
 
+#### notificacion ####
+
+class notification(models.Model):
+    class Meta:
+        ordering = ['-fecha']
+        
+    tipos_notificacion = [
+        ("calificacion_created", "Calificación creada"),
+        ("calificacion_updated", "Calificación actualizada"),
+        ("calificacion_deleted", "Calificación eliminada"),
+        ("instrumento_created", "Instrumento creado"),
+        ("instrumento_updated", "Instrumento actualizado"),
+        ("instrumento_deleted", "Instrumento eliminado"),
+        ("solicitud_creada", "Solicitud creada"),
+    ]
+
+    tipo = models.CharField(max_length=50, choices=tipos_notificacion)
+    mensaje = models.TextField()
+    fecha = models.DateTimeField(auto_now_add=True)
+    leida = models.BooleanField(default=False)
+    receptor = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.tipo} - {self.mensaje[:20]}"
+
 ##### instrumento financiero #####
 
 class instrumento_financiero(models.Model):

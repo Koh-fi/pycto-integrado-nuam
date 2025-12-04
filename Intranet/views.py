@@ -1,11 +1,14 @@
-from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from .forms import *
 from hashlib import sha512
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required, permission_required
+from django.views.decorators.http import require_POST
 from django.contrib.auth import authenticate, login, logout
-from .decorators import role_required, with_contactos
+from .decorators import role_required
 from csv import DictReader as csvr
 from django.db.models import Q
 from .utils import *
@@ -68,7 +71,7 @@ def VW_login(request):
   return render(request, "Intranets/login.html", {"form": form, "error": error, "motivo": motivo})
 
 @login_required()
-@with_contactos
+
 def VW_intranet(request):
     redirecciones = {
         "Auditor": "auditor",
@@ -81,7 +84,7 @@ def VW_intranet(request):
     return redirect(redirecciones.get(grupo.name, "login"))
 
 @login_required()
-@with_contactos
+
 def VW_logout(request):
   logout(request)
   return redirect('login')
@@ -120,19 +123,19 @@ def VW_logout(request):
 #  return render(request, "Intranets/login.html", {"form": form, "error": error})
 
 @login_required()
-@with_contactos
+
 @role_required(["Administrador"])
 def admin(request):
   return render(request, "Intranets/admin.html")
 
 @login_required()
-@with_contactos
+
 @role_required(["Auditor"])
 def auditor(request):
   return render(request, "Intranets/auditor.html")
 
 @login_required()
-@with_contactos
+
 @role_required(["Corredor"])
 def corredor(request):
   return render(request, "Intranets/corredor.html")
@@ -187,7 +190,7 @@ def calcular_factores(factores, factores_total):
   return result
 
 @login_required()
-@with_contactos
+
 @role_required(["Administrador", "Corredor"])
 def crear_calificacion(request):
 
@@ -220,11 +223,15 @@ def crear_calificacion(request):
           for f in factor_calificacion.objects.all():
             valor = form.cleaned_data.get(f"factor" + str(f.factor_id))
             if valor not in [None, ""]:
-              califica.objects.create(
-                calificacion=calificacion,
-                factor=f,
-                valor=valor
-              )
+              update_or_create_with_auditoria(
+          	    usuario=request.user,
+          	    model_class=califica,
+          	    lookup={"calificacion": calificacion, "factor": f},
+          	    defaults={"valor": valor},
+          	    descripcion_crear=f"Califica creado para factor {f.factor_id}",
+          	  	descripcion_editar=f"Califica editado para factor {f.factor_id}",
+							)
+
           return redirect('ver_calificaciones')
         # Calcular
         elif "calcular" in request.POST:
@@ -274,7 +281,7 @@ def crear_calificacion(request):
     })
 
 @login_required()
-@with_contactos
+
 @role_required(["Administrador", "Corredor"])
 def ver_calificaciones(request):
     calificaciones = calificacion_tributaria.objects.prefetch_related('califica_set__factor')
@@ -295,7 +302,7 @@ def ver_calificaciones(request):
     })
 
 @login_required()
-@with_contactos
+
 @role_required(["Administrador", "Corredor", "Bolsa"])
 def carga_por_monto(request):
     factores = factor_calificacion.objects.all().order_by("factor_id")
@@ -402,6 +409,7 @@ def carga_por_monto(request):
           ).first()
       
           if cal:
+              antes = cal
               # UPDATE
               cal.anio = fila["anio"]
               cal.mercado = fila["mercado"]
@@ -412,6 +420,7 @@ def carga_por_monto(request):
               cal.valor_historico = fila["valor_historico"]
               cal.origen_calificacion = origen
               cal.save()
+              registrar_auditoria(request.user, "EDITAR", "Calificación tributaria modificada via Carga Masiva.", instancia_antes=antes, instancia_despues=cal)
           else:
               # CREATE
               cal = calificacion_tributaria.objects.create(
@@ -427,15 +436,19 @@ def carga_por_monto(request):
                   origen_calificacion=origen,
                   isfut=False
               )
+              registrar_auditoria(request.user, "CREAR", "Calificación tributaria ingresada via Carga Masiva.", instancia_despues=cal)
       
           # FACTORES
           print(fila["factores"][8])
           for i, f in enumerate(factores):
-              califica.objects.update_or_create(
-                  calificacion=cal,
-                  factor=f,
-                  defaults={"valor": fila["factores"][i]}
-              )
+              update_or_create_with_auditoria(
+          	    usuario=request.user,
+          	    model_class=califica,
+          	    lookup={"calificacion": cal, "factor": f},
+          	    defaults={"valor": fila["factores"][i]},
+          	    descripcion_crear=f"Califica creado para factor {f.factor_id} via carga masiva.",
+          	  	descripcion_editar=f"Califica editado para factor {f.factor_id} via carga masiva.",
+							)
 
     if "carga_monto" in request.session:
         del request.session["carga_monto"]
@@ -444,7 +457,7 @@ def carga_por_monto(request):
 
 
 @login_required()
-@with_contactos
+
 @role_required(["Administrador", "Corredor", "Bolsa"])
 def carga_por_factor(request):
     factores = factor_calificacion.objects.all().order_by("factor_id")
@@ -515,6 +528,7 @@ def carga_por_factor(request):
           ).first()
       
           if cal:
+              antes = cal
               # UPDATE
               cal.anio = fila["anio"]
               cal.mercado = fila["mercado"]
@@ -525,6 +539,7 @@ def carga_por_factor(request):
               cal.valor_historico = fila["valor_historico"]
               cal.origen_calificacion = origen
               cal.save()
+              registrar_auditoria(request.user, "EDITAR", "Calificación tributaria modificada via Carga Masiva.", instancia_antes=antes, instancia_despues=cal)
           else:
               # CREATE
               cal = calificacion_tributaria.objects.create(
@@ -540,14 +555,18 @@ def carga_por_factor(request):
                   origen_calificacion=origen,
                   isfut=False
               )
+              registrar_auditoria(request.user, "CREAR", "Calificación tributaria ingresada via Carga Masiva.", instancia_despues=cal)
       
           # FACTORES
           for i, f in enumerate(factores):
-              califica.objects.update_or_create(
-                  calificacion=cal,
-                  factor=f,
-                  defaults={"valor": fila["factores"][i]}
-              )
+              update_or_create_with_auditoria(
+          	    usuario=request.user,
+          	    model_class=califica,
+          	    lookup={"calificacion": cal, "factor": f},
+          	    defaults={"valor": fila["factores"][i]},
+          	    descripcion_crear=f"Califica creado para factor {f.factor_id} via carga masiva.",
+          	  	descripcion_editar=f"Califica editado para factor {f.factor_id} via carga masiva.",
+							)
 
     if "carga_monto" in request.session:
         del request.session["carga_factor"]
@@ -555,7 +574,7 @@ def carga_por_factor(request):
     return redirect("ver_calificaciones")
 
 @login_required()
-@with_contactos
+
 @role_required(["Administrador", "Corredor"])
 def editar_calificacion(request, cal_id):
     calificacion = calificacion_tributaria.objects.get(pk=cal_id)
@@ -619,7 +638,7 @@ def editar_calificacion(request, cal_id):
     })
 
 @login_required()
-@with_contactos
+
 @role_required(["Administrador", "Corredor"])
 def eliminar_calificacion(request, cal_id):
   calificacion = calificacion_tributaria.objects.get(pk = cal_id)
@@ -628,7 +647,7 @@ def eliminar_calificacion(request, cal_id):
   return redirect('ver_calificaciones')
 
 @login_required()
-@with_contactos
+
 @role_required(["Administrador", "Auditor"])
 def validar_calificacion(request):
     if request.method == 'GET':
@@ -656,13 +675,13 @@ def validar_calificacion(request):
         return render(request, 'Validators/calificaciones.html', {'msg': f'Calificación actualizada correctamente a: {nuevo_estado}.'})
 
 @login_required()
-@with_contactos
+
 @role_required(["Administrador", "Corredor"])
 def cargar_archivo(request):
     return render(request, 'Readers/calificaciones.html')
 
 @login_required()
-@with_contactos
+
 @role_required(["Administrador", "Auditor"])
 def ver_instrumentos(request):
     instrumentos = instrumento_financiero.objects.all()
@@ -702,7 +721,7 @@ def ver_instrumentos(request):
     return render(request, 'Readers/instrumentos.html', {'form': form,'instrumentos':instrumentos})
 
 @login_required()
-@with_contactos
+
 @role_required(["Administrador", "Auditor"])
 def eliminar_instrumento(request, instrumento_id):
     instrumento = instrumento_financiero.objects.get(instrumento_id = instrumento_id)
@@ -711,7 +730,7 @@ def eliminar_instrumento(request, instrumento_id):
     return redirect('ver_instrumentos')
 
 @login_required()
-@with_contactos
+
 @role_required(["Administrador", "Auditor", "Corredor"])
 def agregar_instrumento(request):
   #form = formInstrumentoFinanciero()
@@ -736,7 +755,7 @@ def agregar_instrumento(request):
   return render(request, 'Creates/instrumentos.html', data)
   
 @login_required()
-@with_contactos
+
 @role_required(["Administrador", "Auditor"])
 def editar_instrumento(request, instrumento_id):
     instrumento = instrumento_financiero.objects.get(instrumento_id = instrumento_id)
@@ -769,7 +788,7 @@ def editar_instrumento(request, instrumento_id):
     return render(request, 'Creates/instrumentos.html', {'form': form,'instrumento':instrumento})
 
 @login_required()
-@with_contactos
+
 @role_required(["Administrador"])
 def ver_usuarios(request):
   usuarios = User.objects.exclude(is_superuser=True)
@@ -790,7 +809,7 @@ def ver_usuarios(request):
   return render(request, 'Readers/usuarios.html', {'usuarios': usuarios})
 
 @login_required()
-@with_contactos
+
 @role_required(["Administrador"])
 def crear_usuario(request):
   alert = ''
@@ -815,7 +834,7 @@ def crear_usuario(request):
   return render(request, 'Creates/usuarios.html', {'alert': alert})
   
 @login_required()
-@with_contactos
+
 @role_required(["Administrador"])
 def modificar_usuario(request, user_id):
   alert = ''
@@ -869,20 +888,21 @@ def modificar_usuario(request, user_id):
   return render(request, 'Creates/usuarios.html', {'usuario': usuario, 'initial': initial_data, 'alert': alert})
 
 @login_required()
-@with_contactos
+
 @role_required(["Administrador"])
 def eliminar_usuario(request, user_id):
   usuario = User.objects.filter(id=user_id).first()
   if not usuario:
     return render(request, 'Creates/usuarios.html', {'msg': "Usuario no encontrado"})
   correo = usuario.email
-  registrar_auditoria(request.user, instancia_antes=usuario, accion="CREAR", descripcion="Eliminación de Usuario")
+  registrar_auditoria(request.user, instancia_antes=usuario, accion="ELIMINAR", descripcion="Eliminación de Usuario")
   usuario.delete()
   msg = f"Usuario {correo} eliminado correctamente."
   return redirect('administracion_usuarios')
 
+########## SOLICITUDES Y NOTIFICACIONES
+
 @login_required()
-@with_contactos
 @role_required(["Administrador", "Auditor"])
 def gestion_solicitudes(request):
     contactos = lista_contactos(request)
@@ -920,25 +940,38 @@ def gestion_solicitudes(request):
     })
 
 @login_required()
-@with_contactos
 @role_required(["Corredor", "Auditor", "Administrador"])
 def agregar_solicitud(request):
-  if request.method == "POST":
-    form = formSolicitud(request.POST)
+    grupos = Group.objects.all()
 
-    if form.is_valid():
-      form.save()
-      return redirect("gestion_solicitudes")
+    if request.method == "POST":
+        form = formSolicitud(request.POST)
 
-    return render(request, "Creates/solicitudes.html", {"form": form})
+        if form.is_valid():
+            group_id = request.POST.get("group")
 
+            if not group_id:
+                messages.error(request, "Debe seleccionar un rol destino.")
+                return redirect("gestion_solicitudes")
 
-  form = formSolicitud()
-  return render(request, "Creates/solicitudes.html", {"form": form})
+            grupo_destino = get_object_or_404(Group, id=group_id)
 
+            solicitud.objects.create(
+                usuario=request.user,        
+                group=grupo_destino,  
+                motivo=form.cleaned_data["motivo"], 
+            )
+
+            messages.success(request, "Solicitud creada correctamente.")
+            return redirect("gestion_solicitudes")
+
+    else:
+        form = formSolicitud(initial={"usuario_display": request.user.email})
+
+    return render(request, "Creates/solicitudes.html", {"form": form, "grupos": grupos,})
+  
 
 @login_required()
-@with_contactos
 @role_required(["Administrador", "Auditor", "Corredor"])
 def editar_solicitud(request, solicitud_id):
   try:
@@ -957,16 +990,45 @@ def editar_solicitud(request, solicitud_id):
   return render(request, "Creates/solicitudes.html", {"form": form, "solicitud": solic})
 
 @login_required()
-@with_contactos
 @role_required(["Administrador", "Auditor", "Corredor"])
 def eliminar_solicitud(request, solicitud_id):
-  try:
-    solic = solicitud.objects.get(solicitud_id=solicitud_id)
-    solic.delete()
-  except:
-    pass
+    try:
+        solic = solicitud.objects.get(solicitud_id=solicitud_id)
+        solic.delete()
+        messages.success(request, "Solicitud eliminada correctamente.")
+    except:
+        messages.error(request, "No se puede eliminar la solicitud porque está vinculada a otros registros.")
+    return redirect('gestion_solicitudes')
 
-  return redirect("gestion_solicitudes")
+@login_required
+def panel_flotante(request):
+    noti = notification.objects.filter(receptor=request.user)
+    return render(request, "Readers/notificaciones.html", {"notifs": noti})
+
+@login_required
+def marcar_leida(request, noti_id):
+    n = get_object_or_404(notification, id=noti_id, receptor=request.user)
+    n.leida = True
+    n.save()
+    count = notification.objects.filter(receptor=request.user, leida=False).count()
+
+    return render(request, "Readers/notificaciones.html", {
+        "n": n,
+        "count": count
+    })
+
+@login_required
+@require_POST
+def eliminar_notificacion(request, noti_id):
+    noti = get_object_or_404(notification, id=noti_id, receptor=request.user)
+    noti.delete()
+    return HttpResponse("")
+
+def actualizar_contador(request):
+    count = request.user.notification_set.filter(leida=False).count()
+    return render(request, "Readers/contador_noti.html", {"count": count})
+
+######### CHAT
 
 def lista_contactos(request):
     try:
@@ -980,15 +1042,181 @@ def lista_contactos(request):
 
     return contactos
 
-# AUDITORÍA
-@login_required
-@role_required(["Administrador", "Auditor"])
-def historial_auditoria(request):
-    registros = Auditoria.objects.order_by("-fecha")
 
-    return render(request, "Readers/auditoria.html", {
-        "auditorias": registros
+
+@login_required()
+def obtener_chats_mensajes(usuario_actual, usuario_destino):
+# entrega el chat entre los usuarios si existe y sino existe lo crea 
+
+    chat = chat_privado.objects.filter(  usuario1=usuario_actual,usuario2=usuario_destino).first() # busca si el chat existe
+
+    if not chat:
+        chat = chat_privado.objects.filter(usuario1=usuario_destino, usuario2=usuario_actual).first() # encuentra el chat aunque los usuarios esten invertidos
+
+    if not chat:
+        chat = chat_privado.objects.create(usuario1=usuario_actual,usuario2=usuario_destino)    # Si no existe el chat lo crea 
+
+    mensajes = mensaje_privado.objects.filter(chat=chat).order_by("fecha_envio") # obtiene el mensaje ordenado por fecha de envio 
+
+    return chat, mensajes
+
+
+
+
+
+
+####################    mensaje privado uno a uno ###############################
+
+@login_required()
+def historial_mensaje_privado(request, user_id):    # usa user_id porque es el nombre que se le esta dando en la url  ya que en xampp solo sale id 
+    contactos = lista_contactos(request)
+    #usuario_actual = User.objects.get(email=request.user.email)     # verifica si el usuario existe
+    usuario_actual = request.user
+    try:                                                  # usa user_id porque es el nombre que se le esta dando en la url  ya que en xampp solo sale id 
+        usuario_destino = User.objects.get(id=user_id)   # usuario receptor seleccionado por el id( id sale en xampp)
+    except User.DoesNotExist:
+        return redirect("intranet")
+
+    
+    chat = chat_privado.objects.filter(    # realiza la busqueda de una conversación entre ambos
+        usuario1=usuario_actual,
+        usuario2=usuario_destino
+    ).first()
+
+    if not chat:
+        chat = chat_privado.objects.filter( usuario1=usuario_destino, usuario2=usuario_actual).first()
+
+    if not chat:
+        chat = chat_privado.objects.create(   # si el chat no existe se crea
+            usuario1=usuario_actual,
+            usuario2=usuario_destino
+        )
+
+    mensajes = mensaje_privado.objects.filter(chat=chat).order_by("fecha_envio")  # obtiene el mensaje ordenado por la fecha de envio
+
+    contactos = lista_contactos(request)   # funcion para el contacto con el offcanvas
+
+    return render(request, "chat.html", {        #devuelve el cuerpo del mensaje 
+        "chat": chat,
+        "mensajes": mensajes,
+        "contactos": contactos,
+        "destino": usuario_destino,
     })
 
-def validacion_calificaciones(request):
-  return render(request, "Validators/calificaciones.html")
+
+#####################################        enviar mensaje privado    #####################################
+
+
+@login_required()
+def enviar_mensaje_privado(request, chat_id):     # lo esta tomando del nombre de la bd: chat_id ( fk de la tabla chat_privado), y asi saber en cual id se guardara el chat
+    
+    if request.method != "POST":    # solo permite acceder a la vista si los datos ingresados en el formulario fue enviado por post
+        return redirect("intranet")  # si se intentan acceder por la url no lo dejara y redirije a intranet 
+
+
+    #usuario_actual = User.objects.get(email=request.user.email) # usario que esta enviando un mensaje, se usa el mail porque se identifica al usuario por el mail no por el nombre
+    usuario_actual = request.user
+
+    try:
+        chat = chat_privado.objects.get(id=chat_id)     # se verifica que la ventana de chat ha sido creado o que existe 
+    except chat_privado.DoesNotExist:
+        return redirect("intranet")     # sino existe retorna a la intranet
+
+    texto = request.POST.get("mensaje", "").strip()      # strip: limina el espacios iniciales y finales en el texto, el get obtiene el texto del formulario
+
+    if texto != "":   # si texto no esta vacio, se crea un mensaje con model chat_privado(usuario 1,2 y fecha creación), usuario actual y mensaje 
+        mensaje_privado.objects.create(
+            chat=chat,
+            usuario=usuario_actual,
+            mensaje=texto
+        )
+
+    if chat.usuario1.id == usuario_actual.id:     # el usuario 1 es el usuario que esta usando la pagina en el momento actual 
+        destino_id = chat.usuario2.id              # destino sera el usuario 2
+    else:
+        destino_id = chat.usuario1.id             # de otro modo si el usuario actual es el usuario 2, el destino sera el usuario 1
+                                                                        # redirige al historial de la conversación con el otro usuario
+    return redirect("historial_mensaje_privado", user_id=destino_id)   # user_id representa el id del otro usuario en la conversación (el destino), y si el usuario actual es usuario2, el destino es usuario1
+
+## AUDITORIA
+
+@login_required() 
+@role_required(["Administrador", "Auditor"])
+
+def historial_auditoria(request): 
+  registros = Auditoria.objects.order_by("-fecha") 
+  return render(request, "Readers/auditoria.html", { "auditorias": registros })
+
+@login_required()
+@role_required(["Administrador", "Auditor"])
+
+@login_required
+@role_required(["Administrador", "Auditor"])
+def validar_instrumentos(request):
+    estado = request.GET.get("estado", "")
+    texto = request.GET.get("texto", "")
+    instrumentos = instrumento_financiero.objects.all()
+
+    if estado:
+        instrumentos = instrumentos.filter(estado__iexact=estado)
+
+    if texto:
+        instrumentos = instrumentos.filter(
+            Q(codigo__icontains=texto) |
+            Q(descripcion__icontains=texto) |
+            Q(categoria__icontains=texto) |
+            Q(bolsa__icontains=texto)
+        )
+
+    if request.method == "POST":
+        instrumento_id = request.POST.get("seleccion")
+        accion = request.POST.get("accion")
+
+        if instrumento_id:
+            inst = instrumento_financiero.objects.get(pk=instrumento_id)
+            inst.estado = accion
+            inst.save()
+
+        return redirect("validar_instrumentos")
+
+    return render(request, "Readers/validar_instrumentos.html", {
+        "instrumentos": instrumentos,
+        "estado": estado,
+        "texto": texto,
+    })
+    
+@login_required
+@role_required(["Administrador", "Auditor"])
+def validar_calificaciones(request):
+
+    estado = request.GET.get("estado", "")
+    texto = request.GET.get("texto", "")
+    calificaciones = calificacion_tributaria.objects.select_related("instrumento").all()
+    
+    if estado:
+        calificaciones = calificaciones.filter(estado__iexact=estado)
+
+    if texto:
+        calificaciones = calificaciones.filter(
+            Q(secuencia_evento__icontains=texto) |
+            Q(descripcion__icontains=texto) |
+            Q(instrumento__codigo__icontains=texto) |
+            Q(instrumento__descripcion__icontains=texto)
+        )
+
+    if request.method == "POST":
+        cal_id = request.POST.get("seleccion")
+        accion = request.POST.get("accion")
+
+        if cal_id:
+            cal = calificacion_tributaria.objects.get(pk=cal_id)
+            cal.estado = accion
+            cal.save()
+
+        return redirect("validar_calificaciones")
+
+    return render(request, "Readers/validar_calificaciones.html", {
+        "calificaciones": calificaciones,
+        "estado": estado,
+        "texto": texto,
+    })

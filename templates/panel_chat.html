@@ -1,0 +1,140 @@
+<!-- panel contenedor de historial y chat -->
+<div id="panel_chat" 
+     class="d-flex justify-content-center align-items-center"
+     {% if chat %}
+        style="display:flex; min-height:75vh;"
+     {% else %}
+        style="display:none;"
+     {% endif %}>
+
+    <!-- caja principal -->
+    <div class="card shadow-lg p-4 rounded-4"
+         style="
+            width:75%;
+            max-width:950px;
+            border: 2px solid #d8dbe2;   
+            background:#ffffff;
+         ">
+
+        <div class="card-body d-flex flex-column">
+
+            <!-- título centrado -->
+            <div class="text-center mb-4">
+                <h2 class="fw-bold"
+                    style="font-size:2.3rem; color:#234A7D;">
+                    {% if destino %} 
+                    {{ destino.email }} 
+                    {% endif %}
+                </h2>
+            </div>
+
+            <!-- historial de chat con scroll solo por CSS -->
+            <div id="zona_mensajes"
+                 class="flex-grow-1 border rounded-4 shadow-sm p-4 mx-auto"
+                 style="
+                    background:#ffffff;
+                    min-height:500px;
+                    max-height:65vh;
+                    overflow-y:auto;
+                    border-color:#dfe2e6;
+                    width: 95%;
+                 ">
+
+                {% for msn in mensajes %}
+
+                <div class="mb-4">
+
+                    <!-- fecha (centrada, con espacio arriba) -->
+                    <div class="text-center text-muted small mb-2 mt-2">
+                        {{ msn.fecha_envio|date:"d/m/Y" }}
+                    </div>
+
+                    <!-- nombre del usuario -->
+                    <div class="{% if msn.usuario == request.user %}text-end{% else %}text-start{% endif %} mb-1">
+                        <strong style="font-size:1rem; color:#3d3d3d;">
+                            {{ msn.usuario.first_name }}
+                        </strong>
+                    </div>
+
+                    <!-- burbuja del mensaje -->
+                    <div class="d-flex {% if msn.usuario == request.user %}justify-content-end{% else %}justify-content-start{% endif %}">
+                        <div class="p-3 rounded-4 shadow-sm"
+                             style="
+                                 max-width:85%;
+                                 background:
+                                 {% if msn.usuario == request.user %}#E3F0FF
+                                 {% else %}#F2ECF9
+                                 {% endif %};
+                                 border:1px solid #dfe2e6;
+                                 font-size:1.15rem;
+                                 line-height:2;
+                             ">
+                            {{ msn.mensaje }}
+
+                            <div class="text-end text-muted small mt-2" style="font-size:0.80rem;">
+                                {{ msn.fecha_envio|time:"H:i" }}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                {% empty %}
+                    <p class="text-muted text-center">No hay mensajes en esta conversación</p>
+                {% endfor %}
+
+            </div>
+
+            <!-- formulario del envio de mensajes -->
+            {% if chat.id %}
+            <form method="POST"
+                  action="{% url 'enviar_mensaje_privado' chat.id %}"
+                  class="mt-4 d-flex align-items-center gap-3 p-3 border rounded-4 shadow-sm bg-white mx-auto"
+                  style="
+                    border-color:#dfe2e6;
+                    width: 95%;
+                  ">
+
+                {% csrf_token %}
+
+                <!-- input del mensaje -->
+                <input type="text"
+                       name="mensaje"
+                       class="form-control"
+                       style="
+                           font-size:1.2rem;
+                           padding:16px;
+                           border-radius:12px;
+                           background:#f8f9fa;
+                           border:1px solid #2E6FD8;
+                           width: 75%;
+                       "
+                       placeholder="Escribe el mensaje"
+                       required>
+
+                <!-- enviar el mensaje  -->
+                <button type="submit"
+                        class="btn text-white"
+                        style="
+                            background:#5F8EEB;
+                            padding:16px 30px;
+                            border-radius:12px;
+                            font-size:1.2rem;
+                            font-weight:600;
+                        ">
+                    Enviar
+                </button>
+
+            </form>
+
+            <!-- volver -->
+            <div class="mt-2 text-start">
+                <a href="{% url 'intranet' %}" class="btn btn-sm btn-secondary">
+                    <i class="bi bi-backspace"></i> VOLVER
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
