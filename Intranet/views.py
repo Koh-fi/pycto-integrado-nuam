@@ -122,23 +122,142 @@ def VW_logout(request):
 #
 #  return render(request, "Intranets/login.html", {"form": form, "error": error})
 
-@login_required()
 
+@login_required()
 @role_required(["Administrador"])
 def admin(request):
-  return render(request, "Intranets/admin.html")
+  contactos = lista_contactos(request)
+  buscar = request.GET.get("buscar")
+  if buscar:
+      contactos = contactos.filter(email__icontains=buscar)
+
+  chat = None
+  abrir_chat = False
+  mensajes = None
+  destino = None
+  user_id = request.POST.get("user_id") or request.GET.get("user_id") #  si viene un user_id en POST o en  GET se obtiene los chats y los mensajes  
+  
+  if user_id:
+    try:
+        #destino = User.objects.get(id=user_id)
+        #chat, mensajes = obtener_chats_mensajes(request.user, destino) #se llama a la función obtener chat( usuario inicial = request.user(usuario logeado),destino= obtener otro user)  
+        destino = User.objects.get(id=user_id)
+           # buscar chat en ambas direcciones
+        chat = chat_privado.objects.filter(
+            usuario1=request.user,
+            usuario2=destino
+        ).first() or chat_privado.objects.filter(
+            usuario1=destino,
+            usuario2=request.user
+        ).first()
+        # si no existe, crearlo
+        if not chat:
+            chat = chat_privado.objects.create(
+                usuario1=request.user,
+                usuario2=destino
+            )
+        # obtener los mensajes
+        mensajes = mensaje_privado.objects.filter(chat=chat).order_by("fecha_envio")
+        abrir_chat = True
+  
+  
+  
+    except User.DoesNotExist:
+        pass  # el chat no se muestra si el id no existe
+    
+  #abrir_chat = True if destino else False # abrir_chat = True si hay destino (sirve para reabrir offcanvas en el template) 
+
+  return render(request, "Intranets/admin.html", {"contactos": contactos,"chat": chat,"mensajes": mensajes,"destino": destino,"abrir_chat": abrir_chat})
 
 @login_required()
-
 @role_required(["Auditor"])
 def auditor(request):
-  return render(request, "Intranets/auditor.html")
+  contactos = lista_contactos(request)
+  buscar = request.GET.get("buscar")
+  if buscar:
+      contactos = contactos.filter(email__icontains=buscar)
+
+  chat = None
+  abrir_chat = False
+  mensajes = None
+  destino = None
+  user_id = request.POST.get("user_id") or request.GET.get("user_id") #  si viene un user_id en POST o en  GET se obtiene los chats y los mensajes 
+  
+  if user_id:
+    try:
+        #destino = User.objects.get(id=user_id)
+        #chat, mensajes = obtener_chats_mensajes(request.user, destino) #se llama a la función obtener chat( usuario inicial = request.user(usuario logeado),destino= obtener otro user)    
+        destino = User.objects.get(id=user_id)
+           # buscar chat en ambas direcciones
+        chat = chat_privado.objects.filter(
+            usuario1=request.user,
+            usuario2=destino
+        ).first() or chat_privado.objects.filter(
+            usuario1=destino,
+            usuario2=request.user
+        ).first()
+        # si no existe, crearlo
+        if not chat:
+            chat = chat_privado.objects.create(
+                usuario1=request.user,
+                usuario2=destino
+            )
+        # obtener los mensajes
+        mensajes = mensaje_privado.objects.filter(chat=chat).order_by("fecha_envio")
+        abrir_chat = True
+    
+    except User.DoesNotExist:
+        pass  # el chat no se muestra si el id no existe
+    
+  #abrir_chat = True if destino else False # abrir_chat = True si hay destino (sirve para reabrir offcanvas en el template) 
+
+  return render(request, "Intranets/auditor.html", {"contactos": contactos,"chat": chat,"mensajes": mensajes,"destino": destino,"abrir_chat": abrir_chat})
 
 @login_required()
-
 @role_required(["Corredor"])
 def corredor(request):
-  return render(request, "Intranets/corredor.html")
+  contactos = lista_contactos(request)
+  buscar = request.GET.get("buscar")
+  if buscar:
+      contactos = contactos.filter(email__icontains=buscar)
+
+  chat = None
+  abrir_chat = False
+  mensajes = None
+  destino = None
+  
+  user_id = request.POST.get("user_id") or request.GET.get("user_id") #  si viene un user_id en POST o en  GET se obtiene los chats y los mensajes 
+  
+  if user_id:
+    try:
+        #destino = User.objects.get(id=user_id)
+        #chat, mensajes = obtener_chats_mensajes(request.user, destino) #se llama a la función obtener chat( usuario inicial = request.user(usuario logeado),destino= obtener otro user)    
+        destino = User.objects.get(id=user_id)
+           # buscar chat en ambas direcciones
+        chat = chat_privado.objects.filter(
+            usuario1=request.user,
+            usuario2=destino
+        ).first() or chat_privado.objects.filter(
+            usuario1=destino,
+            usuario2=request.user
+        ).first()
+        # si no existe, crearlo
+        if not chat:
+            chat = chat_privado.objects.create(
+                usuario1=request.user,
+                usuario2=destino
+            )
+        # obtener los mensajes
+        mensajes = mensaje_privado.objects.filter(chat=chat).order_by("fecha_envio")
+        abrir_chat = True
+    
+    
+    except User.DoesNotExist:
+        pass  # el chat no se muestra si el id no existe
+    
+  #abrir_chat = True if destino else False # abrir_chat = True si hay destino (sirve para reabrir offcanvas en el template) 
+
+  return render(request, "Intranets/corredor.html", {"contactos": contactos,"chat": chat,"mensajes": mensajes,"destino": destino,"abrir_chat": abrir_chat})
 
 def build_categorias_niveladas(valores=None):
     categorias = list(categoria_factor.objects.all())
@@ -788,7 +907,6 @@ def editar_instrumento(request, instrumento_id):
     return render(request, 'Creates/instrumentos.html', {'form': form,'instrumento':instrumento})
 
 @login_required()
-
 @role_required(["Administrador"])
 def ver_usuarios(request):
   usuarios = User.objects.exclude(is_superuser=True)
@@ -809,7 +927,6 @@ def ver_usuarios(request):
   return render(request, 'Readers/usuarios.html', {'usuarios': usuarios})
 
 @login_required()
-
 @role_required(["Administrador"])
 def crear_usuario(request):
   alert = ''
@@ -1028,7 +1145,10 @@ def actualizar_contador(request):
     count = request.user.notification_set.filter(leida=False).count()
     return render(request, "Readers/contador_noti.html", {"count": count})
 
-######### CHAT
+################################# chats usuarios uno a uno   ##########################################
+
+
+###### si fuera una función lista contactos #######
 
 def lista_contactos(request):
     try:
@@ -1040,12 +1160,33 @@ def lista_contactos(request):
     rol_actual = user_actual.groups.first()  # o user_actual.rol según lo que tengas implementado
     contactos = User.objects.filter(groups=rol_actual).exclude(id=user_actual.id)
 
-    return contactos
+    return contactos   # ahora no tenemos una vista sino una función 
 
 
 
-@login_required()
-def obtener_chats_mensajes(usuario_actual, usuario_destino):
+######  si fuera una vista ##############
+#@login_required()
+#def lista_contactos(request):
+#    try:
+#        user_actual = User.objects.get(email=request.user.email)
+#        print(user_actual)
+#    except User.DoesNotExist:
+#        user_actual = None
+#
+#    if user_actual:
+#        rol_actual = user_actual.groups.first()  # o user_actual.rol según lo que tengas implementado
+#        contactos = User.objects.filter(groups=rol_actual).exclude(id=user_actual.id)
+#    else:
+#        contactos = []
+#
+#    return render(request, "chat.html", {"contactos": contactos})
+
+
+#####################    creación de función reutilizable como lista de contactos para los mensajes y el chat ####################
+
+
+#@login_required()    aqui no va el decorador porque es una funcion auxiliar y no usa el (request)
+def obtener_chats_mensajes(usuario_actual, usuario_destino): 
 # entrega el chat entre los usuarios si existe y sino existe lo crea 
 
     chat = chat_privado.objects.filter(  usuario1=usuario_actual,usuario2=usuario_destino).first() # busca si el chat existe
@@ -1062,14 +1203,12 @@ def obtener_chats_mensajes(usuario_actual, usuario_destino):
 
 
 
-
-
-
 ####################    mensaje privado uno a uno ###############################
 
 @login_required()
 def historial_mensaje_privado(request, user_id):    # usa user_id porque es el nombre que se le esta dando en la url  ya que en xampp solo sale id 
-    contactos = lista_contactos(request)
+    contactos = lista_contactos(request) # funcion para el contacto con el offcanvas
+
     #usuario_actual = User.objects.get(email=request.user.email)     # verifica si el usuario existe
     usuario_actual = request.user
     try:                                                  # usa user_id porque es el nombre que se le esta dando en la url  ya que en xampp solo sale id 
@@ -1092,16 +1231,30 @@ def historial_mensaje_privado(request, user_id):    # usa user_id porque es el n
             usuario2=usuario_destino
         )
 
-    mensajes = mensaje_privado.objects.filter(chat=chat).order_by("fecha_envio")  # obtiene el mensaje ordenado por la fecha de envio
+    #mensajes = mensaje_privado.objects.filter(chat=chat).order_by("fecha_envio")  # solo en obtener mensaje, obtiene el mensaje ordenado por la fecha de envio
 
-    contactos = lista_contactos(request)   # funcion para el contacto con el offcanvas
+  #  return render(request, "panel_chat.html", {        #devuelve el cuerpo del mensaje 
+  #      "chat": chat,
+  #      "mensajes": mensajes,
+  #      "contactos": contactos,
+  #      "destino": usuario_destino,
+  #  })
 
-    return render(request, "chat.html", {        #devuelve el cuerpo del mensaje 
-        "chat": chat,
-        "mensajes": mensajes,
-        "contactos": contactos,
-        "destino": usuario_destino,
-    })
+  # en vez de renderizar una página, redirige al panel principal
+    if request.user.groups.filter(name="Administrador").exists():
+        return redirect(f"/intranet/admin/?user_id={user_id}")
+
+    if request.user.groups.filter(name="Auditor").exists():
+        return redirect(f"/intranet/auditor/?user_id={user_id}")
+
+    if request.user.groups.filter(name="Corredor").exists():
+        return redirect(f"/intranet/corredor/?user_id={user_id}")
+
+    # redirije al intranet para que no se caiga
+    return redirect("intranet")
+  
+
+
 
 
 #####################################        enviar mensaje privado    #####################################
@@ -1136,7 +1289,19 @@ def enviar_mensaje_privado(request, chat_id):     # lo esta tomando del nombre d
     else:
         destino_id = chat.usuario1.id             # de otro modo si el usuario actual es el usuario 2, el destino sera el usuario 1
                                                                         # redirige al historial de la conversación con el otro usuario
-    return redirect("historial_mensaje_privado", user_id=destino_id)   # user_id representa el id del otro usuario en la conversación (el destino), y si el usuario actual es usuario2, el destino es usuario1
+    #return redirect("historial_mensaje_privado", user_id=destino_id)   # user_id representa el id del otro usuario en la conversación (el destino), y si el usuario actual es usuario2, el destino es usuario1
+    #return redirect(f"/chat/historial/{destino_id}/")  # forma simple de derigir cuando hay parametros como el id seria = f"/url/{parametro}/"
+    # forma mas profesional pero que no han pasado =  from django.urls import reverse ; return redirect(reverse("historial_mensaje_privado", kwargs={"user_id": destino_id}))
+
+    # redirigir a la vista acorde al rol y se anexa a  ?user_id=destino_id
+    if request.user.groups.filter(name="Administrador").exists():
+        return redirect(f"/intranet/admin/?user_id={destino_id}")
+    elif request.user.groups.filter(name="Auditor").exists():
+        return redirect(f"/intranet/auditor/?user_id={destino_id}")
+    else:
+        return redirect(f"/intranet/corredor/?user_id={destino_id}")
+
+
 
 ## AUDITORIA
 

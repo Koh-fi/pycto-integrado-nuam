@@ -21,7 +21,7 @@
 }
 
 .table-primary{
-  --bs-table-accent-bg: var(--nuam-bg-light-orange);
+  --bs-table-accent-bg: var(--nuam-primary);
   font-size: small;
 }
 
@@ -446,8 +446,8 @@ body, html {
 }
 
 .carrusel-chico {
-    max-width: 1200px;
-    max-height: 600px;
+    max-width: 1500px;
+    max-height: 300px;
     margin: 0 auto;
     border-radius: 15px;
     overflow: hidden;
@@ -455,14 +455,11 @@ body, html {
 }
 
 .carrusel-chico img {
-    height: 600px;
-    object-fit: cover;
+    height: 300px;
+    object-fit:cover;
 }
 
 body {
-    background: 
-        linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-        url('../img/fondo.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -486,11 +483,12 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;                    
-    width: 100%;               
+    width: 340px;
+    max-width: 340px;
     height: 55px;          
     padding: 0 20px;
 
-    background: #fa650e !important;
+    background: #ff4201 !important;
     color: white !important;
     border: none;
     border-radius: 10px;
@@ -558,4 +556,48 @@ body {
 .btn-cancelar {
     background-color: grey !important;
     color: white !important;
+}
+
+/* contenedor principal */
+.hero-wrapper {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* carrusel como fondo */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.hero-bg img {
+  height: 100vh;
+  object-fit: cover;
+}
+
+/* overlay oscuro opcional */
+.hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 2;
+}
+
+/* contenido encima */
+.hero-content {
+  position: relative;
+  z-index: 3;
+  padding-top: 30px; /* navbar + aire */
+  padding-bottom: 4rem;
+}
+
+.modal-backdrop {
+  z-index: 2 !important;
+}
+
+.modal {
+  z-index: 4 !important;
 }

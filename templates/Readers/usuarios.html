@@ -4,7 +4,7 @@
 {% block title %}Gestión de usuarios{% endblock title %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container text-white">
     <h3 class="font-title mb-4">Administración de usuarios</h3>
 
     <form method="GET" class="row g-3 mb-4">
@@ -49,24 +49,6 @@
         </thead>
         <tbody>
           {% for usuario in usuarios %}
-          <div class="modal fade" id="Modal_{{usuario.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                      <div class="modal-dialog">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Eliminar Usuario #{{usuario.id}}</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                          </div>
-                          <div class="modal-body">
-                            Está a punto de eliminar al usuario #{{usuario.id}}, {{usuario.first_name}} {{usuario.last_name}} ({{usuario.groups.all.0.name}})
-                            ¿Está Seguro?
-                          </div>
-                          <div class="modal-footer">
-                            <a href="{% url 'eliminar_usuario' usuario.id %}"><button type="button" class="btn btn-danger">Eliminar</button></a>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
           <tr>
             <td>{{ usuario.id }}</td>
             <td>{{ usuario.first_name }}</td>
@@ -94,5 +76,36 @@
         <a href="{% url 'crear_usuario' %}"><button class="btn btn-sm btn-primary"><i class="bi bi-save"></i> CREAR USUARIO</button>
 				<a href="{% url 'intranet' %}"><button class="btn btn-sm btn-secondary"><i class="bi bi-backspace"></i> VOLVER</button>
     </div>
+  </div>
+
+{% for usuario in usuarios %}
+<div class="modal fade z-4" id="Modal_{{usuario.id}}" tabindex="-1">
+  <div class="modal-dialog modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          Eliminar usuario #{{ usuario.id }}
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        ¿Está seguro de eliminar a
+        <strong>{{ usuario.first_name }} {{ usuario.last_name }}</strong>
+        ({{ usuario.groups.all.0.name }})?
+      </div>
+
+      <div class="modal-footer">
+        <a href="{% url 'eliminar_usuario' usuario.id %}"
+           class="btn btn-danger">
+           Eliminar
+        </a>
+        <button class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
+{% endfor %}
 {% endblock content %}

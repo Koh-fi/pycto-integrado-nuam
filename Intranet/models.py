@@ -191,6 +191,7 @@ class mensaje_privado(models.Model):
     def __str__(self):
         return self.mensaje
 
+
 ###### AUDITORÍA
 
 # root/app/models.py

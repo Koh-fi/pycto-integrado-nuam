@@ -7,13 +7,7 @@
   
 {% endblock navbar %}
 
-
-{% block content %}
-
-<div class="alert alert-danger z-2 position-fixed mt-5 top-0 start-50 translate-middle" role="alert">
-  <i class="bi bi-exclamation-triangle-fill"></i> ERROR: La página que a la que intentó acceder requiere que ingrese sus credenciales.
-</div>
-
+{% block carrusel %}
 <div class="dark-bg-overlay">
   <div id="carouselExampleAutoplaying" class="carousel slide carousel-fade z-n1" data-bs-ride="carousel">
     <div class="carousel-inner">
@@ -29,9 +23,16 @@
     </div>
   </div>
 </div>
+{% endblock carrusel %}
+
+{% block content %}
+
+<div class="alert alert-danger z-2 position-fixed mt-5 top-0 start-50 translate-middle" role="alert">
+  <i class="bi bi-exclamation-triangle-fill"></i> ERROR: La página que a la que intentó acceder requiere que ingrese sus credenciales.
+</div>
 
 <section class="container z-2">
-  <div class="container d-flex position-absolute top-50 start-50 translate-middle align-self-center">
+  <div class="container d-flex align-self-center">
     <div class="card mx-auto py-2 px-5 card-login">
       <div class="card-body mt-3">
         <h5 class="card-title mt-2 mb-5"><img src="{% static 'img/logo.png' %}" alt="Logo" width="117" height="27" class="d-inline-block align-text-bottom"> | Iniciar Sesión</h5>
