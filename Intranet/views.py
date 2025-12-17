@@ -122,6 +122,7 @@ def VW_logout(request):
 #
 #  return render(request, "Intranets/login.html", {"form": form, "error": error})
 
+###### INTRANETS
 
 @login_required()
 @role_required(["Administrador"])
@@ -259,57 +260,9 @@ def corredor(request):
 
   return render(request, "Intranets/corredor.html", {"contactos": contactos,"chat": chat,"mensajes": mensajes,"destino": destino,"abrir_chat": abrir_chat})
 
-def build_categorias_niveladas(valores=None):
-    categorias = list(categoria_factor.objects.all())
-    categorias_por_padre = {}
-    for cat in categorias:
-        categorias_por_padre.setdefault(cat.padre_id, []).append(cat)
-
-    def aplanar(cat, lvl=0):
-        salida = [{
-            "categoria": cat,
-            "nivel": lvl,
-            "factores": [
-                {"obj": f, "valor": valores.get(f.factor_id, 0) if valores else 0}
-                for f in cat.factor_calificacion_set.all().order_by("factor_id")
-            ]
-        }]
-        for sub in categorias_por_padre.get(cat.id, []):
-            salida.extend(aplanar(sub, lvl + 1))
-        return salida
-
-    niveles = []
-    for raiz in categorias_por_padre.get(None, []):
-        niveles.extend(aplanar(raiz))
-    return niveles
-
-def build_factores_sueltos(valores=None):
-    sueltos = factor_calificacion.objects.filter(categoria__isnull=True)
-    return [
-        {"obj": f, "valor": valores.get(f.factor_id, 0) if valores else 0}
-        for f in sueltos
-    ]
-
-def calcular_factores(factores, factores_total):
-  total = sum(factores.get(fid, 0) for fid in factores_total)
-
-  result = {}
-
-  for factor in factor_calificacion.objects.all():
-    fid = factor.factor_id
-    valor = factores.get(fid, 0)
-
-    if total > 0:
-      valor_calc = round(valor / total, 6)
-
-      if fid in factores_total:
-        valor_calc = min(1, valor_calc)
-    
-    result[fid] = valor_calc
-  return result
+###### CALIFICACIONES
 
 @login_required()
-
 @role_required(["Administrador", "Corredor"])
 def crear_calificacion(request):
 
@@ -400,10 +353,22 @@ def crear_calificacion(request):
     })
 
 @login_required()
-
 @role_required(["Administrador", "Corredor"])
 def ver_calificaciones(request):
     calificaciones = calificacion_tributaria.objects.prefetch_related('califica_set__factor')
+
+    mercado = request.GET.get("mercado")
+    origen = request.GET.get("origen")
+    anio = request.GET.get("anio")
+
+    filtros = []
+    if mercado:
+        calificaciones = calificaciones.filter(mercado=mercado)
+    if origen:
+        calificaciones = calificaciones.filter(origen_calificacion=origen)
+    if anio:
+        calificaciones = calificaciones.filter(anio=anio)
+
     factores = factor_calificacion.objects.all().order_by("factor_id")
     id_factores = [factor.factor_id for factor in factores]
     datos = []
@@ -421,7 +386,6 @@ def ver_calificaciones(request):
     })
 
 @login_required()
-
 @role_required(["Administrador", "Corredor", "Bolsa"])
 def carga_por_monto(request):
     factores = factor_calificacion.objects.all().order_by("factor_id")
@@ -537,6 +501,7 @@ def carga_por_monto(request):
               cal.descripcion = fila["descripcion"]
               cal.dividendo = fila["dividendo"]
               cal.valor_historico = fila["valor_historico"]
+              cal.estado="PENDIENTE"
               cal.origen_calificacion = origen
               cal.save()
               registrar_auditoria(request.user, "EDITAR", "Calificación tributaria modificada via Carga Masiva.", instancia_antes=antes, instancia_despues=cal)
@@ -574,9 +539,7 @@ def carga_por_monto(request):
 
     return redirect("ver_calificaciones")
 
-
 @login_required()
-
 @role_required(["Administrador", "Corredor", "Bolsa"])
 def carga_por_factor(request):
     factores = factor_calificacion.objects.all().order_by("factor_id")
@@ -656,6 +619,7 @@ def carga_por_factor(request):
               cal.descripcion = fila["descripcion"]
               cal.dividendo = fila["dividendo"]
               cal.valor_historico = fila["valor_historico"]
+              cal.estado="PENDIENTE"
               cal.origen_calificacion = origen
               cal.save()
               registrar_auditoria(request.user, "EDITAR", "Calificación tributaria modificada via Carga Masiva.", instancia_antes=antes, instancia_despues=cal)
@@ -693,7 +657,6 @@ def carga_por_factor(request):
     return redirect("ver_calificaciones")
 
 @login_required()
-
 @role_required(["Administrador", "Corredor"])
 def editar_calificacion(request, cal_id):
     calificacion = calificacion_tributaria.objects.get(pk=cal_id)
@@ -707,15 +670,15 @@ def editar_calificacion(request, cal_id):
     if request.method == "POST":
         form = CalificacionTributariaForm(request.POST, instance=calificacion)
         if form.is_valid():
-            calificacion_antes = calificacion
-            calificacion = form.save()
-            calificacion_despues = calificacion
+            calificacion = form.save(commit=False)
+            calificacion.estado = "PENDIENTE"
+            calificacion.save()
             registrar_auditoria(request.user, instancia_despues=calificacion, accion="EDITAR", descripcion="Modificación de Calificación Tributaria")
             for f in factor_calificacion.objects.all():
                 valor = form.cleaned_data.get(f"factor" + str(f.factor_id)) or 0
                 try:
-                    existed = califica.objects.get(calificacion=cal, factor=f)
-                    antes = model_to_dict(existed)
+                    existed = califica.objects.get(calificacion=calificacion, factor=f)
+                    antes = existed
                 except califica.DoesNotExist:
                     existed = None
                     antes = None
@@ -733,7 +696,7 @@ def editar_calificacion(request, cal_id):
                         descripcion=f"Califica creada para factor {f.factor_id}"
                     )
                 else:
-                    despues = model_to_dict(obj)
+                    despues = obj
                     registrar_auditoria(
                         usuario=request.user,
                         instancia_antes=antes,
@@ -757,7 +720,6 @@ def editar_calificacion(request, cal_id):
     })
 
 @login_required()
-
 @role_required(["Administrador", "Corredor"])
 def eliminar_calificacion(request, cal_id):
   calificacion = calificacion_tributaria.objects.get(pk = cal_id)
@@ -766,7 +728,6 @@ def eliminar_calificacion(request, cal_id):
   return redirect('ver_calificaciones')
 
 @login_required()
-
 @role_required(["Administrador", "Auditor"])
 def validar_calificacion(request):
     if request.method == 'GET':
@@ -793,14 +754,9 @@ def validar_calificacion(request):
 
         return render(request, 'Validators/calificaciones.html', {'msg': f'Calificación actualizada correctamente a: {nuevo_estado}.'})
 
-@login_required()
-
-@role_required(["Administrador", "Corredor"])
-def cargar_archivo(request):
-    return render(request, 'Readers/calificaciones.html')
+###### INSTRUMENTOS
 
 @login_required()
-
 @role_required(["Administrador", "Auditor"])
 def ver_instrumentos(request):
     instrumentos = instrumento_financiero.objects.all()
@@ -840,7 +796,6 @@ def ver_instrumentos(request):
     return render(request, 'Readers/instrumentos.html', {'form': form,'instrumentos':instrumentos})
 
 @login_required()
-
 @role_required(["Administrador", "Auditor"])
 def eliminar_instrumento(request, instrumento_id):
     instrumento = instrumento_financiero.objects.get(instrumento_id = instrumento_id)
@@ -849,7 +804,6 @@ def eliminar_instrumento(request, instrumento_id):
     return redirect('ver_instrumentos')
 
 @login_required()
-
 @role_required(["Administrador", "Auditor", "Corredor"])
 def agregar_instrumento(request):
   #form = formInstrumentoFinanciero()
@@ -874,7 +828,6 @@ def agregar_instrumento(request):
   return render(request, 'Creates/instrumentos.html', data)
   
 @login_required()
-
 @role_required(["Administrador", "Auditor"])
 def editar_instrumento(request, instrumento_id):
     instrumento = instrumento_financiero.objects.get(instrumento_id = instrumento_id)
@@ -905,6 +858,8 @@ def editar_instrumento(request, instrumento_id):
         })
 
     return render(request, 'Creates/instrumentos.html', {'form': form,'instrumento':instrumento})
+
+###### USUARIOS
 
 @login_required()
 @role_required(["Administrador"])
@@ -951,7 +906,6 @@ def crear_usuario(request):
   return render(request, 'Creates/usuarios.html', {'alert': alert})
   
 @login_required()
-
 @role_required(["Administrador"])
 def modificar_usuario(request, user_id):
   alert = ''
@@ -1005,7 +959,6 @@ def modificar_usuario(request, user_id):
   return render(request, 'Creates/usuarios.html', {'usuario': usuario, 'initial': initial_data, 'alert': alert})
 
 @login_required()
-
 @role_required(["Administrador"])
 def eliminar_usuario(request, user_id):
   usuario = User.objects.filter(id=user_id).first()
@@ -1087,7 +1040,6 @@ def agregar_solicitud(request):
 
     return render(request, "Creates/solicitudes.html", {"form": form, "grupos": grupos,})
   
-
 @login_required()
 @role_required(["Administrador", "Auditor", "Corredor"])
 def editar_solicitud(request, solicitud_id):
@@ -1149,19 +1101,6 @@ def actualizar_contador(request):
 
 
 ###### si fuera una función lista contactos #######
-
-def lista_contactos(request):
-    try:
-        user_actual = User.objects.get(email=request.user.email)
-        print(user_actual)
-    except User.DoesNotExist:
-        return []
-
-    rol_actual = user_actual.groups.first()  # o user_actual.rol según lo que tengas implementado
-    contactos = User.objects.filter(groups=rol_actual).exclude(id=user_actual.id)
-
-    return contactos   # ahora no tenemos una vista sino una función 
-
 
 
 ######  si fuera una vista ##############

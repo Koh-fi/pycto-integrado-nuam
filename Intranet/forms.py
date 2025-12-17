@@ -52,6 +52,7 @@ class CalificacionTributariaForm(forms.ModelForm):
                 'id': 'secuencia_evento',
                 'name': 'secuencia_evento',
                 'placeholder': '100000809',
+                'min': '10000',
                 'required': True
             }),
             'dividendo': forms.NumberInput(attrs={

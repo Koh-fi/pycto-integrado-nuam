@@ -39,7 +39,6 @@ urlpatterns = [
     path('gestores/calificaciones/nueva', intr.crear_calificacion, name="crear_calificacion"),
     path('gestores/calificaciones/editar/<int:cal_id>', intr.editar_calificacion, name="editar_calificacion"),
     path('gestores/calificaciones/eliminar/<int:cal_id>', intr.eliminar_calificacion, name="eliminar_calificacion"),
-    path('gestores/calificaciones/validar/<int:cal_id>', intr.eliminar_calificacion, name="eliminar_calificacion"),
     path('gestores/calificaciones/carga/monto/', intr.carga_por_monto, name='carga_monto'),
     path('gestores/calificaciones/carga/factor/', intr.carga_por_factor, name='carga_factor'),
     path('gestores/instrumentos/', intr.ver_instrumentos, name='ver_instrumentos'),
